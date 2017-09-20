@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="smaartframework.com" version="4.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>SMAART</name>
+<widget id="iris.fhts.ac.in" version="4.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>IRIS</name>
     <description>
-        SMAART Seurvey Application
+        Integrated Road Traffic Injuries Surveillance System
     </description>
     <author email="rahulsharma841990@outlook.com" href="http://rahulasr.com/">
       Rahul Sharma
@@ -68,4 +68,5 @@
     <allow-navigation href="http://192.168.0.111:8101" />
     <engine name="android" spec="~6.1.2" />
     <engine name="windows" spec="~4.3.0" />
+    <preference name="SplashShowOnlyFirstTime" value="false" />
 </widget>
