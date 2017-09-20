@@ -1,0 +1,47 @@
+<ion-view view-title="Update Application" class="main_row" >
+	<ion-nav-bar class="bar-stable bar-positive" style="position:fixed; width:100%; padding-bottom:2%;">
+  	<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px; z-index:999;"></button>
+  </ion-nav-bar>
+
+  <ion-content class="surveyPage" style="margin-top:4%;">
+  
+	<div class="row" style="margin-top:-8%;">
+		<div class="col">
+			
+					
+			<!-- <div class="list list-inset">
+
+			    <div class="item" ng-repeat="(key, value) in list">
+			      <label style="float:left;">{{key}}</label>
+			      <i class="icon ion-chatbubble-working" style="float:right !important; font-size:20px;"></i>
+			    </div>
+
+			</div> -->
+			
+
+			<div class="col question_div" ng-show="{{detailActivate}}">
+				<div class="ans_head">
+					<p style="color:red;text-align:center;">PLEASE NOTE!</p>
+				</div>
+				<p style="margin-top:3%;text-align:center;">On update of the application, you will get all new updated survey data and details. It will not affect any of your stored survey results.</p>
+			</div>
+
+			<div class="col question_div" ng-show="{{notAuth}}">
+				<div class="ans_head">
+					<p style="color:red;text-align:center;">Not authorized to access!</p>
+				</div>
+				<p style="margin-top:3%;text-align:center;">Sorry you are not authorised to access this option. Only Admin can update the application.</p>
+			</div>
+
+			<a href="javascript:;" class="button button-positive button-block" style="width:90%; margin: 0 auto; margin-top: 10%;" ng-click="reActive()" ng-show="{{roleView}}">Update Application</a>
+		</div>
+	</div>
+
+	
+
+
+  </ion-content>
+  <div ng-include="'templates/footer.html'">
+		
+	</div>
+</ion-view>

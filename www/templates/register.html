@@ -1,0 +1,40 @@
+  <style>
+  input::-moz-placeholder, textarea::-moz-placeholder {
+      color: #fff;
+  }
+  </style>
+<ion-view view-title="Register" style="background: url('img/login-bg1.jpg'); background-position: 0px -100px;">
+    <ion-nav-bar class="bar-positive">
+        <ion-nav-back-button>
+          
+        </ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-content>
+    <!-- <div class="logoDiv">
+        <img src="img/icon.png" class="loginLogo" />
+    </div> -->
+    <center><img src="img/user-icon-png-pnglogocom.img.png" style="margin-top: 68px;width: 150px;" "></center>
+    <div class="list list-inset loginDiv" ng-style="">
+      <label class="item item-input loginLabel">
+        <input type="text" placeholder="Firstname" name="fname" ng-model="data.email">
+      </label>
+      <label class="item item-input loginLabel">
+        <input type="text" placeholder="Lastname" name="lname" ng-model="data.email">
+      </label>
+      <label class="item item-input loginLabel">
+        <input type="text" placeholder="Username" name="email" ng-model="data.email">
+      </label>
+      <label class="item item-input loginLabel">
+        <input type="email" placeholder="Email" name="email" ng-model="data.email">
+      </label>
+      <label class="item item-input loginLabel">
+        <input type="text" placeholder="Mobile" name="nob" ng-model="data.email">
+      </label>
+      <label class="item item-input loginLabel">
+        <input type="password" placeholder="Pasword" name="password" ng-model="data.email">
+      </label>
+    </div>
+    <button class="button button-positive button-block" style="width:90%; margin: 0 auto; margin-top: 2%;" ng-click="">Register Now</button>
+
+    </ion-content>
+</ion-view>

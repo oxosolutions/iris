@@ -1,0 +1,24 @@
+<div class="repeater">
+	<div class="row repeaterRow">
+		<div class="col question_div">
+			<div ng-repeat="field in fieldsList" class="repeater_field">
+				
+				<div>
+					<h4 class="para"><span>{{field.question_text}}</span> </h4>
+					<span>{{field.question_desc}}</span>
+				</div>
+				<div class="textBoxSurvey" key="{{field.question_key}}">
+					<div ng-include src="templateUrl(field.question_type,field.answers[0])"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<a href="javascript:;" ng-click="createClone()" class="repeatRow">Add More</a>
+
+<!-- <div><input type='text' name='textAnswer' ng-model='textAnswer' class='surveyTextBox' disabled /><button class='dateBut button-small ion-android-calendar' ng-click='DatePicker()'></button></div> -->
+
+<!-- <div class="ans_footer">
+			<p>Maxime quis.</p>
+		</div> -->

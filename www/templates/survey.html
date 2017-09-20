@@ -1,0 +1,120 @@
+<ion-view view-title="{{surveyName}} -- {{section_name}}" class="main_row" ng-controller="surveyLoad">
+
+  <ion-content class="surveyPage">
+  <ion-nav-bar class="bar-stable bar-positive"></ion-nav-bar>
+  
+	<div class="row">
+		<div class="col">
+			 <!-- <div class="row">
+			 				<div class="col timediv" style="padding: 0;">
+			 					<center><h3 style="margin-bottom: 0;"><img src="img/clock.png" style="width: 10%; vertical-align: middle;margin-right: 2%;padding-top: 1%;padding-bottom: 1%;" /><span class="hr">{{hour}}</span>:<span class="min">{{min}}</span>:<span class="sec">{{sec}}</span></h3></center>
+			 				</div>
+			 			</div> -->
+ 		<div class="row" ng-if="quest_type === undefined">
+				<div class="col question_div">
+					<div class="qus_head">
+						<p>Question:  {{currentQst}}/<span>{{totalQst}}</span></p>
+					</div>
+						<h4 class="para"><span question="QuesHtml"></span> </h4>
+						<span description="DescHtml"></span>
+					<div class="qus_footer">
+						<!-- <p>Maxime quis.</p> -->
+					</div>
+				</div>
+			</div>
+
+			
+			<div answers="AnswerHtml">
+				
+			</div>
+					
+			
+
+			<div class="row" style="margin-bottom: 55px">
+				<div class="col button_div">
+					<div class="button_wrapper previous">
+						<a id="button_previous" class="button button-previous" href="" ng-click="goToPrev()" ng-controller="prevQuest"><span>Previous</span></a>
+					</div>
+					<div class="button_wrapper stop">
+						<a id="button_stop" class="button button-stop" href="" ng-click="StopSurvey()" ng-controller="stopSurvey"><span>Stop</span></a>
+					</div>
+					<div class="button_wrapper next">
+						<a id="button_next" class="button button-next" href="" ng-click="QuestNext(questionId)" ng-controller="nextQuest"><span>Next</span></a>
+					</div>
+
+					<!--<ul>
+						<li><a href=""><img src="../img/next.png" style="width:70px;float:right" alt="next" ng-controller="nextQuest" ng-click="QuestNext()"></a></li>
+						<center><li><button style="align:center">Stop</button></li></center>
+						<li><a href=""><img src="../img/pre.png" style="width:70px;float:left" alt="previous" ></a></li>
+					</ul>
+					-->
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+    <!-- <div class="row">
+    	<div class="col survey_question">
+			<div class="question">
+				<p style="border-bottom:2px solid white;"><strong style="float:left;">Q:&nbsp;</strong>
+					<span question="QuesHtml"></span> 
+				</p><br>
+				
+				<span description="DescHtml" style="font-style: italic;"></span>
+				
+			</div>
+    	</div>
+    </div>
+    <div class="row">
+		<div class="col">
+			<div image="imageHtml">
+				
+			</div>
+		</div>
+    </div><br>
+    <div class="row">
+		<div class="col">
+			<h4>Option:</h4>
+			<form action="" class="ans_form">
+				<div answers="AnswerHtml">
+					
+				</div>
+				<ul class="ans_ul">
+					<li><label for=""><input type="radio" class="rad_ans" name="answer"> pharetra ornare dolor vel</label><br></li>
+					<li><label for=""><input type="radio" class="rad_ans" name="answer"> pharetra ornare dolor vel</label><br></li>
+					<li><label for=""><input type="radio" class="rad_ans" name="answer"> pharetra ornare dolor vel</label><br></li>
+					<li><label for=""><input type="radio" class="rad_ans" name="answer"> pharetra ornare dolor vel</label><br></li>
+				</ul>
+				<div class="row nextButs">
+					<div class="col">
+						<button class="button button-balanced">
+						  Prev
+						</button>
+
+						<button class="button button-assertive">
+						  Stop
+						</button>
+
+						<button class="button button-balanced" ng-controller="nextQuest" ng-click="QuestNext()">
+						  Next
+						</button>	
+					</div>
+				</div>
+			</form>
+		</div>
+    </div> -->
+  </ion-content>
+  	<div ng-include="'templates/footer.html'">
+		
+	</div>
+</ion-view>

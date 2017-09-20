@@ -1,0 +1,39 @@
+<ion-view view-title="Login" style="background: url('img/background_img_1.jpg'); background-position: 0px -100px;">
+   
+
+    <ion-content>
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="doRefresh()">
+        </ion-refresher>        
+        <div class="logoDiv">
+            <img src="img/icon.png" class="loginLogo" />
+            
+        </div>
+        <div layout="row" layout-align="center center" class="padding">
+            <h3 style="color: white">Smaart Framework</h3>
+        </div>
+        
+        <div class="list list-inset loginDiv" ng-style="{'margin-top':'20%'}">
+            <label class="item item-input loginLabel" style="background-color: white !important;margin: 10px">
+                <input type="text" placeholder="Username or Email" name="email" ng-model="data.email" style="color: #666 !important">
+            </label>
+            <!-- <md-input-container class="md-block">
+                <label>Username or Email</label>
+                <input name="email" required type="email" name="clientEmail" ng-model="data.email"
+                   minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Password</label>
+                <input name="password" required type="password" name="clientEmail" ng-model="data.password"
+                   minlength="10" maxlength="100" />
+            </md-input-container> -->
+            <label class="item item-input loginLabelPass" style="background-color: white !important;margin: 10px">
+                <input type="password" placeholder="Password" name="password" ng-model="data.password" style="color: #666 !important">
+            </label>
+        </div>
+        <button class="button button-positive button-block" style="width:90%; margin: 0 auto; margin-top: 2%;" ng-click="doLogin()">Login Now</button>
+    
+
+    </ion-content>
+</ion-view>

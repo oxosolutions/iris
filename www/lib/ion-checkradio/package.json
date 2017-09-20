@@ -1,0 +1,97 @@
+{
+  "_args": [
+    [
+      "ion-checkradio",
+      "C:\\xampp\\htdocs\\smaartn"
+    ]
+  ],
+  "_from": "ion-checkradio@latest",
+  "_id": "ion-checkradio@2.0.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/ion-checkradio",
+  "_nodeVersion": "0.10.25",
+  "_npmUser": {
+    "email": "denis.ineshin@gmail.com",
+    "name": "ionden"
+  },
+  "_npmVersion": "2.11.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "ion-checkradio",
+    "raw": "ion-checkradio",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/ion-checkradio/-/ion-checkradio-2.0.0.tgz",
+  "_shasum": "dec03636ef0d86066116f235b0b296053621d1bb",
+  "_shrinkwrap": null,
+  "_spec": "ion-checkradio",
+  "_where": "C:\\xampp\\htdocs\\smaartn",
+  "author": {
+    "email": "ionden.tech@gmail.com",
+    "name": "Denis Ineshin",
+    "url": "IonDen"
+  },
+  "bugs": {
+    "url": "https://github.com/IonDen/ion.checkRadio/issues"
+  },
+  "dependencies": {
+    "jquery": ">=1.8"
+  },
+  "description": "jQuery plugin for styling checkboxes and radio-buttons. With skin support",
+  "devDependencies": {},
+  "directories": {
+    "lib": "js"
+  },
+  "dist": {
+    "shasum": "dec03636ef0d86066116f235b0b296053621d1bb",
+    "tarball": "https://registry.npmjs.org/ion-checkradio/-/ion-checkradio-2.0.0.tgz"
+  },
+  "gitHead": "9ce354504e99feca9a239350304588f516d0539b",
+  "homepage": "http://ionden.com/a/plugins/ion.checkRadio/en.html",
+  "ignore": [
+    ".idea",
+    "bower.json",
+    "ion-checkRadio.jquery.json",
+    "readme.ru.md"
+  ],
+  "keywords": [
+    "jquery-plugin",
+    "ecosystem:jquery",
+    "forms",
+    "checkbox",
+    "radio",
+    "interface",
+    "skins",
+    "ui"
+  ],
+  "license": "MIT",
+  "main": "./js/ion.checkRadio.js",
+  "maintainers": [
+    {
+      "email": "denis.ineshin@gmail.com",
+      "name": "ionden"
+    }
+  ],
+  "name": "ion-checkradio",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IonDen/ion.checkRadio.git"
+  },
+  "scripts": {},
+  "spm": {
+    "dependencies": {
+      "jquery": "1.11.3"
+    },
+    "main": "js/ion.checkRadio.js"
+  },
+  "version": "2.0.0"
+}

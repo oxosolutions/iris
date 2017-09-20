@@ -1,0 +1,64 @@
+<style type="text/css">
+	.ng-binding .ng-pristine{
+		margin-right: 5px;
+	}
+	.ionic .ion-checkmark:before {
+	    padding: 5px 6px !important;
+	    background: blue !important;
+	    color: white !important;
+	    border-radius: 100% !important;
+	    font-size: 17px !important;
+	    height: 27px !important;
+	}
+	.answer_row .col ul li{
+		padding-left: 0px !important;
+		padding: 0px !important;
+    	background-color: transparent !important;
+	}
+	.ion-checkmark:before{
+		    border: 3px solid;
+		    width: 32px;
+		    text-align: center;
+		    line-height: 26px;
+		    border-radius: 50%;
+		    font-size: 19px;
+	}
+	.radio-icon{
+		margin-top: -6px;
+	}
+	.background-options{
+		    background-color: white;
+   			padding:16px 16px 16px 10px;
+
+
+	}
+	.background-options > .md-container{
+		margin-left: 10px
+
+	}
+	.background-options > .md-label{
+		top: -1.5px;
+
+	}
+</style>
+<div class="row answer_row">
+	<div class="col">
+		<ul>
+			<!-- <label ng-repeat="opt in $parent.radioOptions"> -->
+			<md-radio-group ng-model='$parent.$parent.radioAnswer' ng-repeat="opt in $parent.radioOptions">
+			
+				<li>
+					<h4>
+					 <!--  <ion-radio name="radio" ng-model='$parent.$parent.radioAnswer' ng-value="'{{opt.option_value}}'">{{opt.option_value}}</ion-radio> -->
+
+					      <md-radio-button class="background-options" name="radio"  ng-value="'{{opt.option_value}}'" ng-click="setNextQuestion(opt.option_next)">{{opt.option_text}}</md-radio-button>
+
+						<!-- <label><input type="radio" ng-model='$parent.$parent.radioAnswer' value="{{opt.option_value}}">{{opt.option_value}}</label> -->
+						 <!-- <md-radio-button name="radio"  class="md-primary">{{opt.option_value}}</md-radio-button> -->
+					</h4>
+				</li>
+			<!-- </label> -->
+			 </md-radio-group>
+		</ul>
+	</div>
+</div>

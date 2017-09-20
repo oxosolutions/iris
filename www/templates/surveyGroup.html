@@ -1,0 +1,44 @@
+<ion-view view-title="Survey Sections" class="main_row" >
+	<ion-nav-bar class="bar-stable bar-positive" style="position:fixed; width:100%; padding-bottom:2%;">
+	 
+  	<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px; z-index:999;"></button>
+  </ion-nav-bar>
+
+	<ion-content class="surveyPage" >
+		<div class="row">
+			<div class="col">
+				
+				<!-- <div layout="column" style="padding: 50px 15px 0px 15px;">
+					<button class="button button-block button-calm btn-shape" ng-click="startSurvey(group.survey_id,group.id)"  ng-repeat="group in groupList" ng-disabled="checkGroupCompleted(group.id)">
+						{{group.title}}
+						
+					</button>
+				</div> -->
+				<div class="list">
+					<div class="item" ng-click="startSurvey(group.survey_id,group.group_id)"  ng-repeat="group in groupList" style="text-align:center">
+		        		<div layout="row">
+				            <div flex="90" layout="row" layout-wrap ng-class="{active: checkGroupCompleted(group.id)}">
+					           	<div flex="100">
+					           		{{group.title}}
+					           	</div>
+					           	<div flex="100" style="font-size:12px;margin-top:5px;color:#8f8f8f; overflow: hidden; text-overflow: ellipsis;">
+					           		{{group.description | htmlToPlaintext}}
+					           	</div>
+					         </div>
+					         <div flex="10" layout="row" layout-align="center center" ng-show="checkGroupCompleted(group.group_id)">
+					         	<i class = "icon icon ion-checkmark-circled" style="color: green;float: right;font-size: 38px"></i>
+					         </div>
+					    </div>
+				     </div>
+			            
+		      	</div>
+
+			</div>
+
+		</div>
+
+	</ion-content>
+	<div ng-include="'templates/footer.html'">
+		
+	</div>
+</ion-view>

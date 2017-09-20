@@ -1,0 +1,40 @@
+<style type="text/css">
+	.drop{
+		width: 100%;
+		max-width: 100%;
+		z-index: 999999;
+	}
+</style>
+<div class="row">
+	<div class="col question_div">
+		<div class="ans_head">
+			<p>You Answer:</p>
+		</div>
+		<!-- <select name="selectAnswer" id="app_select" ng-model="$parent.selectAnswer" ng-options="option as option.option_value for option in $parent.selectOptions" class="selectAnswer">
+		</select> -->
+		
+		<label class="item item-input item-select">
+		    <div class="input-label drop">
+		      Select any one
+		    </div>
+		    <select name="selectAnswer" class="app_select" ng-model="$parent.selectAnswer" class="selectAnswer" ng-change="setNextQuestion(option.option_next,'select')">
+		    	<option ng-repeat="option in $parent.selectOptions" next="{{option.option_next}}" value="{{option.option_value}}">{{option.option_text}}</option>
+			</select>
+		</label>
+
+<!-- 		 <label class="item item-input item-select">
+		    <div class="input-label drop">
+		      Select any one
+		    </div>
+		    <select name="selectAnswer" ng-model="$parent.selectAnswer">
+		      <option layout="row" ng-repeat="value in $parent.selectOptions" value="{{value.option_value}}" layout-align="center stretch"> {{value.option_text}}</option>
+		    </select>
+		  </label>
+ -->			<!-- 
+			<md-select name="selectAnswer" ng-model="$parent.selectAnswer" ng-options="option as option.option_value for option in $parent.selectOptions" class="selectAnswer">
+        </md-select> -->
+		<div class="ans_footer">
+			<!-- <p>Maxime quis.</p> -->
+		</div>
+	</div>
+</div>

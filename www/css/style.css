@@ -1,0 +1,203 @@
+/* Empty. Add your own CSS if you like */
+
+input{
+
+	color: #FFF !important;
+}
+
+.loginLabel{
+
+	background: transparent !important;
+	border: none !important;
+	
+}
+
+.loginLabelPass{
+	
+	background: transparent !important;
+	border: none !important;
+	border-top: 1px solid #185164 !important;
+}
+
+.loginDiv{
+
+	background: transparent !important;
+}
+
+.logoDiv{
+
+	width: 40%;
+	margin: 0 auto;
+}
+
+.logoDiv img{
+	width: 100%;
+	margin-top: 30%;
+}
+
+.loginErr{
+
+	border-bottom: 1px solid red !important;
+}
+
+.scroll-bar-indicator
+{
+	display: none;
+}
+
+
+.homeBack{
+
+	background: url('../img/ghar.jpg') !important;
+}
+.survey_question{
+	border: 1px solid grey;
+	margin-top: 50px;
+	border-radius: 6px;
+	padding: 10px;
+	background: #f7f7f7;
+
+}
+.qimg{
+	width: 100%;
+	height: auto;
+}
+.ans_form{
+	margin-left: 50px
+}
+
+.ans_ul li{
+	margin-bottom: 10px;
+}
+.question p{
+	text-align: justify;
+}
+
+.surveyTextBox{
+
+	border: 1px solid #000 !important;
+	width: 100% !important;
+	color: #000 !important;
+	padding-left: 2% !important;
+}
+
+.dateBut{
+
+	background-color: #387ef5;
+	border-color: #0c60ee;
+	border: none;
+	color: #FFF;
+	font-size: 16px;
+	height: 34px !important;
+}
+
+.nextButs{
+
+	margin-top: 18%;
+	margin-left: -5%;
+}
+
+.nextButs button{
+
+	padding: 0px 25px 0px 20px;
+}
+.main_row{
+	background: url('../img/bacgground.png');
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+.timediv{
+	margin-top: 50px;
+	background: #444;
+	padding: 10px;
+	border: 1px solid wheat;
+}
+.timediv h3{
+	color: white
+}
+.qus_head p,.qus_footer{
+	background: #F5F5F5;
+	padding: 10px;
+	margin:0px;
+}
+.question_div{
+	background: #FFFFFF;
+	margin-top: 40px
+}
+.question_div .question{
+	padding:10px;
+}
+.question_div h4{
+	padding: 20px
+}
+.answer_row .col{
+	margin-top: 40px;
+}
+.answer_row .col ul li{
+	padding: 2px;
+	/*text-align: center;*/
+	padding-left: 5%;
+	background-color:#A7E0FD;
+	margin-top: 10px;
+	color: #444;
+	border-radius: 5px
+}
+
+.ans_head p,.ans_footer{
+	background: #F5F5F5;
+	padding: 10px;
+	margin:0px;
+}
+.button_div{
+	margin-top: 20px;
+}
+
+.textareaDesign{
+
+	border: 1px solid #000;
+	width: 100%;
+}
+
+.numberAnswer{
+
+	border: 1px solid #000 !important;
+	width: 100%;
+	height: 28px;
+	margin-bottom: 2%;
+	color: #000 !important;
+}
+
+.emailAnswer{
+
+	border: 1px solid #000 !important;
+	width: 100%;
+	color: #000 !important
+}
+
+.selectAnswer{
+
+	width: 100%;
+	height: 35px;
+}
+
+.button_wrapper{
+	width:33%; 
+	float:left;
+}
+.button_wrapper a,
+.button_wrapper a span{
+	display:block;
+}
+
+.button_wrapper .button-stop{ 
+	width:70%;
+	margin:0 auto;
+	background-color:#cc0000;
+	color:#FFFFFF;
+ }
+ .black-fg{
+ 	color: black !important;
+ }
+
+

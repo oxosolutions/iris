@@ -1,0 +1,63 @@
+<ion-side-menus enable-menu-with-back-views="false" >
+  <ion-side-menu-content>
+    <ion-nav-bar class="bar-stable bar-positive" style="background: transparent !important;">
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+    
+      <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="right">
+        </button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
+
+  <ion-side-menu side="right">
+    <ion-header-bar class="bar-stable bar-positive">
+      <h1 class="title">Menu</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list padding="0">
+        <!-- <ion-item menu-close >
+          <div>
+            <img src="../img/vin-diesel.jpg" style="height:200px;width:280px;">
+          </div>
+        </ion-item> -->
+        <ion-item menu-close href="#/app/dashboard">
+          Dashboard
+        </ion-item>
+        <ion-item menu-close href="#/app/surveylist">
+          Survey List
+        </ion-item>
+        <ion-item menu-close href="#/app/incomplete">
+          Incomplete Survey
+        </ion-item>
+        <ion-item menu-close href="#/app/completed">
+          Completed Survey
+        </ion-item>
+
+        <!-- <ion-item menu-close ng-click="delete()">
+          Delete Local Storage
+        </ion-item> -->
+
+        <ion-item menu-close href="#/app/reactivate">
+          Update Application
+        </ion-item>
+        <ion-item menu-close href="#/app/about">
+          About
+        </ion-item>
+
+        <!-- <ion-item menu-close href="#/app/search">
+          Search
+        </ion-item>
+        <ion-item menu-close href="#/app/browse">
+          Browse
+        </ion-item> -->
+        <ion-item menu-close ng-click="logout()">
+          Logout
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>
