@@ -51,6 +51,27 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
       	}
       	$scope.list = row;
 	});
+	$scope.surveyData = {};
+	$scope.getQuestionCounts = function(surveyid){
+		$scope.surveyData['questionCount'] = {};
+		var getSurveysQuestions = 'SELECT count(*) as count FROM survey_questions WHERE survey_id = ?';
+		dbservice.runQuery(getSurveysQuestions,[surveyid.toString()], function(res){
+			$scope.surveyData['questionCount'][surveyid.toString()] = res.rows.item(0).count;
+		});
+	}
+
+	$scope.getCompletedRecords = function(surveyid,status){
+		$scope.surveyData['completed'] = {};
+		$scope.surveyData['incomplete'] = {};
+		var getCompleted = 'SELECT count(*) as count FROM survey_result_'+surveyid+' WHERE survey_status = ?';
+		dbservice.runQuery(getCompleted,[status], function(res){
+			if(status == 'completed'){
+				$scope.surveyData['completed'][surveyid.toString()] = res.rows.item(0).count;
+			}else{
+				$scope.surveyData['incomplete'][surveyid.toString()] = res.rows.item(0).count;
+			}
+		});
+	}
 
 
 	/*$scope.getCompletedIncompleted = function(status,surveyid){
@@ -433,6 +454,8 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 		$scope.list = SurveyListSelect;
 	});
 
+
+
 	$scope.surveyChange = function(){
 		var sendArrayList = {};
 		var SurveyID = $scope.$$childTail.surveySelect;
@@ -484,7 +507,11 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 		});
 		$scope.list = SurveyListSelect;
 	});
-
+	// $scope.onTap = function(id){
+	// 	console.log(id);
+	// 	console.log();
+	// 	$('.active_'=id).addClass('active');
+	// }
 	$scope.surveyChange = function(){
 		var sendArrayList = {};
 		var SurveyID = $scope.$$childTail.surveySelect;
