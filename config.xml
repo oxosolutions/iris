@@ -2,12 +2,12 @@
 <widget id="iris.fhts.ac.in" version="4.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>IRIS</name>
     <description>
-        Integrated Road Traffic Injuries Surveillance System
+        Integrated Road Traffic Injuries Surveillance System - INDIA
     </description>
     <author email="rahulsharma841990@outlook.com" href="http://rahulasr.com/">
       Rahul Sharma
     </author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.0.110:8100" />
     <access origin="*" />
     <access origin="cdvfile:*" />
     <preference name="webviewbounce" value="false" />
@@ -19,7 +19,6 @@
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreen" value="screen" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-    <preference name="orientation" value="portrait" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
@@ -65,7 +64,6 @@
     <allow-navigation href="http://192.168.0.106:8100" />
     <allow-navigation href="http://192.168.0.110:8101" />
     <allow-navigation href="http://192.168.0.107:8100" />
-    <allow-navigation href="http://192.168.0.111:8101" />
     <engine name="android" spec="~6.1.2" />
     <engine name="windows" spec="~4.3.0" />
     <preference name="SplashShowOnlyFirstTime" value="false" />

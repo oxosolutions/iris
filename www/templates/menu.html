@@ -27,14 +27,14 @@
         <ion-item menu-close href="#/app/dashboard">
           Dashboard
         </ion-item>
-        <ion-item menu-close href="#/app/surveylist">
-          Survey List
+        <ion-item menu-close ng-click="openModal()" ng-controller="dashboardCtrl">
+          Enter Records
         </ion-item>
-        <ion-item menu-close href="#/app/incomplete">
-          Incomplete Survey
+        <ion-item menu-close href="#/app/surveylist">
+         Review Records
         </ion-item>
         <ion-item menu-close href="#/app/completed">
-          Completed Survey
+          Synchronize Records
         </ion-item>
 
         <!-- <ion-item menu-close ng-click="delete()">
@@ -44,6 +44,10 @@
         <ion-item menu-close href="#/app/reactivate">
           Update Application
         </ion-item>
+        <ion-item menu-close href="#">
+          Help
+        </ion-item>
+
         <ion-item menu-close href="#/app/about">
           About
         </ion-item>

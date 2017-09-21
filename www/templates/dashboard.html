@@ -11,7 +11,7 @@
 		</div>
 		<div class="row">
 			<div layout="row" layout-wrap layout-align="center stretch" style="width: 100%">
-				<div flex="100" class="btn-big orange" ng-click="openModal()" style="margin-bottom: 15px">
+				<div flex="100" class="btn-big orange" ng-click="openModal()" style="margin-bottom: 10px">
 		        	<i class="fa fa-bar-chart fa-2x"></i>
 		        	<span class="label bottom">Enter Records</span> 
 		        </div>
@@ -49,7 +49,7 @@
 					}
 		        </style>
 		       
-		        	<div flex="100" style="margin-bottom: 15px">
+		        	<div flex="100" style="margin-bottom: 10px">
 		        		<a href="#/app/surveylist" >
 		        			<div class="btn-big orange" ng-click="goToSurvey()" style="background:#418bca">
 					        	<i class="fa fa-list fa-2x"></i>
@@ -66,16 +66,16 @@
 				        </a>
 		        	</div> -->
 		      
-		        	<div flex="100" style="margin-bottom: 15px">
+		        	<div flex="100" style="margin-bottom: 10px">
 		        		<a href="#/app/completed">
 			        		<div class="btn-big orange" ng-click="goToSurvey()" style="background:#5db85b">
 					        	<div style="color: white;text-align: center"><i class="fa fa-upload fa-2x"></i></div
 					        	>
-					        	<span class="label bottom">Sync Results</span> 
+					        	<span class="label bottom">Synchronize Records</span> 
 					        </div>
 				        </a>
 		        	</div>
-		        	<div flex="100" style="margin-bottom: 15px">
+		        	<div flex="100" style="margin-bottom: 10px">
 		        		<a href="#/app/reactivate" >
 			        		<div class="btn-big orange" ng-click="goToSurvey()" style="background:#93a2bf">
 					        	<i class="fa fa-refresh fa-2x"></i>
@@ -117,14 +117,14 @@
 	        	</div>   	
 	        	<div flex="80">
 	        		<div style="font-size: 12px">
-	        			<strong>{{list.questions}} </strong><span> Questions</span> 
+	        			 {{list.name}}
 	        		</div>
-	        		<div style="text-transform: uppercase;font-weight: 800; overflow:hidden;text-overflow: ellipsis;">
-	        			{{list.name}}
+	        		<div style="text-transform: uppercase;">
+	        			{{list.description | htmlToPlaintext}}
 	        		</div>
 	        		<div style="font-size: 12px;overflow: hidden;">
 	        			<!-- Creates at:<span style="font-weight: 800">26</span> min ago | Expires in 1 day -->
-	        			{{list.description | htmlToPlaintext}}
+	        			<strong>{{list.questions}} </strong><span> Questions</span>
 	        		</div>
 	        	</div>
 	        	<div flex="10" layout="row" layout-align="end center">

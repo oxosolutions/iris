@@ -6,7 +6,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
       	return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
     };
   })
-.controller('dashboardCtrl', function($rootScope, dbservice, $scope, $ionicLoading, localStorageService,$ionicModal, $ionicPopup, $ionicPopover, $state, $ionicActionSheet, $timeout, $ionicBackdrop, appData){
+.controller('dashboardCtrl', function($rootScope, dbservice, $scope, $ionicLoading, localStorageService,$ionicModal, $ionicPopup, $ionicPopover, $state, $ionicActionSheet, $timeout, $ionicBackdrop, appData, $ionicHistory){
 	if(localStorageService.get('userId') == undefined || localStorageService.get('userId') == null){
         $state.go('login');
     }
@@ -132,91 +132,6 @@ angular.module('smaart.dashboard', ['ngCordova'])
 		  });*/
 
     	 $scope.goToSurvey = function() {
-    	 	
-     /* $scope.data = {};
-
-      // An elaborate, custom popup
-      var myPopup = $ionicPopup.show({
-        templateUrl: 'templates/activation-dialog.html',
-        title: 'Enter Activation Code',
-        subTitle: 'Contact Admin for this code',
-        scope: $scope,
-        buttons: [
-          { text: 'Cancel' },
-          {
-            text: '<b>Activate</b>',
-            type: 'button-positive',
-            onTap: function(e) {
-              if (!$scope.data.wifi) {
-                $ionicLoading.show({
-                  template: 'Please fill answer!',
-                  noBackdrop: false,
-                  duration: 1000
-                });
-                e.preventDefault();
-              } else {
-                var formData = new FormData;
-                formData.append('activation_key',$scope.data.wifi);
-                $ionicLoading.show({
-                      template: '<ion-spinner class="spinner-energized"></ion-spinner>',
-                      noBackdrop: false
-                     
-                    });
-                appActivation.appActivate(formData).then(function(res){
-                    $ionicLoading.hide();
-                    if(res.data.status == 'error'){
-                      $ionicLoading.show({
-                        template: 'invalid Activation code',
-                        noBackdrop: false,
-                        duration: 1000
-                      });
-                    }else{
-                      localStorageService.set('UsersData',res.data.users);
-                      localStorageService.set('SurveyData',res.data.surveys);
-                      localStorageService.set('GroupsData',res.data.groups);
-                      $ionicLoading.show({
-                        template: 'Activated Successfully',
-                        noBackdrop: false,
-                        duration: 1000
-                      });
-                      $state.go('login');
-                    }
-                    
-                });
-                
-              }
-            }
-          }
-        ]
-      });*/
-
-
-
-
-	  //    var hideSheet = $ionicActionSheet.show({
-	  //    buttons: buttonsArray,
-	  //    titleText: 'Select Survey',
-	  //    cancelText: 'Cancel',
-	  //    cancel: function() {
-	  //       },
-	  //    buttonClicked: function(index, data) {
-	  //    	var SurveyData = getSurveyData($state, localStorageService, index+1);
-	  //    	console.log(SurveyData);
-	  //    	if(SurveyData.length == 0){
-
-			// 	$ionicLoading.show({
-			// 		      template: 'Survey data empty!',
-			// 		      noBackdrop: false,
-			// 		      duration: 2000
-			// 		    });
-			// 	return true;
-			// }else{
-
-			// 	$state.go('app.survey',{'surveyId': index+1});
-			// }
-	       		
-	  //    }
-	  //  });
 
     }
 }).controller('surveyGroup',function($scope, $ionicLoading, localStorageService, $state, appData, $ionicHistory, $ionicPlatform, dbservice){

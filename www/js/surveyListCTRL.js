@@ -498,35 +498,50 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 		var row = {};
       	for(var i=0; i<res.rows.length; i++) {
           	row[i] = res.rows.item(i)
-      	}
-      	var SurveyData = row;
-		var SurveyListSelect = {};
-		angular.forEach(SurveyData, function(value, key){
-			
-			SurveyListSelect[value.survey_id] = value.name;
-		});
-		$scope.list = SurveyListSelect;
+      	}	
+      	var RowsData = {};
+      	$.each(row,function(key, value){
+      		var resultRecords = 'SELECT * FROM survey_result_'+value.survey_id+' WHERE survey_status = ?';
+      		dbservice.runQuery(resultRecords,['completed'], function(result){
+      			if(result.rows.length != 0){
+      				RowsData[value.survey_id] = {}
+      				RowsData[value.survey_id]['survey'] = row[key];
+      				RowsData[value.survey_id]['result'] = {}
+      				RowsData[value.survey_id]['result']['unsynced'] = 0;
+      				RowsData[value.survey_id]['result']['synced'] = 0;
+      				for(var i=0; i<result.rows.length; i++) {
+			          	if(result.rows.item(i).survey_sync_status == null){
+			          		RowsData[value.survey_id]['result']['unsynced'] = RowsData[value.survey_id]['result']['unsynced'] + 1;
+			          	}else{
+			          		RowsData[value.survey_id]['result']['synced'] = RowsData[value.survey_id]['result']['synced'] + 1;
+			          	}
+			      	}	
+      			}
+      		});
+      	});
+      	setTimeout(function(){
+      		$scope.list = RowsData;
+      	},100)
+	}, function(error){
+		console.log(error);
 	});
-	// $scope.onTap = function(id){
-	// 	console.log(id);
-	// 	console.log();
-	// 	$('.active_'=id).addClass('active');
-	// }
-	$scope.surveyChange = function(){
-		var sendArrayList = {};
-		var SurveyID = $scope.$$childTail.surveySelect;
-		var Query = 'SELECT id, incomplete_name, survey_started_on FROM survey_result_'+SurveyID+' WHERE survey_status = ?';
-		dbservice.runQuery(Query,['completed'],function(res) {	
-			var row = {};
-			for(var i=0; i<res.rows.length; i++) {
-	            row[i] = res.rows.item(i)
-	        }		
-	       	console.log(row);
-			$scope.PendingSurvey = row;
-        }, function (err) {
-          console.log(err);
-        });
+	$scope.onTap = function(id,elem){
+		$scope.selectedSyncSurvey = id;
+		$('.active').removeClass('active');
+		$(elem.currentTarget).addClass('active');
 	}
+	
+	$scope.surveyData = {};
+	$scope.getQuestionCounts = function(surveyid){
+		$scope.surveyData['questionCount'] = {};
+		var getSurveysQuestions = 'SELECT count(*) as count FROM survey_questions WHERE survey_id = ?';
+		dbservice.runQuery(getSurveysQuestions,[surveyid.toString()], function(res){
+			$scope.surveyData['questionCount'][surveyid.toString()] = res.rows.item(0).count;
+		});
+	}
+
+
+
 
 	$scope.exportSurv = function(){
 		/*if(window.Connection) {
@@ -538,7 +553,16 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 	          		
 	        	});
 	      	}else{*/
-	      		var Query = 'SELECT * from survey_result_'+$scope.$$childTail.surveySelect;
+	      		if($scope.selectedSyncSurvey == undefined || $scope.selectedSyncSurvey == ''){
+	      			$ionicPopup.confirm({
+		          		title: 'Please Select any one survey',
+		          		content: 'Select at least one survey to synchronize.'
+		        	}).then(function(result) {
+		          		
+		        	});
+	      			return false;
+	      		}
+	      		var Query = 'SELECT * from survey_result_'+$scope.selectedSyncSurvey;
 				dbservice.runQuery(Query,[],function(res) {	
 					if(res.rows.length == 0){
 						$ionicLoading.show({
@@ -563,7 +587,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 						            //don't allow the user to close unless he enters wifi password
 						            e.preventDefault();
 						          } else {
-						            return $scope.$$childTail.surveyExport;
+						            return $scope.selectedSyncSurvey;
 						          }
 						        }
 						      }
@@ -575,7 +599,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 								var row = {};
 								for(var i=0; i<res.rows.length; i++) {
 						            row[i] = res.rows.item(i)
-						            var Query = 'UPDATE survey_result_'+$scope.$$childTail.surveySelect+' SET survey_sync_status = ? WHERE id = ?'
+						            var Query = 'UPDATE survey_result_'+$scope.selectedSyncSurvey+' SET survey_sync_status = ? WHERE id = ?'
 						            dbservice.runQuery(Query,['synced',res.rows.item(i).id],function(res) {	
 						            }, function(err){
 						            	console.log(err);
@@ -583,7 +607,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 						        }
 						        var formData = new FormData;
 						        formData.append('survey_data',JSON.stringify(row));
-						        formData.append('survey_id',$scope.$$childTail.surveySelect);
+						        formData.append('survey_id',$scope.selectedSyncSurvey);
 						        formData.append('activation_code',localStorageService.get('ActivationCode'));
 						        formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
 						        exportS.exportSurvey(formData).then(function(result){
