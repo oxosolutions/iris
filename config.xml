@@ -7,7 +7,7 @@
     <author email="rahulsharma841990@outlook.com" href="http://rahulasr.com/">
       Rahul Sharma
     </author>
-    <content original-src="index.html" src="http://192.168.0.112:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <access origin="cdvfile:*" />
     <preference name="webviewbounce" value="false" />

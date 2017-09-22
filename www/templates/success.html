@@ -1,5 +1,5 @@
 
-<ion-view >
+<ion-view title="Survey Completed">
 	<style type="text/css">
 	ion-content > .scroll{
 		height: 100%
@@ -40,16 +40,16 @@
     border-radius: 3px;
 	}
 	</style>
-	<ion-nav-bar class="bar-stable bar-positive"></ion-nav-bar>
-	<div class="bar bar-header">
-	 
-	  <div class="h1 title">Header Buttons</div>
-	   <button class="button button-icon icon ion-navicon" menu-toggle="right" ></button>
-	</div>
+	<ion-nav-bar class="bar-stable bar-positive">
+		<div style="float: right !important; padding-right: 3%; z-index: 99999 !important; position: absolute; right: 0;">
+			<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px;"></button>
+		</div>
+	</ion-nav-bar>
+	
 	<ion-content>
-		<div class="success-msg">Congratulations!</div>
+		<div class="success-msg">Survey Completed Successfully!</div>
 		<i class="ion-checkmark-circled"></i>
-		<div class="go-back"><button>Go to dashboard</button></div>
+		<div class="go-back"><button ui-sref="app.dashboard">Go to dashboard</button></div>
 		
 	</ion-content>
 </ion-view>
