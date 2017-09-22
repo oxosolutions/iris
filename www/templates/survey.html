@@ -21,16 +21,18 @@
 			 					<center><h3 style="margin-bottom: 0;"><img src="img/clock.png" style="width: 10%; vertical-align: middle;margin-right: 2%;padding-top: 1%;padding-bottom: 1%;" /><span class="hr">{{hour}}</span>:<span class="min">{{min}}</span>:<span class="sec">{{sec}}</span></h3></center>
 			 				</div>
 			 			</div> -->
- 		<div class="row" ng-if="quest_type === undefined">
+ 		<div class="row">
 				<div class="col question_div">
-					<div class="qus_head">
-						<p>Question:  {{currentQst}}/<span>{{totalQst}}</span></p>
-					</div>
-						<h4 class="para"><span question="QuesHtml"></span> </h4>
-						<span description="DescHtml"></span>
-					<div class="qus_footer">
-						<!-- <p>Maxime quis.</p> -->
+					<div ng-if="quest_type === undefined">
+						<div class="qus_head">
+							<p>Question:  {{currentQst}}/<span>{{totalQst}}</span></p>
+						</div>
+							<h4 class="para"><span question="QuesHtml"></span> </h4>
+							<span description="DescHtml"></span>
+						<div class="qus_footer">
+							<!-- <p>Maxime quis.</p> -->
 
+						</div>
 					</div>
 					<div answers="AnswerHtml" style="padding: 5px 10px;">
 							

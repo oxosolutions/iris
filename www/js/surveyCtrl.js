@@ -442,9 +442,8 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse)
 			
 		});
 	}
-	
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/repeater.html'\"></div>";
-	
+
 	$scope.templateUrl = function(type,answers){
 		$scope.selectOptions = answers;
 		return "surveyTemplate/"+type+".html";
@@ -1308,7 +1307,6 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 		    			surveyStatus.push('incomplete');
 		    		}
 				});
-				console.log(surveyStatus);
 				if($.inArray('incomplete', surveyStatus) != -1){
 					surveyStatus = 'incomplete';
 				}else{
@@ -1322,6 +1320,8 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 	                }, function (err) {
 	                  console.log(err);
 	                });
+	                console.log(surveyStatus);
+	              	$state.go('app.success',{},{location:'replace'});
 				}else{
 					$state.go('app.surveyGroup',{id: $state.params.surveyId});
 				}
@@ -1351,6 +1351,10 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 				localStorageService.set('completedGroups',completedGroup);
 				$state.go('app.surveyGroup',{id: $state.params.surveyId});
               	console.log("group updated");
+              	console.log(surveyStatus);
+              	if(surveyStatus == 'completed'){
+              		$state.go('app.success',{},{location:'replace'});
+              	}
             }, function (err) {
               console.log(err);
             });

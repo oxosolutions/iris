@@ -1,14 +1,20 @@
-<ion-view view-title=" Integrated Road Traffic Injuries Surveillance System">
-    <!-- <ion-header-bar>
+<ion-view view-title="Integrated Road Traffic Injuries Surveillance System">
+	<ion-nav-bar class="bar-stable bar-positive">
+		<div style="float: right !important; padding-right: 3%; z-index: 99999 !important; position: absolute; right: 0;">
+			<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px;"></button>
+		</div>
+	</ion-nav-bar>
+
+    <!-- <ion-nav-bar class="bar-stable bar-positive">
     	<div class="bar bar-header bar-positive" style="text-align: center;padding:0px 10px" layout="row" layout-align="space-between center">
     		<h4 class="color-heading">List of All survey</h4>
-    		<a href="" style="float: right !important; color: #FFF;" ng-click="closeModal()"><div class="close-icon"><i class=" icon ion-close"></i></div></a>
     	</div>
-    </ion-header-bar> -->
+    </ion-nav-bar>  -->
     <div class="bar bar-subheader" style="background-color: #e8e8e8;">
 	 	<div style="width: 100%;text-align: center;line-height: 32px;overflow: hidden;text-overflow: ellipsis;">List of All survey</div>
 	</div>
     <ion-content class="has-subheader">
+
       <div >
       
           <div ng-repeat="list in surveyList" ng-click="startSurvey(list.survey_id)" style="border-bottom: 1px solid grey">

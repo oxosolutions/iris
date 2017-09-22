@@ -1,21 +1,26 @@
 <ion-view view-title="Login" style="background: url('img/background_img_1.jpg'); background-position: 0px -100px;">
-   
+   <style type="text/css">
+        ion-content > .scroll{
+            height: 100%
+        }       
+   </style>
 
     <ion-content>
         <ion-refresher
             pulling-text="Pull to refresh..."
             on-refresh="doRefresh()">
         </ion-refresher>        
-        <div class="logoDiv">
+      <!--   <div class="logoDiv">
             <img src="img/icon.png" class="loginLogo" />
             
-        </div>
-        <div class="padding" style="text-align: center;">
-            <h3 style="color: white;">IRIS<br/></h3>
-            <span style="font-size: 13px; color: #FFF; ">(Integrated Road Traffic Injuries Surveillance System)</span>
+        </div> -->
+        <div class="padding" style="text-align: center;margin-top: 30px ">
+          <!--   <h3 style="color: white;">IRIS<br/></h3> -->
+            <span style="font-size: 14px; color: #FFF;">(Integrated Road Traffic Injuries Surveillance System)</span>
         </div>
         
-        <div class="list list-inset loginDiv" ng-style="{'margin-top':'20%'}">
+        <div style="position: absolute;bottom: 30px;left: 0;right: 0">
+              <div class="list list-inset loginDiv" ng-style="{'margin-top':'20%'}">
             <label class="item item-input loginLabel" style="background-color: white !important;margin: 10px">
                 <input type="text" placeholder="Email Address" name="email" ng-model="data.email" style="color: #666 !important">
             </label>
@@ -48,6 +53,7 @@
     text-decoration-line: none;
     text-align: center;
     display: inline;text-align: center;display: block" onclick="window.open('http://iris.fhts.ac.in/register','_system')">Signup Here</a>
+        </div>
     
 
     </ion-content>
