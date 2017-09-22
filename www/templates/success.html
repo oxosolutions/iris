@@ -1,0 +1,55 @@
+
+<ion-view >
+	<style type="text/css">
+	ion-content > .scroll{
+		height: 100%
+	}
+	.success-msg{
+		    position: absolute;
+    top: 10%;
+    left: 0;
+    right: 0;
+    text-align: center;
+        font-size: 22px;
+	}
+	.ion-checkmark-circled{
+		position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    text-align: center;	
+        font-size: 100px;
+    color: green;
+    margin-top: -50px;
+	}
+	.go-back{
+		position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 10px;	
+	}
+	.go-back > button{
+		    background-color: #387EF5;
+    width: 100%;
+    color: white;
+    font-size: 16px;
+    line-height: 28px;
+    border: none;
+    border-radius: 3px;
+	}
+	</style>
+	<ion-nav-bar class="bar-stable bar-positive"></ion-nav-bar>
+	<div class="bar bar-header">
+	 
+	  <div class="h1 title">Header Buttons</div>
+	   <button class="button button-icon icon ion-navicon" menu-toggle="right" ></button>
+	</div>
+	<ion-content>
+		<div class="success-msg">Congratulations!</div>
+		<i class="ion-checkmark-circled"></i>
+		<div class="go-back"><button>Go to dashboard</button></div>
+		
+	</ion-content>
+</ion-view>
