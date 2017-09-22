@@ -6,12 +6,12 @@
 			<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px;"></button>
 		</div>
 		<div style="text-align:center;">
-			<img src="img/icon.png" style="width:20%;max-width:25%" />
+			<!-- <img src="img/icon.png" style="width:20%;max-width:25%" /> -->
 			<h3 style="color:#FFF;">Welcome {{name}}</h3>
 		</div>
 		<div class="row">
 			<div layout="row" layout-wrap layout-align="center stretch" style="width: 100%">
-				<div flex="100" class="btn-big orange" ng-click="openModal()" style="margin-bottom: 10px">
+				<div flex="100" class="btn-big orange" ng-click="openList()" style="margin-bottom: 10px">
 		        	<i class="fa fa-bar-chart fa-2x"></i>
 		        	<span class="label bottom">Enter Records</span> 
 		        </div>
@@ -89,7 +89,7 @@
 	        
         </div>
 	</div>		
-<script id="suvlist.html" type="text/ng-template">
+<script id="suvlist.html" type="text/ng-template" ng-controller="dashboardCtrl">
   <ion-modal-view>
     <ion-header-bar>
     	<div class="bar bar-header bar-positive" style="text-align: center;padding:0px 10px" layout="row" layout-align="space-between center">

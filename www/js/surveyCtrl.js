@@ -304,7 +304,6 @@ function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQ
 	}else{
 		var $next = parseInt(QuestionIndex) + 1;
 	}
-	console.log($next);
 	/*var prevQuest = {};
 	prevQuest['surveyId'] = $state.params.surveyId;
 	prevQuest['QuestId'] = $state.params.QuestId;
@@ -360,6 +359,7 @@ function checkbox(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
 function text(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 
 	var $scope = params.scope;
+	$scope.textAnswer = {};
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
@@ -674,6 +674,7 @@ function text_only(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse
 function number(params){
 
 	var $scope = params.scope;
+	$scope.numberAnswer = {};
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
 
@@ -692,6 +693,7 @@ function email(params){
 function radio(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce){
 
 	var $scope = params.scope;
+	$scope.radioAnswer = {};
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
@@ -738,6 +740,7 @@ function radio(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $s
 function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce){
 
 	var $scope = params.scope;
+	$scope.selectAnswer = {};
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
@@ -786,14 +789,16 @@ function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $
 
 
 function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $state, $cordovaDevice){
+	/*console.log($scope.numberAnswer);
+	return false;*/
 	var answer_of_current_question = '';
 	switch(type){
 
 		case'text':
 			if(rawData.pattern == 'number'){
-				answer_of_current_question = ($scope.$parent.numberAnswer === undefined)?null:$scope.$parent.numberAnswer;
+				answer_of_current_question = ($scope.numberAnswer.value === undefined)?null:$scope.numberAnswer.value;
 			}else{
-				answer_of_current_question = ($scope.$parent.textAnswer === undefined)?null:$scope.$parent.textAnswer;
+				answer_of_current_question = ($scope.$parent.textAnswer === undefined)?null:$scope.textAnswer.value;
 			}			
 		break;
 
@@ -802,7 +807,7 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		break;
 
 		case'number':
-			answer_of_current_question = $scope.$parent.numberAnswer;
+			answer_of_current_question = $scope.numberAnswer.value;
 		break;
 
 		case'email':
@@ -810,7 +815,7 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		break;
 
 		case'radio':
-			answer_of_current_question = $scope.$parent.radioAnswer;
+			answer_of_current_question = $scope.radioAnswer.value;
 		break;
 
 		case'checkbox':
@@ -828,10 +833,10 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		break;
 
 		case'select'://dropdown
-			answer_of_current_question = $scope.$parent.selectAnswer;
+			answer_of_current_question = $scope.selectAnswer.value;
 		break;
 
-		case'date':
+		case'datepicker':
 			answer_of_current_question = ($scope.textAnswer === undefined)?null:$scope.textAnswer;
 		break;
 

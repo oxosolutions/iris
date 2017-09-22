@@ -15,6 +15,9 @@ angular.module('smaart.dashboard', ['ngCordova'])
       console.log(state);
     });
    */
+   $scope.openList =function() {
+   		$state.go('app.ListSurvey');
+   }
   
   
 

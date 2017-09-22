@@ -3,8 +3,16 @@
 	 <div class="bar bar-subheader" style="background-color: #e8e8e8;">
 	 	<div style="width: 100%;text-align: center;line-height: 32px;overflow: hidden;text-overflow: ellipsis;">{{surveyName}} -- {{section_name}}</div>
 	</div>
-  <ion-content class="surveyPage">
-  	
+  <ion-content class="surveyPage has-subheader">
+  	<style type="text/css">
+  		.qus_head{
+
+  		}
+  		span[description=DescHtml] > p{
+  			    padding: 0px 15px;
+  			    margin-bottom: 0
+  		}
+  	</style>
   
 	<div class="row">
 		<div class="col">
@@ -22,14 +30,16 @@
 						<span description="DescHtml"></span>
 					<div class="qus_footer">
 						<!-- <p>Maxime quis.</p> -->
+
+					</div>
+					<div answers="AnswerHtml" style="padding: 5px 10px;">
+							
 					</div>
 				</div>
 			</div>
 
 			
-			<div answers="AnswerHtml">
-				
-			</div>
+			
 					
 			
 
@@ -39,7 +49,8 @@
 						<a id="button_previous" class="button button-previous" href="" ng-click="goToPrev()" ng-controller="prevQuest"><span>Previous</span></a>
 					</div>
 					<div class="button_wrapper stop">
-						<a id="button_stop" class="button button-stop" href="" ng-click="StopSurvey()" ng-controller="stopSurvey"><span>Stop</span></a>
+						<!-- <a id="button_stop" class="button button-stop" href="" ng-click="StopSurvey()" ng-controller="stopSurvey"><span>Stop</span></a> -->
+						<a id="button_stop" class="button button-stop" href="" ng-click="StopSurvey()" ng-controller="stopSurvey"><span>Exit</span></a>
 					</div>
 					<div class="button_wrapper next">
 						<a id="button_next" class="button button-next" href="" ng-click="QuestNext(questionId)" ng-controller="nextQuest"><span>Next</span></a>

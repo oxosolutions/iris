@@ -7,9 +7,9 @@
 </style>
 <div class="row">
 	<div class="col question_div">
-		<div class="ans_head">
+		<!-- <div class="ans_head">
 			<p>You Answer:</p>
-		</div>
+		</div> -->
 		<!-- <select name="selectAnswer" id="app_select" ng-model="$parent.selectAnswer" ng-options="option as option.option_value for option in $parent.selectOptions" class="selectAnswer">
 		</select> -->
 		
@@ -17,7 +17,7 @@
 		    <div class="input-label drop">
 		      Select any one
 		    </div>
-		    <select name="selectAnswer" class="app_select" ng-model="$parent.selectAnswer" class="selectAnswer" ng-change="setNextQuestion(option.option_next,'select')">
+		    <select name="selectAnswer" class="app_select" ng-model="selectAnswer.value" class="selectAnswer" ng-change="setNextQuestion(option.option_next,'select')">
 		    	<option ng-repeat="option in $parent.selectOptions" next="{{option.option_next}}" value="{{option.option_value}}">{{option.option_text}}</option>
 			</select>
 		</label>

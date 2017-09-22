@@ -116,20 +116,25 @@ input{
 .timediv h3{
 	color: white
 }
-.qus_head p,.qus_footer{
-	background: #F5F5F5;
+.qus_head p{
+	background: #e8e8e8;
 	padding: 10px;
+	margin:0px;
+}
+.qus_footer{
+	background: #fff;
+	padding:0 10px;
 	margin:0px;
 }
 .question_div{
 	background: #FFFFFF;
-	margin-top: 40px
+	padding: 0;
 }
 .question_div .question{
 	padding:10px;
 }
 .question_div h4{
-	padding: 20px
+	padding: 5px 15px;
 }
 .answer_row .col{
 	margin-top: 40px;
@@ -144,10 +149,15 @@ input{
 	border-radius: 5px
 }
 
-.ans_head p,.ans_footer{
+.ans_head p{
 	background: #F5F5F5;
 	padding: 10px;
 	margin:0px;
+}
+.ans_footer{
+	background: #fff;
+	padding: 10px;
+	margin:0px;	
 }
 .button_div{
 	margin-top: 20px;
@@ -193,8 +203,8 @@ input{
 .button_wrapper .button-stop{ 
 	width:70%;
 	margin:0 auto;
-	background-color:#cc0000;
-	color:#FFFFFF;
+	background-color: #f8f8f8;
+    color: #444;
  }
  .black-fg{
  	color: black !important;

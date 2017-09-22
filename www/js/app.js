@@ -63,6 +63,17 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
     }
   })
 
+  .state('app.ListSurvey', {
+    url: '/listsurvey',
+    cache: false,
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/list-survey.html',
+        controller: 'dashboardCtrl'
+      }
+    }
+  })
+
   .state('app.surveylist', {
     url: '/surveylist',
     cache: false,
