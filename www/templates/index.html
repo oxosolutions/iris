@@ -3,19 +3,28 @@
 	padding-bottom: 10px
 	
 }
+ion-content{
+	background-color: #3B5BB3;
+}
 ion-content > .scroll{
-	height: 100%
+	height: 100%;
+	
+}
+input{
+	color: #444 !important;
+
 }
 </style>
+
 <ion-content>
-	<div layout="row" layout-wrap md-colors="{background:'white'}" style="background-image: url('img/bg1.png');background-size: cover;height: 100%" ms-scroll>
+	<!-- <div layout="row" layout-wrap md-colors="{background:'white'}" style="background-image: url('img/bg1.png');background-size: cover;height: 100%" ms-scroll>
 		<div flex="100" layout="row" layout-align="center center" style="    padding: 20% 5% 0 5%;font-size: 30px;text-align: center;line-height: 1.7;color: white;">
-			<!-- <img src="img/icon.png"> -->
+		
 			
 			IRIS
 		</div>
 		<div flex="100" layout="row" layout-align="center center" style="    padding:0 5% 20% 5%;font-size: 20px;text-align: center;line-height: 1.7;color: white;">
-			<!-- <img src="img/icon.png"> -->
+			
 
 			Integrated Road Traffic Injuries Surveillance System - INDIA
 		</div>
@@ -33,5 +42,36 @@ ion-content > .scroll{
 				<md-button class="md-raised md-primary" style="padding:5px 0px;margin-bottom: 8px" ng-click="Activate()">Activate</md-button>
 			
 		</div>
+	</div> -->
+
+	<div layout="row" layout-align="center center" style="    padding: 20% 5% 0 5%;font-size: 28px;text-align: center;line-height: 1.7;color: white;">
+		
+		
+		IRIS
+	</div>
+	<div layout="row" layout-align="center center" style="    padding:0 5% 20% 5%;font-size: 16px;text-align: center;line-height: 1.7;color: white;">
+		
+
+		Integrated Road Traffic Injuries Surveillance System - INDIA
+	</div>
+	<div layout="row" layout-wrap layout-align="center center" style="padding: 10% 5%;  font-size: 14px;text-align: left;line-height: 2;color: white;">
+		<div flex="100"><h4 style="color: white">Steps to activate the app</h4></div>
+		<div flex="100">
+			1. Go to the website ,open profile and get activation code.<br>
+			2. Press activate button below and paste the code in the dialog box.
+
+		</div>
+	</div>
+	<div layout="row" layout-wrap layout-align="center center">
+		<div >
+			<label class="item item-input">
+			    <input type="text" placeholder="Enter activation code" ng-model="activation.code">
+			</label>	
+		</div>
+		<div style="margin: 30px">
+			<a href="" style="background-color:#303F9F;color: white;font-size: 16px;font-weight:600;text-decoration: none; text-transform: uppercase;display:block;line-height: 40px;padding: 5px 40px" ng-click="Activate()">Activate Now</a>	
+		</div>
+		
+		
 	</div>
 </ion-content>

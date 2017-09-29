@@ -121,7 +121,7 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
   })
 
   .state('app.incomplete', {
-    url: '/incomplete',
+    url: '/incomplete/:surveyid',
     cache: false,
     views: {
       'menuContent': {

@@ -66,5 +66,5 @@
     <allow-navigation href="http://192.168.0.107:8100" />
     <engine name="android" spec="~6.1.2" />
     <engine name="windows" spec="~4.3.0" />
-    <preference name="SplashShowOnlyFirstTime" value="false" />
+    <allow-navigation href="http://192.168.0.108:8100" />
 </widget>

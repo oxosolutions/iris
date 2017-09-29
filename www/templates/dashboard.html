@@ -1,6 +1,7 @@
 <ion-view hide-nav-bar="true" view-title="Dashboard" style="background: url('img/dashboard.jpg');">
 	
   <ion-content class="homeBack has-footer">
+
 	<div class="row responsive-lg">
 		<div style="float: right !important; padding-right: 3%;">
 			<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px;"></button>
@@ -8,7 +9,7 @@
 		<div style="text-align:center;">
 			<!-- <img src="img/icon.png" style="width:20%;max-width:25%" /> -->
 			<h3 style="color:#FFF;">Welcome {{name}}</h3>
-			<div style="color: white;font-size: 16px">...Integrated Road Traffic Injuries Surveillance System</div>
+			<div style="color: white;font-size: 16px">Integrated Road Traffic Injuries Surveillance System - INDIA</div>
 		</div>
 		<div class="row" style="margin-top: 30px">
 			<div layout="row" layout-wrap layout-align="center stretch" style="width: 100%">
@@ -58,14 +59,7 @@
 					        </div>
 				        </a>
 		        	</div>
-		        	<!-- <div flex="100" style="margin-bottom: 15px">
-		        		<a href="#/app/incomplete" >
-			        		<div class="btn-big orange" ng-click="goToSurvey()" style="background:#d95350">
-					        	<div style="color: white;text-align: center;"><i class="fa fa-exclamation-triangle fa-2x" ></i></div>
-					        	<span class="label bottom">Incomplete Survey</span> 
-					        </div>
-				        </a>
-		        	</div> -->
+		        
 		      
 		        	<div flex="100" style="margin-bottom: 10px">
 		        		<a href="#/app/completed">
@@ -104,15 +98,7 @@
           <div ng-repeat="list in surveyList" ng-click="startSurvey(list.survey_id)" style="border-bottom: 1px solid grey">
             <!-- {{list.name}} -->
             <div class="row" style="color:  #2F5F5F;"> 
-	           <!-- 	<div flex="70">
-	           		{{list.name}}
-	           	</div>
-	           	<div flex="30" style="font-size:12px;color:#8f8f8f">
-	           		{{list.created_at}}
-	           	</div>
-	           	<div flex="100" style="font-size:12px;margin-top:5px;color:#8f8f8f">
-	           		{{list.description | htmlToPlaintext}}
-	           	</div> -->
+	        
 	        	<div class="col" >
 	        		<i class="fa fa-mobile" aria-hidden="true" style="color:  #2F5F5F;font-size: 52px"></i>
 	        	</div>   	

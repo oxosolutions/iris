@@ -456,24 +456,22 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 
 
-	$scope.surveyChange = function(){
-		var sendArrayList = {};
-		var SurveyID = $scope.$$childTail.surveySelect;
-		var Query = 'SELECT id, incomplete_name, survey_started_on FROM survey_result_'+SurveyID+' WHERE survey_status = ?';
-		dbservice.runQuery(Query,['incomplete'],function(res) {	
-			var row = {};
-			for(var i=0; i<res.rows.length; i++) {
-	            row[i] = res.rows.item(i)
-	        }		
-			$scope.PendingSurvey = row;
-        }, function (err) {
-          console.log(err);
-        });
-	}
+	var sendArrayList = {};
+	var SurveyID = $state.params.surveyid;
+	var Query = 'SELECT id, incomplete_name, survey_started_on FROM survey_result_'+SurveyID+' WHERE survey_status = ?';
+	dbservice.runQuery(Query,['incomplete'],function(res) {	
+		var row = {};
+		for(var i=0; i<res.rows.length; i++) {
+            row[i] = res.rows.item(i)
+        }		
+		$scope.PendingSurvey = row;
+    }, function (err) {
+      console.log(err);
+    });
 
 
 	$scope.continue = function(recordId){
-		var SurveyID = $scope.$$childTail.surveySelect;
+		var SurveyID = $state.params.surveyid;
 		var Query = 'SELECT last_field_id, last_group_id, completed_groups FROM survey_result_'+SurveyID+' WHERE id = ?';
 		dbservice.runQuery(Query,[recordId],function(res) {	
 			var lastIds = res.rows.item(0);

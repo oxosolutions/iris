@@ -75,10 +75,14 @@ input{
 
 .surveyTextBox{
 
-	border: 1px solid #000 !important;
-	width: 100% !important;
+	border: 1px solid #e8e8e8 !important;
+	width: 100%;
+	    padding: 10px !important;
+	        height: 48px !important;
+	        font-size: 16px !important;
+	height: 28px;
+	margin-bottom: 2%;
 	color: #000 !important;
-	padding-left: 2% !important;
 }
 
 .dateBut{
@@ -171,8 +175,11 @@ input{
 
 .numberAnswer{
 
-	border: 1px solid #000 !important;
+	border: 1px solid #e8e8e8 !important;
 	width: 100%;
+	    padding: 10px !important;
+	        height: 48px !important;
+	        font-size: 16px !important;
 	height: 28px;
 	margin-bottom: 2%;
 	color: #000 !important;

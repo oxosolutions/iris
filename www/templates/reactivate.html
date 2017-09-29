@@ -30,10 +30,61 @@
 		.nav-bar-title{
 			line-height: 50px
 		}
+		.main_row{
+			    background-size: 100% 40%;
+		}
+		ion-content > .scroll{
+			height: 100%;
+		}
+		.version{
+			   position: relative;
+			       height: 31%;
+    font-size: 18px;
+  
+    padding-left: 0;
+    margin: 0;
+		}
+		.version > div{
+			position: absolute;
+			 top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: white
+		}
 	</style>
   <ion-content class="surveyPage has-subheader" >
+  	<dir class="version">
+  		<div>last Updated on 23-11-18</div>
+  	</dir>
+  	<ion-scroll direction="y" style="height: 52%;">
+  		<ul class="list">
+
+		  <li class="item item-toggle">
+		     Check update automatically
+		     <label class="toggle toggle-positive">
+		       <input type="checkbox">
+		       <div class="track">
+		         <div class="handle"></div>
+		       </div>
+		     </label>
+		  </li>
+		  <label class="item item-input item-select" gn-disabled="true">
+		    <div class="input-label">
+		      Update app frequency
+		    </div>
+		    <select>
+		      <option>One Hour</option>
+		      <option selected>One day</option>
+		      <option>One week</option>
+		    </select>
+		  </label>
+
+		  
+
+		</ul>
+  	</ion-scroll>
   
-	<div class="row" style="margin-top:-8%;">
+	<!-- <div class="row" >
 		<div class="col">
 			
 					
@@ -52,16 +103,16 @@
 				<p style="margin-top:3%;text-align:center;">Sorry you are not authorised to access this option. Only Admin can update the application.</p>
 			</div>
 
-			<!-- <a href="javascript:;" class="button button-positive button-block" style="width:90%; margin: 0 auto; margin-top: 10%;" ng-click="reActive()" ng-show="{{roleView}}">Update Application</a> -->
+			
 		</div>
-	</div>
+	</div> -->
 
 	
 
 
   </ion-content>
-   <div class="tabs">
-  	<button>Check for latest update</button>
+  <div class="tabs">
+  	<button>update Now</button>
   </div>
   <div ng-include="'templates/footer.html'">
 		

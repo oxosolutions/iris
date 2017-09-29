@@ -6,20 +6,26 @@
    </style>
 
     <ion-content>
-        <ion-refresher
+       <!--  <ion-refresher
             pulling-text="Pull to refresh..."
             on-refresh="doRefresh()">
-        </ion-refresher>        
+        </ion-refresher>       -->  
       <!--   <div class="logoDiv">
             <img src="img/icon.png" class="loginLogo" />
             
         </div> -->
-        <div class="padding" style="text-align: center;margin-top: 30px ">
-          <!--   <h3 style="color: white;">IRIS<br/></h3> -->
-            <span style="font-size: 14px; color: #FFF;">(Integrated Road Traffic Injuries Surveillance System)</span>
+        <div flex="100" layout="row" layout-align="center center" style="    padding: 20% 5% 0 5%;font-size: 30px;text-align: center;line-height: 1.7;color: white;">
+            <!-- <img src="img/icon.png"> -->
+            
+            IRIS
+        </div>
+        <div flex="100" layout="row" layout-align="center center" style="    padding:0 5% 20% 5%;font-size: 20px;text-align: center;line-height: 1.7;color: white;">
+            <!-- <img src="img/icon.png"> -->
+
+            Integrated Road Traffic Injuries Surveillance System - INDIA
         </div>
         
-        <div style="position: absolute;bottom: 30px;left: 0;right: 0">
+        <div >
               <div class="list list-inset loginDiv" ng-style="{'margin-top':'20%'}">
             <label class="item item-input loginLabel" style="background-color: white !important;margin: 10px">
                 <input type="text" placeholder="Email Address" name="email" ng-model="data.email" style="color: #666 !important">
@@ -39,7 +45,8 @@
             </label>
         </div>
         <button class="button button-positive button-block" style="width:90%; margin: 0 auto; margin-top: 2%;" ng-click="doLogin()">Login</button>
-        <a href="" style="    margin: 30px;
+        <div style="margin-top: 30px;text-align: center;color: white">If you do not have a user account?</div>
+        <a href="" style="    margin-bottom: 30px;
     padding: 0px;
     border: 0px;
     font-variant-numeric: inherit;

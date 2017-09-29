@@ -121,7 +121,7 @@
 						<td>{{survey.name}}</td>
 						<td style="text-align: center;" ng-init="getQuestionCounts(survey.survey_id)">{{surveyData.questionCount[survey.survey_id]}}</td>
 						<td style="text-align: center;color: green" ng-init="getCompletedRecords(survey.survey_id,'completed')">{{surveyData.completed[survey.survey_id]}}</td>
-						<td style="text-align: center;color: red" ng-init="getCompletedRecords(survey.survey_id,'incomplete')">{{surveyData.incomplete[survey.survey_id]}}</td>
+						<td style="text-align: center;color: red" ng-init="getCompletedRecords(survey.survey_id,'incomplete')" ui-sref="app.incomplete({surveyid: survey.survey_id})">{{surveyData.incomplete[survey.survey_id]}} <i class="ion-forward" style="color: #676767;font-size: 20px;    vertical-align: middle;"></i></td>
 		            </tr>
 		         
 		           

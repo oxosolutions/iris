@@ -13,7 +13,7 @@
 	<div class="row" style="margin-top:-8%;">
 		<div class="col">
 			
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col question_div">
 					<div class="qus_head">
 						<p>Incomplete Survey List</span></p>
@@ -31,10 +31,10 @@
 
 						</div>
 					<div class="qus_footer">
-						<!-- <p>Maxime quis.</p> -->
+						
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="list list-inset">
 			    <div class="item" ng-repeat="(key, value) in PendingSurvey" ng-click="continue(value.id)">
 			      <label style="float:left;">{{(value.incomplete_name != null)?value.incomplete_name:value.survey_started_on}}</label>
