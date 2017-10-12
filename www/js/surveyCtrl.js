@@ -58,6 +58,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 	var dt = new Date;
 	var startedTime = dt.getFullYear()+''+(dt.getMonth()+1)+''+dt.getDay()+''+dt.getHours()+''+dt.getMinutes()+''+dt.getSeconds()+''+dt.getMilliseconds();
 	var SurveyData = '';
+	$scope.readonlyText = {};
 	setSurveyNameAndId($state, localStorageService, 0, dbservice);
 	var getQuestions = 'SELECT * FROM survey_questions WHERE group_id = ? AND survey_id = ?';
 	dbservice.runQuery(getQuestions, [$state.params.groupId,$state.params.surveyId], function(res){
@@ -172,7 +173,8 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 	    				  'raw'			: SurveyData[QuestionIndex],
 	    				  'ls'			: localStorageService
 		    		   };
-		console.log(QuestType);
+		// console.log(QuestType);
+		$scope.numberAnswer = {};
 		switch(QuestType){
 
 			case'text':
@@ -226,6 +228,52 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			case'text_image':
 				text_only(DrawHTML, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce);
 		}
+
+		/*############################## HARD CODED CONDITIONS ##############################*/
+		
+			if(	(QuestionIndex == 2 && $state.params.groupId == 5 && $state.params.surveyId == 2)||
+				(QuestionIndex == 1 && $state.params.groupId == 19 && $state.params.surveyId == 5)){
+				if(localStorageService.get('record_id') > 9){
+					$scope.textAnswer = {
+						value : '00'+localStorageService.get('record_id')
+					};
+				}else{
+					$scope.textAnswer = {
+						value : '000'+localStorageService.get('record_id')
+					};
+				}
+				$scope.readonlyText.status = true;
+			}
+			if($state.params.surveyId == 2 && $state.params.groupId == 5 && QuestionIndex == 3){
+				var datavalues = localStorageService.get('uniqueSerial');
+				$scope.textAnswer.value = datavalues[0]+''+datavalues[1]+''+datavalues[2];
+				$scope.readonlyText.status = true;
+			}
+			if($state.params.surveyId == 5 && $state.params.groupId == 19 && QuestionIndex == 2){
+				var datavalues = localStorageService.get('uniqueSerial');
+				$scope.textAnswer.value = datavalues[0]+''+datavalues[1];
+				$scope.readonlyText.status = true;
+			}
+			if(	($state.params.surveyId == 2)){
+				console.log(localStorageService.get('uniqueSerial'));
+				if(localStorageService.get('uniqueSerial') != undefined && localStorageService.get('uniqueSerial') != null){
+					var datavalues = localStorageService.get('uniqueSerial');
+					if(datavalues[1] != undefined && datavalues[2] != undefined){
+						$scope.iris_id = 'IRISID: '+datavalues[0]+''+datavalues[1]+''+datavalues[2];
+					}
+				}
+			}
+
+			if(	($state.params.surveyId == 5)){
+				if(localStorageService.get('uniqueSerial') != undefined && localStorageService.get('uniqueSerial') != null){
+					var datavalues = localStorageService.get('uniqueSerial');
+					if(datavalues[0] != undefined && datavalues[1] != undefined){
+						$scope.iris_id = 'IRISID: '+datavalues[0]+''+datavalues[1];
+					}
+				}
+			}
+
+		/*####################################################################################*/
 	});
 })
 
@@ -254,7 +302,18 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			
 			var QuestType  =  SurveyData[QuestionIndex].question_type;
 			var RequiredCheck = SurveyData[QuestionIndex].required;
-			
+			/*############################## HARD CODED ##################################*/
+				if($state.params.surveyId == 2 && $state.params.groupId == 5){
+					if($.inArray(parseInt(QuestionIndex),[0,1,2]) !== -1){
+						RequiredCheck = 'yes';
+					}
+				}
+				if($state.params.surveyId == 5 && $state.params.groupId == 19){
+					if($.inArray(parseInt(QuestionIndex),[0,1]) !== -1){
+						RequiredCheck = 'yes';
+					}
+				}
+			/*###########################################################################*/
 			if(RequiredCheck == 'yes'){
 				var valResult = validation($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex]);
 				if(valResult == true){
@@ -360,6 +419,7 @@ function text(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 
 	var $scope = params.scope;
 	$scope.textAnswer = {};
+	$scope.textAnswer.value = '';
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
@@ -402,6 +462,7 @@ function text(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 	}else{
 		$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/text.html'\"></div>";
 	}
+	$scope.readonlyText.status = false;
 
 }
 
@@ -674,6 +735,7 @@ function number(params){
 
 	var $scope = params.scope;
 	$scope.numberAnswer = {};
+	$scope.numberAnswer.value = '';
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
 
@@ -693,6 +755,7 @@ function radio(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $s
 
 	var $scope = params.scope;
 	$scope.radioAnswer = {};
+	$scope.radioAnswer.value = '';
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
@@ -740,6 +803,7 @@ function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $
 
 	var $scope = params.scope;
 	$scope.selectAnswer = {};
+	$scope.selectAnswer.value = '';
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
@@ -859,6 +923,20 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 			answer_of_current_question = JSON.stringify(answerObject);
 		break;
 	}
+	/*######################################## HARD CODED ########################################*/
+	if(	($state.params.groupId == 5 && $state.params.surveyId == 2)||
+				($state.params.groupId == 19 && $state.params.surveyId == 5)){
+		if(locS.get('uniqueSerial') != null && locS.get('uniqueSerial') != undefined){
+			var oldData = locS.get('uniqueSerial');
+			oldData[QuestionIndex] = answer_of_current_question;
+			locS.set('uniqueSerial',oldData);
+		}else{
+			var oldData = {};
+			oldData[QuestionIndex] = answer_of_current_question;
+			locS.set('uniqueSerial',oldData);
+		}
+	}
+	/*###########################################################################################*/
 	saveResult(rawData, locS, dbservice, $state, answer_of_current_question, $cordovaDevice, QuestionIndex);
 	return true;
 }
@@ -885,8 +963,8 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 									[
 										answer, localStorage.get('startStamp'), 
 										localStorage.get('userId'),'app','NULL',uniqueKey, 
-										//JSON.stringify($cordovaDevice.getDevice()),
-										'device_details',
+										JSON.stringify($cordovaDevice.getDevice()),
+										// 'device_details',
 										localStorage.get('userId'), 
 										timeStamp(), QuestionIndex,
 										'incomplete',
@@ -1069,7 +1147,7 @@ function validation($scope, type, $ionicLoading, rawData){
 				    return false;
 				}
 			}else{
-				if($scope.textAnswer === undefined){
+				if($scope.textAnswer.value === undefined || $scope.textAnswer.value == ''){
 					$ionicLoading.show({
 				      template: 'Please fill answer!',
 				      noBackdrop: false,
@@ -1115,8 +1193,8 @@ function validation($scope, type, $ionicLoading, rawData){
 		break;
 
 		case'radio':
-		
-			if($scope.$parent.radioAnswer === undefined){
+			console.log($scope.radioAnswer.value);
+			if($scope.radioAnswer.value === undefined || $scope.radioAnswer.value == ''){
 				$ionicLoading.show({
 			      template: 'Please select answer',
 			      noBackdrop: false,

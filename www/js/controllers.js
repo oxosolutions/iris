@@ -31,7 +31,21 @@ angular.module('smaart.controllers', ['ngCordova'])
 
     
 }).controller('LoginCtrl', function($scope, $ionicLoading, localStorageService, $state, appData, $ionicNavBarDelegate, dbservice){
-
+	var getSettings = 'SELECT * FROM settings';
+    dbservice.runQuery(getSettings,[], function(res){
+      	var row = {};
+      	for(var i=0; i<res.rows.length; i++) {
+          	row[res.rows.item(i).key] = res.rows.item(i).value
+      	}
+      	$scope.application_title = row['login_page_title_text'];
+      	$scope.application_description = row['login_page_description_text'];
+      	localStorageService.set('settings',row);
+      	$scope.link_to_register_page = row['link_to_register_page'];
+      	console.log(row);
+        $scope.registerLink = function(){
+	    	window.open($scope.link_to_register_page,'_system');
+	    }  
+    }); 
     $ionicNavBarDelegate.showBackButton(false);
 
     if(localStorageService.get('ActivationCode') == null){
@@ -141,12 +155,14 @@ angular.module('smaart.controllers', ['ngCordova'])
                   var users = res.data.users;
                   var surveys = res.data.surveys;
                   var surveySections = res.data.groups;
+                  var AppSettings = res.data.settings;
 
                   var dropArray = [
                         'DROP TABLE IF EXISTS survey_data',
                         'DROP TABLE IF EXISTS survey_questions',
                         'DROP TABLE IF EXISTS survey_sections',
                         'DROP TABLE IF EXISTS users',
+                        'DROP TABLE IF EXISTS settings',
                     ];
                   angular.forEach(dropArray, function(val,key){
                       dbservice.runQuery(val, [], function(res){
@@ -155,6 +171,22 @@ angular.module('smaart.controllers', ['ngCordova'])
                           console.log(err);
                       });
                   });
+                  //create settings
+               		var createSettionsTable = 'CREATE TABLE IF NOT EXISTS settings(id integer primary key, key text, value text)';
+					dbservice.runQuery(createSettionsTable, [], function(res){
+						angular.forEach(AppSettings, function(val, key){
+                            var insertSettingsData = 'INSERT INTO settings(key, value) VALUES(?,?)';
+                            dbservice.runQuery(insertSettingsData,[key, val], function(res){
+								
+							},function(error){
+								console.log(error);
+							});
+						});
+					},function(error){
+						console.log(error);
+					});
+                //end sections
+
 
                   angular.forEach(res.data.questions[0], function(value, key){
                       if(key != 'created_at' && key != 'updated_at' && key != 'deleted_at'){
@@ -271,7 +303,9 @@ angular.module('smaart.controllers', ['ngCordova'])
 							console.log(error);
 						});
                     //end sections
+                   
 
+                   
 
 
                   //localStorageService.set('UsersData',res.data.users);
@@ -308,21 +342,22 @@ angular.module('smaart.controllers', ['ngCordova'])
                                  /*alert("Success");*/
                               },
                               function (error) {
-                                 alert("Error during download. Code = " + error.code);
+                                 //alert("Error during download. Code = " + error.code);
                               }
                            );
                         });
                       }, false);
                     });
                   }
-
-                  $ionicLoading.hide();
-                  $ionicLoading.show({
-                    template: 'Activated Successfully',
-                    noBackdrop: false,
-                    duration: 1000
-                  });
-                  $state.go('login');
+                  setTimeout(function(){
+                  	  $ionicLoading.hide();
+	                  $ionicLoading.show({
+	                    template: 'Activated Successfully',
+	                    noBackdrop: false,
+	                    duration: 1000
+	                  });
+	                  $state.go('login');
+                  },20000);
                 }
                 
             });

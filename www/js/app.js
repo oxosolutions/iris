@@ -41,6 +41,7 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
 })
 
 .constant('AppConfig', {'QuestionOrder': 'false'})
+.constant('ApiURL', 'http://admin.scolm.com/api/')
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -119,7 +120,16 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
       }
     }
   })
-
+  .state('app.help', {
+    url: '/help',
+    cache: false,
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/help.html',
+        controller: 'dashboardCtrl'
+      }
+    }
+  })
   .state('app.incomplete', {
     url: '/incomplete/:surveyid',
     cache: false,
@@ -144,7 +154,6 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
 
   .state('app.survey', {
       url: '/survey/:surveyId/:groupId/:QuestId',
-     
       views: {
         'menuContent': {
           templateUrl: 'templates/survey.html'

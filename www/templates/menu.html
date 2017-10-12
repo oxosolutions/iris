@@ -1,4 +1,4 @@
-<ion-side-menus enable-menu-with-back-views="false" >
+<ion-side-menus enable-menu-with-back-views="false" ng-controller="dashboardCtrl" >
   <ion-side-menu-content>
     <ion-nav-bar class="bar-stable bar-positive" style="background: transparent !important;">
       <ion-nav-back-button>
@@ -15,7 +15,7 @@
 
   <ion-side-menu side="right">
     <ion-header-bar class="bar-stable bar-positive">
-      <h1 class="title">Menu</h1>
+      <h1 class="title">{{sidenav_header_text}}</h1>
     </ion-header-bar>
     <ion-content>
       <ion-list padding="0">
@@ -25,16 +25,16 @@
           </div>
         </ion-item> -->
         <ion-item menu-close href="#/app/dashboard">
-          Dashboard
+          {{link_to_dashboard}}
         </ion-item>
         <ion-item menu-close  href="#/app/listsurvey">
-          Enter Records
+          {{link_to_start_survey_text}}
         </ion-item>
         <ion-item menu-close href="#/app/surveylist">
-         Review Records
+         {{manage_survey_button_text}}
         </ion-item>
         <ion-item menu-close href="#/app/completed">
-          Synchronize Records
+          {{link_to_sync_survey_text}}
         </ion-item>
 
         <!-- <ion-item menu-close ng-click="delete()">
@@ -42,9 +42,9 @@
         </ion-item> -->
 
         <ion-item menu-close href="#/app/reactivate">
-          Update Application
+          {{link_to_update_app_text}}
         </ion-item>
-        <ion-item menu-close href="#">
+        <ion-item menu-close href="#/app/help">
           Help
         </ion-item>
 

@@ -5,16 +5,40 @@ angular.module('smaart.dashboard', ['ngCordova'])
     return function(text) {
       	return  text ? String(text).replace(/<[^>]+>/gm, '') : '';
     };
-  })
-.controller('dashboardCtrl', function($rootScope, dbservice, $scope, $ionicLoading, localStorageService,$ionicModal, $ionicPopup, $ionicPopover, $state, $ionicActionSheet, $timeout, $ionicBackdrop, appData, $ionicHistory){
+  }).directive('dynamic', function ($compile) {
+		  return {
+		    restrict: 'A',
+		    replace: true,
+		    link: function (scope, ele, attrs) {
+		      scope.$watch(attrs.dynamic, function(html) {
+		        ele.html(html);
+		        $compile(ele.contents())(scope);
+		      });
+		    }
+		  };
+		})
+.controller('dashboardCtrl', function($rootScope, $compile, dbservice, $scope, $ionicLoading, localStorageService,$ionicModal, $ionicPopup, $ionicPopover, $state, $ionicActionSheet, $timeout, $ionicBackdrop, appData, $ionicHistory){
 	if(localStorageService.get('userId') == undefined || localStorageService.get('userId') == null){
         $state.go('login');
     }
-
-    /*$rootScope.$on('$stateChangeStart', function (state) {
-      console.log(state);
-    });
-   */
+    var settings = localStorageService.get('settings');
+    //console.log(settings);
+    $scope.description = settings['android_application_description'];
+    $scope.link_to_start_survey_text = settings['link_to_start_survey_text'];
+    $scope.start_survey_button_text = settings['start_survey_button_text'];
+    $scope.link_to_manage_survey_text = settings['link_to_manage_survey_text'];
+    $scope.link_to_sync_survey_text = settings['link_to_sync_survey_text'];
+    $scope.link_to_update_app_text = settings['link_to_update_app_text'];
+    $scope.android_application_footer_text = settings['android_application_footer_text'];
+    $scope.link_to_dashboard = settings['link_to_dashboard'];
+    $scope.link_to_start_survey_text = settings['link_to_start_survey_text'];
+    $scope.manage_survey_button_text = settings['manage_survey_button_text'];
+    $scope.link_to_sync_survey_text = settings['link_to_sync_survey_text'];
+    $scope.link_to_update_app_text = settings['link_to_update_app_text'];
+    $scope.sidenav_header_text = settings['sidenav_header_text'];
+    $scope.about_page_content = settings['about_page_content'];
+    $scope.help_page_content = settings['help_page_content'];
+    
    $scope.openList =function() {
    		$state.go('app.ListSurvey');
    }
@@ -105,6 +129,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
   		localStorageService.set('ContinueKey',undefined);
   		localStorageService.set('RuningSurvey',null);
   		localStorageService.set('record_id',null);
+  		localStorageService.set('uniqueSerial',null);
   		window.currentTimeStamp = null;
   		window.surveyStatus = 'new';
   		$state.go('app.surveyGroup',{id:surveyid});
@@ -161,15 +186,9 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	      	// console.log(row);
 		});
 
-
-    	/*var selectedSurveyGroup = $.grep(groupsData, function(value){
-    			return value.survey_id == $state.params.id;
-    	});
-    	$scope.groupList = selectedSurveyGroup;*/
+		/*########################### DON'T DELETE THIS CODE, THIS IS BACKUP CODE BEFORE SET HARD CODE IN APP #########################*/
     	
-    	
-    	//console.log(selectedSurveyGroup);
-    	$scope.startSurvey = function(surveyid, groupid){
+    	/*$scope.startSurvey = function(surveyid, groupid){
     		var Query = 'SELECT completed_groups FROM survey_result_'+$state.params.id+' WHERE id = ?';
     		dbservice.runQuery(Query,[localStorageService.get('record_id')],function(res) {
     			if(res.rows.length != 0){
@@ -191,8 +210,61 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	    			});
     			}
             }, function (err) {
-              // console.log(err);
               $state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
+            });
+    	}*/
+
+    	$scope.startSurvey = function(surveyid, groupid){
+    		var groupsArray = {};
+    		groupsArray[2] = 5;
+    		groupsArray[5] = 19;
+    		var Query = 'SELECT completed_groups FROM survey_result_'+$state.params.id+' WHERE id = ?';
+    		dbservice.runQuery(Query,[localStorageService.get('record_id')],function(res) {
+    			if(res.rows.length != 0){
+    				if($.inArray(groupid, JSON.parse(res.rows.item(0).completed_groups)) !== -1){
+	    				$ionicLoading.show({
+		                  template: 'Section already filled!',
+		                  noBackdrop: false,
+		                  duration: 2000
+		                });
+		    			return false;
+	    			}else{
+	    				if(groupsArray[surveyid] != undefined){
+		    				if(groupid != groupsArray[surveyid]){
+		    					if($.inArray(groupsArray[surveyid], JSON.parse(res.rows.item(0).completed_groups)) !== 0){
+			    					$ionicLoading.show({
+					                  template: 'Please fill Personal Identification First',
+					                  noBackdrop: false,
+					                  duration: 2000
+					                });
+					                return false;
+			    				}
+		    				}
+		    			}
+		    			//localStorageService.set('uniqueSerial',null);
+	    				$ionicHistory.clearCache().then(function(){
+		    				$state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
+		    			});
+	    			}
+    			}else{
+    				if(groupsArray[surveyid] != undefined){
+    					if(groupid != groupsArray[surveyid]){
+	    					$ionicLoading.show({
+			                  template: 'Please fill Personal Identification First',
+			                  noBackdrop: false,
+			                  duration: 2000
+			                });
+			                return false;
+	    				}
+    				}
+    				//localStorageService.set('uniqueSerial',null);
+    				$ionicHistory.clearCache().then(function(){
+	    				$state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
+	    			});
+    			}
+            }, function (err) {
+            	//localStorageService.set('uniqueSerial',null);
+              	$state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
             });
     	}
     	

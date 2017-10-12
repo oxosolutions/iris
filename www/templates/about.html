@@ -1,21 +1,22 @@
-<ion-view view-title="About SMAART&trade;" class="main_row" ng-controller="about">
+<ion-view view-title="Integrated Road Traffic Injuries Surveillance System" class="main_row" ng-controller="about">
 	<ion-nav-bar class="bar-stable bar-positive" style="position:fixed; width:100%; padding-bottom:2%;">
   	<button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px; z-index:999;"></button>
   </ion-nav-bar>
-   <div class="bar bar-subheader" style="background-color: #e8e8e8;">
-	 	<div style="width: 100%;text-align: center;line-height: 32px;">Integrated Road Traffic Injuries Surveillance System</div>
+    <div class="bar bar-subheader" style="background-color: #e8e8e8;">
+	 	<div style="width: 100%;text-align: center;line-height: 32px;overflow: hidden;text-overflow: ellipsis;">About</div>
 	</div>
+	<style type="text/css">
+		ion-content .scroll{
+			height: calc(100% - 44px);
+			padding: 2%
+		}
+	</style>
   <ion-content class="surveyPage has-subheader">
  
   
 	
-					<div style="background-color: #fff;padding:20px;min-height: 604px">
-						<h3 style="text-align: center;border-bottom: 1px solid #ededed">About</h3>
-						<ul style="padding:10px">
-							<li>Application Version: <span style="float: right;">4.2.0</span></li>
-							<li>Application Updation Date: <span style="float: right;">22nd May 2017</span></li>
-						</ul>
-					</div>
+	<div dynamic="about_page_content"></div>
+	
 
   </ion-content>
   	<div ng-include="'templates/footer.html'">

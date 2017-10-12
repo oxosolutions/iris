@@ -9,13 +9,13 @@
 		<div style="text-align:center;">
 			<!-- <img src="img/icon.png" style="width:20%;max-width:25%" /> -->
 			<h3 style="color:#FFF;">Welcome {{name}}</h3>
-			<div style="color: white;font-size: 16px">Integrated Road Traffic Injuries Surveillance System - INDIA</div>
+			<div style="color: white;font-size: 16px">{{description}}</div>
 		</div>
 		<div class="row" style="margin-top: 30px">
 			<div layout="row" layout-wrap layout-align="center stretch" style="width: 100%">
 				<div flex="100" class="btn-big orange" ng-click="openList()" style="margin-bottom: 10px">
 		        	<i class="fa fa-bar-chart fa-2x"></i>
-		        	<span class="label bottom">Enter Records</span> 
+		        	<span class="label bottom">{{start_survey_button_text}}</span> 
 		        </div>
 		        <style type="text/css">
 		        	.btn-big span{
@@ -55,7 +55,7 @@
 		        		<a href="#/app/surveylist" >
 		        			<div class="btn-big orange" ng-click="goToSurvey()" style="background:#418bca">
 					        	<i class="fa fa-list fa-2x"></i>
-					        	<span class="label bottom">Review Records</span> 
+					        	<span class="label bottom">{{link_to_manage_survey_text}}</span> 
 					        </div>
 				        </a>
 		        	</div>
@@ -66,7 +66,7 @@
 			        		<div class="btn-big orange" ng-click="goToSurvey()" style="background:#5db85b">
 					        	<div style="color: white;text-align: center"><i class="fa fa-upload fa-2x"></i></div
 					        	>
-					        	<span class="label bottom">Synchronize Records</span> 
+					        	<span class="label bottom">{{link_to_sync_survey_text}}</span> 
 					        </div>
 				        </a>
 		        	</div>
@@ -74,7 +74,7 @@
 		        		<a href="#/app/reactivate" >
 			        		<div class="btn-big orange" ng-click="goToSurvey()" style="background:#93a2bf">
 					        	<i class="fa fa-refresh fa-2x"></i>
-					        	<span class="label bottom">Update Application</span> 
+					        	<span class="label bottom">{{link_to_update_app_text}}</span> 
 					        </div>
 				        </a>
 		        	</div>
