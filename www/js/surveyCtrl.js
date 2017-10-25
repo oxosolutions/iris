@@ -376,7 +376,9 @@ function checkbox(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 
 	$scope.checkboxOptions = params.QuestAnswers;
 	if(params.ls.get('SurveyMedia') != 'null'){
@@ -423,7 +425,9 @@ function text(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 
 	if(params.raw.media != 'null'){
 		document.addEventListener("deviceready", function() {
@@ -523,8 +527,9 @@ function message(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
-
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	if(params.raw.media != 'null'){
 		document.addEventListener("deviceready", function() {
 			var num = 1;
@@ -565,7 +570,9 @@ function date(params, ionicDatePicker){
 
 	var $scope = params.scope;
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/datepicker.html'\"></div>";
 	var ipObj1 = {
 				      callback: function (val) {  
@@ -590,7 +597,9 @@ function time(params, ionicTimePicker){
 
 	var $scope = params.scope;
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/timepicker.html'\"></div>";
 	var ipObj1 = {
 	    callback: function (val) {      //Mandatory
@@ -618,7 +627,9 @@ function GpsLocation(params, $ionicLoading, $cordovaGeolocation){
 
 	var $scope = params.scope;
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/location.html'\"></div>";
 	$scope.getLoaction = function(){
 		$ionicLoading.show({
@@ -650,7 +661,9 @@ function textarea(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
 	var $scope = params.scope;
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	if(params.ls.get('SurveyMedia') != 'null'){
 		document.addEventListener("deviceready", function() {
 			var num = 1;
@@ -691,7 +704,9 @@ function text_only(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse
 	var $scope = params.scope;
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	if(params.ls.get('SurveyMedia') != 'null'){
 		document.addEventListener("deviceready", function() {
 			var num = 1;
@@ -737,7 +752,9 @@ function number(params){
 	$scope.numberAnswer = {};
 	$scope.numberAnswer.value = '';
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/number.html'\"></div>";
 }
@@ -746,8 +763,9 @@ function email(params){
 
 	var $scope = params.scope;
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
-
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/email.html'\"></div>";
 }
 
@@ -758,7 +776,9 @@ function radio(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $s
 	$scope.radioAnswer.value = '';
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	$scope.radioOptions = params.QuestAnswers;
 	if(params.ls.get('SurveyMedia') != 'null'){
 		document.addEventListener("deviceready", function() {
@@ -806,7 +826,9 @@ function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $
 	$scope.selectAnswer.value = '';
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
-	$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	if(params.QuestionDesc != null){
+		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+	}
 	$scope.$parent.selectAnswer = {};
 	$scope.selectOptions = params.QuestAnswers;
 	console.log(params.QuestAnswers);
@@ -963,8 +985,8 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 									[
 										answer, localStorage.get('startStamp'), 
 										localStorage.get('userId'),'app','NULL',uniqueKey, 
-										JSON.stringify($cordovaDevice.getDevice()),
-										// 'device_details',
+										// JSON.stringify($cordovaDevice.getDevice()),
+										'device_details',
 										localStorage.get('userId'), 
 										timeStamp(), QuestionIndex,
 										'incomplete',

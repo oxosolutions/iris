@@ -38,6 +38,9 @@ angular.module('smaart.dashboard', ['ngCordova'])
     $scope.sidenav_header_text = settings['sidenav_header_text'];
     $scope.about_page_content = settings['about_page_content'];
     $scope.help_page_content = settings['help_page_content'];
+    $scope.page = {
+    	title: settings['android_application_title']
+    }
     
    $scope.openList =function() {
    		$state.go('app.ListSurvey');

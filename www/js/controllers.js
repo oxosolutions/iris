@@ -129,7 +129,7 @@ angular.module('smaart.controllers', ['ngCordova'])
     $scope.Activate = function() {
       	if($scope.activation.code == undefined){
       		$ionicLoading.show({
-		      template: 'Please fill code!',
+		      template: 'Invalid Activation Code',
 		      noBackdrop: false,
 		      duration: 1000
 		    });
@@ -143,7 +143,7 @@ angular.module('smaart.controllers', ['ngCordova'])
             appActivation.appActivate(formData).then(function(res){
                 if(res.data.status == 'error'){
                   $ionicLoading.show({
-                    template: 'invalid Activation code',
+                    template: 'Invalid Activation Code',
                     noBackdrop: false,
                     duration: 1000
                   });

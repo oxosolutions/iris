@@ -1,77 +1,118 @@
 <style type="text/css">
-.index-title:after{
-	padding-bottom: 10px
-	
+
+
+/*
+.aione-wrapper{
+	background-color: #ffffff;
+	margin: 0;
+	padding: 10% 6%;
+	height: 100%;
+	position: relative;
+	z-index: 9999;
 }
-ion-content{
-	background-color: #3B5BB3;
+ion-content:before{
+	content:"";
+	border: 1px solid #168dc5;
+	position: absolute;
+	top: 6%;
+	right: 6%;
+	bottom: 6%;
+	left: 6%;
+	z-index: -1;
 }
+*/
+
 ion-content > .scroll{
 	height: 100%;
 	
 }
-input{
-	color: #444 !important;
 
+ion-content{
+	background-color: #f8f8f8;
 }
+
+.aione-title{
+    font-size: 2em;
+    text-align: center;
+    line-height: 1.6;
+    color: #168dc5;
+}
+.aione-description{
+	font-size: 1.3em;
+	font-weight:300;
+	text-align: center;
+	line-height: 1.5;
+	color: #666666;
+}
+.aione-button{
+	background-color:#168dc5;
+	color: #ffffff;
+	font-size: 1.5em;
+	font-weight:300;
+	text-align:center;
+	text-decoration: none; 
+	text-transform: uppercase;
+	display:block;
+	line-height: 40px;
+	padding: 0 20px
+	width:100%;
+}
+.field input[type=date], 
+.field input[type=email], 
+.field input[type=number], 
+.field input[type=password], 
+.field input[type=password],
+.field input[type=number], 
+.field input[type=tel], 
+.field input[type=text], 
+.field input[type=time], 
+.field input[type=url], 
+.field select, 
+.field select[multiple=multiple], 
+select, 
+textarea {
+    font-size: 1.3em;
+    line-height: 28px;
+    font-weight: 400;
+    width: 100%;
+    min-height: 40px;
+    padding: 0;
+    margin: 0;
+    text-indent: 0;
+    color: #747474 ;
+    background-color: #faf8f7;
+    border: 1px solid #e8e8e8;
+    outline: 0;
+    text-shadow: none;
+    box-shadow: none;
+    font-family: "Open Sans",Arial,Helvetica,sans-serif;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -moz-transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+.field input[type=text]{
+	color:#747474 !important;
+	text-align: center;
+}
+
 </style>
 
 <ion-content>
-	<!-- <div layout="row" layout-wrap md-colors="{background:'white'}" style="background-image: url('img/bg1.png');background-size: cover;height: 100%" ms-scroll>
-		<div flex="100" layout="row" layout-align="center center" style="    padding: 20% 5% 0 5%;font-size: 30px;text-align: center;line-height: 1.7;color: white;">
-		
-			
-			IRIS
-		</div>
-		<div flex="100" layout="row" layout-align="center center" style="    padding:0 5% 20% 5%;font-size: 20px;text-align: center;line-height: 1.7;color: white;">
-			
 
-			Integrated Road Traffic Injuries Surveillance System - INDIA
-		</div>
-		<div flex="100" layout="column" layout-align="center center" class="md-subhead" style="padding: 2.5% 2.5% 2.5% 2.5%;text-align: justify;background: rgba(255, 255, 255, 0.4);">
-			
-			<h4 class="index-title">Steps to activate the app</h4>
-			<div>
-				1. Go to the website ,open profile and get activation code.<br>
-				2. Press activate button below and paste the code in the dialog box.
+		<div layout="row" layout-align="center center">
+          <div>
+            <h1 class="aione-title">Activate Application</h1>
+            <h3 class="aione-description">Put the activation code in the input field below and press Activate button.</h3>
+            <div class="field">
+    			  	<input type="text" placeholder="Enter activation code" ng-model="activation.code">
+    			  </div>
+    			  <div class="field">
+    			    <a href="javascript:void(0)" class="aione-button" ng-click="Activate()">Activate</a>
+    			  </div>
+  			  </div>
+  		</div>
 
-			</div>
-		</div>
-		<div flex="100" layout="column" layout-align="end stretch">
-
-				<md-button class="md-raised md-primary" style="padding:5px 0px;margin-bottom: 8px" ng-click="Activate()">Activate</md-button>
-			
-		</div>
-	</div> -->
-
-	<div layout="row" layout-align="center center" style="    padding: 20% 5% 0 5%;font-size: 28px;text-align: center;line-height: 1.7;color: white;">
-		
-		
-		Activate Application
-	</div>
-	<!-- <div layout="row" layout-align="center center" style="    padding:0 5% 20% 5%;font-size: 16px;text-align: center;line-height: 1.7;color: white;">
-		
-
-		Integrated Road Traffic Injuries Surveillance System - INDIA
-	</div> -->
-	<div layout="row" layout-wrap layout-align="center center" style="padding: 10% 5%;  font-size: 14px;text-align: left;line-height: 2;color: white;">
-		<div flex="100"><h4 style="color: white">Steps to activate the app</h4></div>
-		<div flex="100">
-			1. Go to the website ,open profile and get activation code.<br>
-			2. Enter the code in the dialog box and press activate button below.
-
-		</div>
-	</div>
-	<div layout="row" layout-wrap layout-align="center center">
-		<div >
-			<label class="item item-input">
-			    <input type="text" placeholder="Enter activation code" ng-model="activation.code">
-			</label>	
-		</div>
-		<div style="margin: 30px">
-			<a href="" style="background-color:#303F9F;color: white;font-size: 16px;font-weight:600;text-decoration: none; text-transform: uppercase;display:block;line-height: 40px;padding: 5px 40px" ng-click="Activate()">Activate Now</a>	
-		</div>
-		
-		
-	</div>
 </ion-content>

@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="iris.fhts.ac.in" version="4.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>IRIS</name>
+<widget id="urbanslumstudy.oxosolutions.com" version="4.2.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>URBAN SLUM STUDY</name>
     <description>
-        Integrated Road Traffic Injuries Surveillance System - INDIA
+        SMAART Surveillance System
     </description>
-    <author email="rahulsharma841990@outlook.com" href="http://rahulasr.com/">
-      Rahul Sharma
+    <author email="oxosolutions@gmail.com" href="http://oxosolutions.com/">
+      OXO Solutions
     </author>
     <content src="index.html" />
     <access origin="*" />
