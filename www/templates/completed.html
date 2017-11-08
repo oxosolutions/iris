@@ -85,7 +85,7 @@ button{
 }
   </style>
   <ion-content class="surveyPage has-subheader" style="background-color: white">
-  
+    <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
 <!-- 	<div class="row" style="margin-top:-8%;">
 		<div class="col">
 			

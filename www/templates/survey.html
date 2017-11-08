@@ -4,6 +4,7 @@
 	 	<div style="width: 100%;text-align: center;line-height: 32px;overflow: hidden;text-overflow: ellipsis;">{{surveyName}} -- {{section_name}}</div>
 	</div>
   <ion-content class="surveyPage has-subheader">
+    <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
   	<style type="text/css">
   		.qus_head{
 

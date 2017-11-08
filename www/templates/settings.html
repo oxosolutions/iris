@@ -1,0 +1,25 @@
+<ion-view view-title="{{page.title}}">
+    <ion-nav-bar class="bar-stable bar-positive">
+        <div style="float: right !important; padding-right: 3%; z-index: 99999 !important; position: absolute; right: 0;">
+            <button class="button button-icon button-clear ion-navicon" menu-toggle="right" style="color:#FFF !important; float: right; font-size: 30px;"></button>
+        </div>
+    </ion-nav-bar>
+    <ion-content>
+        <ng-include src="'templates/testmode.html'" ng-if="app.testingMode" ng-controller="settingsCTRL"></ng-include>
+        <ul class="list">
+            <li class="item item-toggle item-icon-left">
+                <i class="icon ion-speakerphone"></i>
+                Enable Test Mode
+                <p>Appliction is running in <b>{{enable_disable}}</b> mode </p>
+                <label class="toggle toggle-assertive">
+                    <input type="checkbox" ng-model="app.application_mode" ng-change="changeApplicationMode(app)" ng-checked="app.application_mode">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+    </ion-content>
+    
+    
+</ion-view>

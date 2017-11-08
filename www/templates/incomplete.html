@@ -9,7 +9,7 @@
 	 	<div style="width: 100%;text-align: center;line-height: 32px;">{{page.title}}</div>
 	</div>
   <ion-content class="surveyPage has-subheader" style="margin-top:4%;">
-  
+    <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
 	<div class="row" style="margin-top:-8%;">
 		<div class="col">
 			

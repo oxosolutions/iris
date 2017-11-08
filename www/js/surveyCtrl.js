@@ -979,8 +979,12 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 		//insert new record
 		var NameAndID = localStorage.get('CurrentSurveyNameID');
 		var dateForUnique = new Date(Date.now());
+        var app_mode = localStorage.get('app_mode');
+        if(app_mode == null || app_mode == undefined || app_mode == ''){
+            app_mode = 'live';
+        }
 		var uniqueKey = NameAndID.id+''+dateForUnique.getFullYear()+''+(dateForUnique.getMonth()+1)+''+dateForUnique.getDay()+''+dateForUnique.getHours()+''+dateForUnique.getMinutes()+''+dateForUnique.getSeconds()+''+dateForUnique.getMilliseconds()+''+Math.floor(Math.random() * 10000000);
-		var Query = 'INSERT INTO survey_result_'+$state.params.surveyId+'('+questionData.question_key+', survey_started_on, survey_submitted_by, survey_submitted_from, imei, unique_id, device_detail, created_by, created_at, last_field_id, survey_status, last_group_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
+		var Query = 'INSERT INTO survey_result_'+$state.params.surveyId+'('+questionData.question_key+', survey_started_on, survey_submitted_by, survey_submitted_from, imei, unique_id, device_detail, created_by, created_at, last_field_id, survey_status, last_group_id, record_type) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)';
 		dbservice.runQuery(Query,
 									[
 										answer, localStorage.get('startStamp'), 
@@ -991,6 +995,7 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 										timeStamp(), QuestionIndex,
 										'incomplete',
 										$state.params.groupId,
+                                        app_mode
 									],
 		function(res) {
           console.log("record created ");

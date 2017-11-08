@@ -47,6 +47,7 @@
 	</ion-nav-bar>
 	
 	<ion-content>
+        <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
 		<div class="success-msg">Survey Completed Successfully!</div>
 		<i class="ion-checkmark-circled"></i>
 		<div class="go-back"><button ui-sref="app.dashboard">Go to dashboard</button></div>

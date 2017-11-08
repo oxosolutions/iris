@@ -212,7 +212,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                       	});
                       	var Query = 'DROP TABLE IF EXISTS survey_result_'+value.id;
                       	dbservice.runQuery(Query,[],function(res) {
-                            var Query = 'CREATE TABLE IF NOT EXISTS survey_result_'+value.id+'(id integer primary key,'+surveyResulColumns+' ip_address text, survey_started_on text, survey_completed_on text, survey_submitted_by text, survey_submitted_from text, mac_address text, imei text, unique_id text, device_detail text, created_by text, created_at text, last_field_id integer, last_group_id integer, completed_groups text, survey_status text, incomplete_name text, survey_sync_status text)'
+                            var Query = 'CREATE TABLE IF NOT EXISTS survey_result_'+value.id+'(id integer primary key,'+surveyResulColumns+' ip_address text, survey_started_on text, survey_completed_on text, survey_submitted_by text, survey_submitted_from text, mac_address text, imei text, unique_id text, device_detail text, created_by text, created_at text, last_field_id integer, last_group_id integer, completed_groups text, survey_status text, incomplete_name text, survey_sync_status text, record_type text)'
                             dbservice.runQuery(Query,[],function(res) {
                             	//console.log(res);
                             },function(error){
@@ -223,12 +223,12 @@ angular.module('smaart.controllers', ['ngCordova'])
 					//create survey table results end
 					
 					//create user table if not exists
-					var createUserTable = 'CREATE TABLE IF NOT EXISTS users(id integer primary key, name text, email text, api_token text, created_at text, updated_at text, role_id integer, organization_id integer, approved integer, app_password text)';
+					var createUserTable = 'CREATE TABLE IF NOT EXISTS users(id integer primary key, name text, email text, api_token text, created_at text, updated_at text, role text, organization_id integer, approved integer, app_password text)';
 					dbservice.runQuery(createUserTable,[],function(userResp){
 						angular.forEach(users, function(v,k){
-							var insertUser = 'INSERT INTO users(name, email, api_token, created_at, updated_at, role_id, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?)';
+							var insertUser = 'INSERT INTO users(name, email, api_token, created_at, updated_at, role, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?)';
                                 dbservice.runQuery(insertUser,[
-                                v.name,v.email,v.api_token,v.created_at,v.updated_at,v.role_id,v.organization_id,v.approved,v.app_password], function(res){
+                                v.name,v.email,v.api_token,v.created_at,v.updated_at,v.role,v.organization_id,v.approved,v.app_password], function(res){
 
 								},function(error){
 									console.log(error);

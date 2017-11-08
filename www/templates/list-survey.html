@@ -14,7 +14,7 @@
 	 	<div style="width: 100%;text-align: center;line-height: 32px;overflow: hidden;text-overflow: ellipsis;">List of All survey</div>
 	</div>
     <ion-content class="has-subheader">
-
+    <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
       <div >
       
           <div ng-repeat="list in surveyList" ng-click="startSurvey(list.survey_id)" style="border-bottom: 1px solid grey">

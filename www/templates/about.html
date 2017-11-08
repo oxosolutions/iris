@@ -12,7 +12,7 @@
 		}
 	</style>
   <ion-content class="surveyPage has-subheader">
- 
+    <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
   
 	
 	<div dynamic="about_page_content"></div>
