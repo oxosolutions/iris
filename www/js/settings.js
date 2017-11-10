@@ -34,4 +34,13 @@ angular.module('smaart.settingsCTRL', ['ngCordova'])
         }
     }
 
+    $scope.checkSurveyUpdate = function(){
+        var query = 'SELECT * FROM settings WHERE key = ?';
+        dbservice.runQuery(query,['surveys_update_date'],function(res){
+            console.log(res);
+        }, function(error){
+            console.error(error);
+        });
+    }
+
 });
