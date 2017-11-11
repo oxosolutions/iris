@@ -141,6 +141,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                   noBackdrop: false
                 });
             appActivation.appActivate(formData).then(function(res){
+
                 if(res.data.status == 'error'){
                   $ionicLoading.show({
                     template: 'Invalid Activation Code',
@@ -148,6 +149,9 @@ angular.module('smaart.controllers', ['ngCordova'])
                     duration: 1000
                   });
                 }else{
+                  var activation_date = new Date;
+                  activation_date = activation_date.getFullYear()+'-'+(activation_date.getMonth()+1)+'-'+activation_date.getDate();
+                  localStorageService.set('activation_date',activation_date);
                   var questionsColumn = '';
                   var insertQuestionMark = '';
                   var insertColumnsName = '';
@@ -156,7 +160,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                   var surveys = res.data.surveys;
                   var surveySections = res.data.groups;
                   var AppSettings = res.data.settings;
-
+                  
                   var dropArray = [
                         'DROP TABLE IF EXISTS survey_data',
                         'DROP TABLE IF EXISTS survey_questions',
@@ -228,7 +232,7 @@ angular.module('smaart.controllers', ['ngCordova'])
 						angular.forEach(users, function(v,k){
 							var insertUser = 'INSERT INTO users(name, email, api_token, created_at, updated_at, role, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?)';
                                 dbservice.runQuery(insertUser,[
-                                v.name,v.email,v.api_token,v.created_at,v.updated_at,v.role,v.organization_id,v.approved,v.app_password], function(res){
+                                v.name,v.email,v.api_token,v.created_at,v.updated_at,JSON.stringify(v.user_roles),v.org_id,v.approved,v.app_password], function(res){
 
 								},function(error){
 									console.log(error);
@@ -257,14 +261,13 @@ angular.module('smaart.controllers', ['ngCordova'])
                                           }
                                       }
                                   });
-                                  //console.log(insertColumnsName);
-                                  // console.log(dataArray);
-                                  //console.log(insertQuestionMark);
+                                  
                                   var insertQuestion = 'INSERT INTO survey_questions('+insertColumnsName+') VALUES('+insertQuestionMark+')';
 									dbservice.runQuery(insertQuestion,dataArray, function(res){
 
 									},function(error){
 										console.log(error);
+                                        console.log(insertQuestion,k);
 									});
 							});
 						},function(error){
@@ -278,7 +281,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                         	angular.forEach(surveys, function(val, key){
                                 var insertSurveyData = 'INSERT INTO survey_data(survey_id, survey_table, name, created_by, description, status) VALUES(?,?,?,?,?,?)';
                                 dbservice.runQuery(insertSurveyData,[val.id, val.survey_table, val.name, val.created_by, val.description, val.status], function(res){
-
+                                    console.log(res);
                                   },function (error) {
                                   	console.log(error);
                                   });
@@ -318,35 +321,36 @@ angular.module('smaart.controllers', ['ngCordova'])
                   if(res.data.media != 'null'){
 
                     angular.forEach(res.data.media, function(mediaLink, mediaKey){
+                        if(mediaLink != null){
+                            var fileSplited = mediaLink.split('/');
+                            var fileLength = fileSplited.length;
+                            var fileName = fileSplited[fileLength-1];
 
-                        var fileSplited = mediaLink.split('/');
-                        var fileLength = fileSplited.length;
-                        var fileName = fileSplited[fileLength-1];
+                            // console.log(fileName);
+                            // console.log(mediaLink);
 
-                        // console.log(fileName);
-                        // console.log(mediaLink);
+                            var downloadUrl = mediaLink;
+                            var relativeFilePath = fileName;  // using an absolute path also does not work
+                            document.addEventListener("deviceready", function() {
+                                window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+                                   fileSystem.root.getDirectory("SmaartMedia", {create: true, exclusive: false});
+                                   var fileTransfer = new FileTransfer();
+                                   fileTransfer.download(
+                                      downloadUrl,
 
-                        var downloadUrl = mediaLink;
-                        var relativeFilePath = fileName;  // using an absolute path also does not work
-                        document.addEventListener("deviceready", function() {
-                        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-                           fileSystem.root.getDirectory("SmaartMedia", {create: true, exclusive: false});
-                           var fileTransfer = new FileTransfer();
-                           fileTransfer.download(
-                              downloadUrl,
+                                      // The correct path!
+                                      fileSystem.root.toURL() + 'SmaartMedia/' + relativeFilePath,
 
-                              // The correct path!
-                              fileSystem.root.toURL() + 'SmaartMedia/' + relativeFilePath,
-
-                              function (entry) {
-                                 /*alert("Success");*/
-                              },
-                              function (error) {
-                                 //alert("Error during download. Code = " + error.code);
-                              }
-                           );
-                        });
-                      }, false);
+                                      function (entry) {
+                                         /*alert("Success");*/
+                                      },
+                                      function (error) {
+                                         //alert("Error during download. Code = " + error.code);
+                                      }
+                                   );
+                                });
+                            }, false);
+                        }
                     });
                   }
                   setTimeout(function(){

@@ -22,25 +22,29 @@ angular.module('smaart.dashboard', ['ngCordova'])
         $state.go('login');
     }
     var settings = localStorageService.get('settings');
-    //console.log(settings);
-    $scope.description = settings['android_application_description'];
-    $scope.link_to_start_survey_text = settings['link_to_start_survey_text'];
-    $scope.start_survey_button_text = settings['start_survey_button_text'];
-    $scope.link_to_manage_survey_text = settings['link_to_manage_survey_text'];
-    $scope.link_to_sync_survey_text = settings['link_to_sync_survey_text'];
-    $scope.link_to_update_app_text = settings['link_to_update_app_text'];
-    $scope.android_application_footer_text = settings['android_application_footer_text'];
-    $scope.link_to_dashboard = settings['link_to_dashboard'];
-    $scope.link_to_start_survey_text = settings['link_to_start_survey_text'];
-    $scope.manage_survey_button_text = settings['manage_survey_button_text'];
-    $scope.link_to_sync_survey_text = settings['link_to_sync_survey_text'];
-    $scope.link_to_update_app_text = settings['link_to_update_app_text'];
-    $scope.sidenav_header_text = settings['sidenav_header_text'];
-    $scope.about_page_content = settings['about_page_content'];
-    $scope.help_page_content = settings['help_page_content'];
-    $scope.page = {
-    	title: settings['android_application_title']
+    try{
+        $scope.description = settings['android_application_description'];
+        $scope.link_to_start_survey_text = settings['link_to_start_survey_text'];
+        $scope.start_survey_button_text = settings['start_survey_button_text'];
+        $scope.link_to_manage_survey_text = settings['link_to_manage_survey_text'];
+        $scope.link_to_sync_survey_text = settings['link_to_sync_survey_text'];
+        $scope.link_to_update_app_text = settings['link_to_update_app_text'];
+        $scope.android_application_footer_text = settings['android_application_footer_text'];
+        $scope.link_to_dashboard = settings['link_to_dashboard'];
+        $scope.link_to_start_survey_text = settings['link_to_start_survey_text'];
+        $scope.manage_survey_button_text = settings['manage_survey_button_text'];
+        $scope.link_to_sync_survey_text = settings['link_to_sync_survey_text'];
+        $scope.link_to_update_app_text = settings['link_to_update_app_text'];
+        $scope.sidenav_header_text = settings['sidenav_header_text'];
+        $scope.about_page_content = settings['about_page_content'];
+        $scope.help_page_content = settings['help_page_content'];
+        $scope.page = {
+            title: settings['android_application_title']
+        }
+    }catch(e){
+        console.warn(e);
     }
+    
     
    $scope.openList =function() {
    		$state.go('app.ListSurvey');
@@ -57,34 +61,38 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	var getSurveys = 'SELECT * FROM survey_data';
 	dbservice.runQuery(getSurveys,[],function(res){
 
-    var row = {};
-    var survey_ids = [];
-		var countSurveyQuestion = {};
-      	for(var i=0; i < res.rows.length; i++) {
-          var tempData = res.rows.item(i);
-          tempData['questions'] = 0;
-          row[i] = tempData;
-          // console.log(res.rows.item(i))
-          survey_ids.push(res.rows.item(i).survey_id);
-          	
-      	}
-        var getSurveysCount = 'SELECT count(id) as count, survey_id FROM survey_questions where survey_id in ('+survey_ids+') group by survey_id';
-        dbservice.runQuery(getSurveysCount,[],function(count){
-          angular.forEach(row, function(value, key){
-            for(var j = 0; j < count.rows.length; j++){
-                // console.log(cVal);
-                if(count.rows.item(j).survey_id == value.survey_id){
-                  row[key]['questions'] = count.rows.item(j).count;
+        var row = {};
+        var survey_ids = [];
+    		var countSurveyQuestion = {};
+          	for(var i=0; i < res.rows.length; i++) {
+              var tempData = res.rows.item(i);
+              tempData['questions'] = 0;
+              row[i] = tempData;
+              // console.log(res.rows.item(i))
+              survey_ids.push(res.rows.item(i).survey_id);
+              	
+          	}
+            var getSurveysCount = 'SELECT count(id) as count, survey_id FROM survey_questions where survey_id in ('+survey_ids+') group by survey_id';
+            dbservice.runQuery(getSurveysCount,[],function(count){
+              angular.forEach(row, function(value, key){
+                for(var j = 0; j < count.rows.length; j++){
+                    // console.log(cVal);
+                    if(count.rows.item(j).survey_id == value.survey_id){
+                      row[key]['questions'] = count.rows.item(j).count;
+                    }
                 }
-            }
-               
-          });
-         // console.log(row);
-          $scope.surveyList = row;
-          //console.log(count.rows);
-        });
+                   
+              });
+             // console.log(row);
+              $scope.surveyList = row;
+              //console.log(count.rows);
+            }, function(error){
+                console.warn(error);
+            });
         // console.log(survey_ids);
-	});
+	}, function(error){
+        console.warn(error);
+    });
 
 
 
@@ -179,7 +187,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 		var getGroups = 'SELECT * FROM survey_sections WHERE survey_id = ?';
 		dbservice.runQuery(getGroups, [$state.params.id], function(res){
 			var row = {};
-      var sectionsData = [];
+            var sectionsData = [];
 	      	for(var i=0; i<res.rows.length; i++) {
 	          	row[i] = res.rows.item(i);
               sectionsData.push(res.rows.item(i));
@@ -187,7 +195,9 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	      	$scope.groupList = row;
           localStorageService.set('sections_data',sectionsData);
 	      	// console.log(row);
-		});
+		}, function(error){
+            console.warn(error);
+        });
 
 		/*########################### DON'T DELETE THIS CODE, THIS IS BACKUP CODE BEFORE SET HARD CODE IN APP #########################*/
     	

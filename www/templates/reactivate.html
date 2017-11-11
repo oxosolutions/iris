@@ -30,34 +30,35 @@
 		.nav-bar-title{
 			line-height: 50px
 		}
-		.main_row{
-			    background-size: 100% 40%;
-		}
+		
 		ion-content > .scroll{
 			height: 100%;
 		}
 		.version{
-			   position: relative;
-			       height: 31%;
-    font-size: 18px;
-  
-    padding-left: 0;
-    margin: 0;
+			/*position: relative;*/
+            /*height: 31%;*/
+            font-size: 18px;
+            padding-left: 0;
+            margin: 0;
+            text-align: center;
+            margin-top: 15%;
 		}
-		.version > div{
-			position: absolute;
-			 top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    color: white
+		.version h3,h5{
+			color: #FFF;
 		}
 	</style>
   <ion-content class="surveyPage has-subheader" >
     <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
-  	<dir class="version">
-  		<div>last Updated on 23-11-18</div>
-  	</dir>
-  	<ion-scroll direction="y" style="height: 52%;">
+  	<div class="version">
+  		<h3>Activation Date</h3>
+        <h5>{{activate_date}}</h5>
+  	</div>
+
+    <div class="version">
+        <h3>Updation Date</h3>
+        <h5>{{update_date}}</h5>
+    </div>
+  	<!-- <ion-scroll direction="y" style="height: 52%;">
   		<ul class="list">
 
 		  <li class="item item-toggle">
@@ -83,7 +84,7 @@
 		  
 
 		</ul>
-  	</ion-scroll>
+  	</ion-scroll> -->
   
 	<!-- <div class="row" >
 		<div class="col">
@@ -107,15 +108,11 @@
 			
 		</div>
 	</div> -->
-
-	
-
-
   </ion-content>
   <div class="tabs">
   	<button ng-click="reActive()">update Now</button>
   </div>
   <div ng-include="'templates/footer.html'">
 		
-	</div>
+</div>
 </ion-view>

@@ -8,9 +8,16 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
   })
 .controller('surveyListCTRL', function($scope, $ionicLoading, localStorageService, $state, $ionicPopup, appData, appActivation, dbservice){
 	
-	
+    $scope.activate_date = localStorageService.get('activation_date');
+
+    var query = 'SELECT value FROM settings WHERE key = ?';
+    dbservice.runQuery(query,['survey_update_date'], function(res){
+        $scope.update_date = res.rows.item(0).value;
+    }, function(error){
+        console.error(error);
+    });
+
 	$scope.startSurvey = function(surveyid){
-		console.log(surveyid)
   		localStorageService.set('finishedGroups',undefined);
   		localStorageService.set('completedGroups',undefined);
   		localStorageService.set('ContinueKey',undefined);
@@ -21,28 +28,9 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
   		$state.go('app.surveyGroup',{id:surveyid});
   	}
   	
-	/*var userRoles = localStorageService.get('userRole');
-	var adminStatus = false;
-	for(var i = 0; i < userRoles.length; i++){
-
-		if(userRoles[i] == 'administrator'){
-
-			adminStatus = true;
-		}
-	}
-	if(adminStatus == true){
-
-		$scope.roleView = 'true';
-		$scope.notAuth = 'false';
-		$scope.detailActivate = 'true';
-	}else{
-		$scope.roleView = 'false';
-		$scope.notAuth = 'true';
-		$scope.detailActivate = 'true';
-	}*/
 	$scope.roleView = 'true';
-		$scope.notAuth = 'false';
-		$scope.detailActivate = 'true';
+	$scope.notAuth = 'false';
+	$scope.detailActivate = 'true';
 	var getSurveys = 'SELECT * FROM survey_data';
 	dbservice.runQuery(getSurveys,[],function(res){
 		var row = {};
@@ -73,17 +61,6 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 		});
 	}
 
-
-	/*$scope.getCompletedIncompleted = function(status,surveyid){
-		var incomplete= '';
-		var QueryCompleted = 'SELECT id FROM survey_result_'+surveyid+' WHERE survey_status = ?';
-		var incomplete = dbservice.runQuery(QueryCompleted,['incomplete'],function(res) {
-			return res.rows.length;
-		}, function(err){
-
-		});
-		console.log(incomplete);
-	}*/
 
 	$scope.gotoSurvey = function(surveyID){
 		$state.go('app.survey',{'surveyId': surveyID+1});
@@ -303,38 +280,8 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 								});
 	                        //end sections
 	                        
-	                        //create survey results table
-		                      /*var surveyQuestions = '';
-		                      angular.forEach(surveys, function(value, key) {
-			                      	surveyQuestions = $.grep(questionsList,function(grepVal){
-			                      		return grepVal.survey_id == value.id;
-			                      	});
-			                      	var surveyResulColumns = '';
-			                      	angular.forEach(surveyQuestions, function(val){
-			                        	surveyResulColumns += val.question_key+ ' text, ';
-			                      	});
-			                      	var Query = 'DROP TABLE IF EXISTS survey_result_'+value.id;
-			                      	dbservice.runQuery(Query,[],function(res) {
-			                           console.log(surveyResulColumns);
-			                           console.log(value);
-			                            var Query = 'CREATE TABLE IF NOT EXISTS survey_result_'+value.id+'(id integer primary key,'+surveyResulColumns+' ip_address text, survey_started_on text, survey_completed_on text, survey_submitted_by text, survey_submitted_from text, mac_address text, imei text, unique_id text, device_detail text, created_by text, created_at text, last_field_id integer, last_group_id integer, completed_groups text, survey_status text, incomplete_name text, survey_sync_status text)'
-			                            dbservice.runQuery(Query,[],function(res) {
-			                            	//console.log(res);
-			                            },function(error){
-			                            	console.log(error);
-			                            });
-			                      	});
-		                      });
-								//create survey table results end*/
-	                       
-
-
-		                      /*localStorageService.set('UsersData',res.data.users);
-		                      localStorageService.set('SurveyData',res.data.surveys);
-		                      localStorageService.set('GroupsData',res.data.groups);
-		                      localStorageService.set('QuestionData',res.data.questions);*/
+	                        
 		                      localStorageService.set('ActivationCode',$scope.data.wifi);
-		                      // localStorageService.set('SurveyMedia',res.data.media);
 
 		                      if(res.data.media != 'null'){
 
@@ -391,8 +338,6 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 	     }
 	   });
     }
-
-
 })
 
 .controller('stopSurvey', function($scope, $rootScope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $ionicPopup, dbservice){
