@@ -573,6 +573,10 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 						            	console.log(err);
 						            });
 						        }
+                                $ionicLoading.show({
+                                    template: '<ion-spinner class="spinner-energized"></ion-spinner>',
+                                    noBackdrop: false
+                                });
 						        var formData = new FormData;
 						        formData.append('survey_data',JSON.stringify(row));
 						        formData.append('survey_id',$scope.selectedSyncSurvey);
@@ -580,12 +584,19 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 						        formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
 						        exportS.exportSurvey(formData).then(function(result){
 						        	console.log(result);
+                                    $ionicLoading.hide();
 						        	$ionicLoading.show({
 								      template: 'Data Successfully Exported!',
 								      noBackdrop: false,
 								      duration: 2000
 								    });
-						        });
+						        }, function(error){
+                                    $ionicLoading.show({
+                                      template: 'Unable to sync survey!',
+                                      noBackdrop: false,
+                                      duration: 2000
+                                    });
+                                });
 							}				    			    
 						});
 					}

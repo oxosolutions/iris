@@ -54,7 +54,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
   };
 })
 
-.controller('surveyLoad', function(dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker){
+.controller('surveyLoad', function(dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile){
 	var dt = new Date;
 	var startedTime = dt.getFullYear()+''+(dt.getMonth()+1)+''+dt.getDay()+''+dt.getHours()+''+dt.getMinutes()+''+dt.getSeconds()+''+dt.getMilliseconds();
 	var SurveyData = '';
@@ -161,9 +161,46 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 		    });
 		}
 	    //end here
-	    
+	    var conditionsArray = [];
+        try{
+            window.field_conditions = JSON.parse(SurveyData[QuestionIndex].field_conditions);
+            var fieldCondIndex = 0;
+            if(field_conditions.length != 0 && field_conditions[fieldCondIndex].condition_operator !== undefined && field_conditions[fieldCondIndex].condition_value !== undefined){
+                checkFieldConditions(fieldCondIndex);
+                function checkFieldConditions(fieldCondIndex){
+                    if(field_conditions[fieldCondIndex] !== undefined){
+                        var condition_question_id = parseInt(field_conditions[fieldCondIndex].condition_column);
+                        var conditioned_question_key = '';
+                        $.each(SurveyData, function(datakey, datavalue){
+                            if(datavalue.question_id == condition_question_id){
+                                conditioned_question_key = datavalue.question_key;
+                                return false;
+                            }
+                        });
+                        var conditionQuery = 'SELECT '+conditioned_question_key+' FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
+                        var rec_id = localStorageService.get('record_id');
+                        dbservice.runQuery(conditionQuery,[rec_id],function(res){
+                            var cond_operator = field_conditions[fieldCondIndex].condition_operator;
+                            var cond_value = field_conditions[fieldCondIndex].condition_value;
+                            if(eval(res.rows.item(0)[conditioned_question_key]+' '+cond_operator+' '+cond_value)){
+                                conditionsArray.push('true');
+                            }else{
+                                $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1});
+                            }
+                            fieldCondIndex++;
+                            checkFieldConditions(fieldCondIndex);
+                        }, function(error){
+                            console.log(error);
+                        });
+                    }
+                }
+            }
 
-	   
+        }catch(e){
+            console.log(e);
+            // console.log('No conditions found');
+        }
+        
 	    var QuestType  =  SurveyData[QuestionIndex].question_type;
 	    var DrawHTML = {
 	    				  'QuestionText': SurveyData[QuestionIndex].question_text, 
@@ -222,7 +259,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			break;
 
 			case'repeater':
-				repeater(DrawHTML, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse);
+				repeater(DrawHTML, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $compile);
 			break;
 
 			case'text_image':
@@ -255,7 +292,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 				$scope.readonlyText.status = true;
 			}
 			if(	($state.params.surveyId == 2)){
-				console.log(localStorageService.get('uniqueSerial'));
+				// console.log(localStorageService.get('uniqueSerial'));
 				if(localStorageService.get('uniqueSerial') != undefined && localStorageService.get('uniqueSerial') != null){
 					var datavalues = localStorageService.get('uniqueSerial');
 					if(datavalues[1] != undefined && datavalues[2] != undefined){
@@ -300,7 +337,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 	      	var SurveyData = row;
 			//to get question_type for store in answer
 			
-			var QuestType  =  SurveyData[QuestionIndex].question_type;
+            var QuestType  =  SurveyData[QuestionIndex].question_type;
 			var RequiredCheck = SurveyData[QuestionIndex].required;
 			/*############################## HARD CODED ##################################*/
 				if($state.params.surveyId == 2 && $state.params.groupId == 5){
@@ -313,6 +350,9 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 						RequiredCheck = 'yes';
 					}
 				}
+                if($.inArray(parseInt(SurveyData[QuestionIndex].question_id),[50,56,98,149,186,46,139]) != -1){
+                    RequiredCheck = 'yes';
+                }
 			/*###########################################################################*/
 			if(RequiredCheck == 'yes'){
 				var valResult = validation($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex]);
@@ -470,13 +510,11 @@ function text(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 
 }
 
-function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
+function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $compile){
 	var $scope = params.scope;
 	$scope.quest_type = 'repeater';
 	params.QuestionDesc = checkForMedia(params, $q, $rootScope, $cordovaFile);
-
 	$scope.fieldsList = JSON.parse(params.raw.fields);
-	console.log($scope.fieldsList);
 	if(params.raw.media != 'null'){
 		document.addEventListener("deviceready", function() {
 			var num = 1;
@@ -508,16 +546,23 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse)
 		});
 	}
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/repeater.html'\"></div>";
-
+    setTimeout(function(){
+        $('input[type=radio]').removeAttr('ng-model');
+    },1000);
 	$scope.templateUrl = function(type,answers){
-		$scope.selectOptions = answers;
+        $scope.selectOptions = answers;
+        $scope.radioOptions = '';
+		$scope.radioOptions = answers;
 		return "surveyTemplate/"+type+".html";
 	}
 	
 	$scope.createClone = function(){
 		var cloneRow = $('.repeaterRow:last').clone();
 		$('.repeater').append(cloneRow);
-		$('.repeaterRow:last').find('select,input').val('');
+		$('.repeaterRow:last').find('select,input[type=text]').val('');
+        var test = Math.random();
+        test = test.toString().split('.');
+        $('.repeaterRow:last').find('input[type=radio]').attr('name',test[1]);
 	}
 }
 
@@ -938,10 +983,15 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 			$('.repeaterRow').each(function(i){
 				var questionsObjectArray = {};
 				$(this).find('.repeater_field').each(function(j){
-					questionsObjectArray[$(this).find('.textBoxSurvey').attr('key')] = $(this).find('select,input').val();
+                    if($(this).find('input').attr('type') == 'radio'){
+                        questionsObjectArray[$(this).find('.textBoxSurvey').attr('key')] = $(this).find('input[type=radio]:checked').val();
+                    }else{
+                        questionsObjectArray[$(this).find('.textBoxSurvey').attr('key')] = $(this).find('select,input,input[type=radio]:checked').val();
+                    }
 				});
 				answerObject.push(questionsObjectArray);
 			});
+            console.log(answerObject);
 			answer_of_current_question = JSON.stringify(answerObject);
 		break;
 	}
@@ -1197,6 +1247,23 @@ function validation($scope, type, $ionicLoading, rawData){
 		break;
 
 		case'number':
+            // ############################################ HARD CODED #############################################
+            if($.inArray(parseInt(rawData.question_id),[50,56,98,149,186]) != -1){
+                console.log($scope.$parent.numberAnswer);
+                if($scope.$parent.numberAnswer === undefined || $scope.$parent.numberAnswer.value == null || $scope.$parent.numberAnswer.value == ''){
+                    return true;
+                }else{
+                    if($scope.$parent.numberAnswer.value.toString().length < 10){
+                        $ionicLoading.show({
+                          template: 'Please fill mobile in proper format!',
+                          noBackdrop: false,
+                          duration: 1000
+                        });
+                        return false;
+                    }
+                }
+            }
+            // ############################################ HARD CODED #############################################
 			if($scope.$parent.numberAnswer === undefined){
 				$ionicLoading.show({
 			      template: 'Please fill answer!',

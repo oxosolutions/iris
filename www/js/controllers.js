@@ -141,7 +141,6 @@ angular.module('smaart.controllers', ['ngCordova'])
                   noBackdrop: false
                 });
             appActivation.appActivate(formData).then(function(res){
-
                 if(res.data.status == 'error'){
                   $ionicLoading.show({
                     template: 'Invalid Activation Code',
@@ -248,27 +247,25 @@ angular.module('smaart.controllers', ['ngCordova'])
 								var dataArray = [];
                                   angular.forEach(question, function(val, key){
                                       if(key != 'created_at' && key != 'updated_at' && key != 'deleted_at'){
-                                          if(key == 'answers'){
-                                            dataArray.push(JSON.stringify(val));
-                                          }else if(key == 'fields'){
-                                          	dataArray.push(JSON.stringify(val));
-                                          }else{
-                                            try{
-                                              dataArray.push(val.toString());
-                                            }catch(e){
-                                              dataArray.push(val);
+                                            if($.inArray(key, ['answers','fields','field_validations','field_conditions']) != -1){
+                                                dataArray.push(JSON.stringify(val));
+                                                                                              
+                                            }else{
+                                                try{
+                                                  dataArray.push(val.toString());
+                                                }catch(e){
+                                                  dataArray.push(val);
+                                                }
                                             }
-                                          }
                                       }
                                   });
-                                  
-                                  var insertQuestion = 'INSERT INTO survey_questions('+insertColumnsName+') VALUES('+insertQuestionMark+')';
-									dbservice.runQuery(insertQuestion,dataArray, function(res){
-
-									},function(error){
-										console.log(error);
-                                        console.log(insertQuestion,k);
-									});
+                                var insertQuestion = 'INSERT INTO survey_questions('+insertColumnsName+') VALUES('+insertQuestionMark+')';
+                                dbservice.runQuery(insertQuestion,dataArray, function(res){
+                                    console.log(res);
+                                },function(error){
+                                    console.log(error);
+                                    console.log(insertQuestion,k);
+                                });
 							});
 						},function(error){
 							console.log(error);
@@ -281,7 +278,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                         	angular.forEach(surveys, function(val, key){
                                 var insertSurveyData = 'INSERT INTO survey_data(survey_id, survey_table, name, created_by, description, status) VALUES(?,?,?,?,?,?)';
                                 dbservice.runQuery(insertSurveyData,[val.id, val.survey_table, val.name, val.created_by, val.description, val.status], function(res){
-                                    console.log(res);
+                                    //console.log(res);
                                   },function (error) {
                                   	console.log(error);
                                   });
