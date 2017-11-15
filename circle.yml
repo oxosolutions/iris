@@ -23,7 +23,7 @@ dependencies:
 
   post:
     ##- mkdir www
-    - ionic cordova platform add android -Y --noresources
+    - ionic cordova platform add android
 
 test:
   pre:
