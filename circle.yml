@@ -23,12 +23,12 @@ dependencies:
 
   post:
     ##- mkdir www
-    - ionic cordova platform add android
+    - sudo ionic cordova platform add android
 
 test:
   pre:
     - npm install
 
   override:
-    - ionic cordova build android -Y
+    - sudo ionic cordova build android -Y
     - cp -r platforms/android/build/outputs/apk $CIRCLE_ARTIFACTS
