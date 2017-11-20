@@ -54,14 +54,16 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
   };
 })
 
-.controller('surveyLoad', function(dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile){
+.controller('surveyLoad', function(dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile, $ionicHistory, $ionicPlatform){
 	var dt = new Date;
 	var startedTime = dt.getFullYear()+''+(dt.getMonth()+1)+''+dt.getDay()+''+dt.getHours()+''+dt.getMinutes()+''+dt.getSeconds()+''+dt.getMilliseconds();
 	var SurveyData = '';
 	$scope.readonlyText = {};
 	setSurveyNameAndId($state, localStorageService, 0, dbservice);
 	var getQuestions = 'SELECT * FROM survey_questions WHERE group_id = ? AND survey_id = ?';
+    $scope.showHideQuestion = false;
 	dbservice.runQuery(getQuestions, [$state.params.groupId,$state.params.surveyId], function(res){
+
 		var row = {};
       	for(var i=0; i<res.rows.length; i++) {
           	row[i] = res.rows.item(i)
@@ -76,6 +78,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 		var sectionDetails = $.grep(sectionsList, function(elem,i){
 			return (elem.group_id == $state.params.groupId);
 		});
+
 		$scope.section_name = sectionDetails[0].title;
 		var surveyName = localStorageService.get('CurrentSurveyNameID');
 		$scope.surveyName = surveyName.name;
@@ -91,10 +94,10 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			
 		}
 		if(SurveyData[QuestionIndex] == undefined || SurveyData[QuestionIndex] == ''){
-
-	    	finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeolocation, dbservice);
+	    	finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeolocation, dbservice, $scope);
 	    	return false;
 	    }
+
 		var my_media = {};
 		$scope.play = function(url, exact){
 			angular.forEach(my_media, function(value, key){
@@ -116,6 +119,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 		    	$('.pauseMusic_'+exact).show();
 			});
 		}
+
 		$scope.questionId = '';
 		$scope.setNextQuestion = function(nextQuestion,type){
 			
@@ -161,14 +165,18 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 		    });
 		}
 	    //end here
+        //Question Conditions start here ###################################################
 	    var conditionsArray = [];
         try{
             window.field_conditions = JSON.parse(SurveyData[QuestionIndex].field_conditions);
             var fieldCondIndex = 0;
+            console.log(field_conditions);
             if(field_conditions.length != 0 && field_conditions[fieldCondIndex].condition_operator !== undefined && field_conditions[fieldCondIndex].condition_value !== undefined){
                 checkFieldConditions(fieldCondIndex);
                 function checkFieldConditions(fieldCondIndex){
+
                     if(field_conditions[fieldCondIndex] !== undefined){
+                        
                         var condition_question_id = parseInt(field_conditions[fieldCondIndex].condition_column);
                         var conditioned_question_key = '';
                         $.each(SurveyData, function(datakey, datavalue){
@@ -177,15 +185,37 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                                 return false;
                             }
                         });
+
                         var conditionQuery = 'SELECT '+conditioned_question_key+' FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
                         var rec_id = localStorageService.get('record_id');
                         dbservice.runQuery(conditionQuery,[rec_id],function(res){
                             var cond_operator = field_conditions[fieldCondIndex].condition_operator;
                             var cond_value = field_conditions[fieldCondIndex].condition_value;
-                            if(eval(res.rows.item(0)[conditioned_question_key]+' '+cond_operator+' '+cond_value)){
-                                conditionsArray.push('true');
+                            
+                            if($.inArray(cond_operator,['has','have']) !== -1){
+                                var existingAnswerArray = JSON.parse(res.rows.item(0)[conditioned_question_key]);
+                                if(existingAnswerArray[cond_value] !== undefined && existingAnswerArray[cond_value] == true){
+                                    conditionsArray.push('true');
+                                }else{
+                                    $ionicHistory.nextViewOptions({
+                                        disableAnimate: true
+                                    });
+                                    if((SurveyData[QuestionIndex]['question_key'] == 'SID2_GID8_QID84' || SurveyData[QuestionIndex]['question_key'] == 'SID1_GID1_QID281') && fieldCondIndex == 1){
+                                        conditionsArray.push('true');
+                                    }else{
+                                        $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1});
+                                    }
+                                }
+
                             }else{
-                                $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1});
+                                if(eval(res.rows.item(0)[conditioned_question_key]+' '+cond_operator+' '+cond_value)){
+                                    conditionsArray.push('true');
+                                }else{
+                                    $ionicHistory.nextViewOptions({
+                                        disableAnimate: true
+                                    });
+                                    $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1});
+                                }
                             }
                             fieldCondIndex++;
                             checkFieldConditions(fieldCondIndex);
@@ -200,7 +230,8 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
             console.log(e);
             // console.log('No conditions found');
         }
-        
+        //Question conditions ends here ############################################################
+
 	    var QuestType  =  SurveyData[QuestionIndex].question_type;
 	    var DrawHTML = {
 	    				  'QuestionText': SurveyData[QuestionIndex].question_text, 
@@ -312,9 +343,29 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
 		/*####################################################################################*/
 	});
+    $scope.showHideQuestion = true;
+    $scope.$parent.checkboxAnswer = {};
+    $scope.checkUnkown = function(value){
+        if(value == 98 || value == '98'){
+            var checkBoxObjectArray = $scope.$parent.checkboxAnswer;
+            if(checkBoxObjectArray[98] !== undefined && checkBoxObjectArray[98] != false){
+                $scope.$parent.checkboxAnswer = {};
+                $scope.$parent.checkboxAnswer[98] = true;
+            }
+        }else{
+            try{
+                $scope.$parent.checkboxAnswer[98] = false;
+            }catch(e){
+
+            }
+        }
+        console.log($scope.$parent.checkboxAnswer);
+    }
 })
 
-.controller('nextQuest', function($scope, $rootScope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, dbservice, $cordovaDevice){
+.controller('nextQuest', function($scope, $rootScope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, dbservice, $cordovaDevice, $ionicHistory){
+
+
 
 	$scope.QuestNext = function(nextQuestion){
 
@@ -363,7 +414,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 							return false;
 						}
 					}
-					goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice);
+					goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory);
 				}
 			}else{
 				if(SurveyData[QuestionIndex].pattern != '' && SurveyData[QuestionIndex].pattern != null){
@@ -372,7 +423,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 						return false;
 					}
 				}
-				goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice);
+				goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory);
 			}
 
 			if(SurveyData == undefined){
@@ -385,17 +436,21 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
 
 .controller('prevQuest', function($scope, $rootScope, $ionicLoading, localStorageService, $state, $ionicHistory){
-
+     /*$rootScope.$ionicGoBack = function(backCount) {
+        console.log(lastQuestionIndex);
+    };*/
 	$scope.goToPrev = function(){
-		$ionicHistory.goBack();
+        var lastQuestion = localStorageService.get('lastQuestionIndex');
+        $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(lastQuestion)});
+		// $ionicHistory.goBack();
 		/*var prevDet = localStorageService.get('prevQuestDet');
 		$state.go('app.survey',{'surveyId':prevDet['surveyId'], 'QuestId': prevDet['QuestId']});*/
 	}
 });
 
 
-function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQuestion, dbservice, $cordovaDevice){
-	
+function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory){
+	$scope.showHideQuestion = false;
 	StoreAnswer(QuestionIndex,$scope, QuestType, rawData, locS, dbservice, $state, $cordovaDevice);
 	if(nextQuestion != ''){
 		QuestionIndex = nextQuestion;
@@ -403,11 +458,10 @@ function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQ
 	}else{
 		var $next = parseInt(QuestionIndex) + 1;
 	}
-	/*var prevQuest = {};
-	prevQuest['surveyId'] = $state.params.surveyId;
-	prevQuest['QuestId'] = $state.params.QuestId;
-	locS.set('prevQuestDet',prevQuest);*/
-	$state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': $next});
+    locS.set('lastQuestionIndex',QuestionIndex);
+    $ionicHistory.clearHistory();
+    $ionicHistory.clearCache();
+	$state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': $next},{replace: true});
 }
 
 function checkbox(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce){
@@ -946,19 +1000,27 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 
 		case'radio':
 			answer_of_current_question = $scope.radioAnswer.value;
+            locS.set('submit_section',$scope.radioAnswer.value);
 		break;
 
 		case'checkbox':
 			var checkBoxObject = {};
 			angular.forEach($scope.$parent.checkboxOptions, function(val, key){
 				if(val.option_value != ''){
-					checkBoxObject[val.option_value] = false;
+                    
+                    checkBoxObject[val.option_value] = false
+                   
 				}
 			});
 
 			angular.forEach($scope.$parent.checkboxAnswer, function(val,key){
-				checkBoxObject[key] = true;
+                if(key != 98 || key != '98'){
+                    checkBoxObject[key] = true;
+                }else{
+                    checkBoxObject[key] = val;
+                }
 			});
+            console.log(checkBoxObject);
 			answer_of_current_question = JSON.stringify(checkBoxObject);
 		break;
 
@@ -1438,7 +1500,7 @@ function checkConditions(conditions, rawData, localStorageService){
 
 }
 
-function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeolocation, dbservice){
+function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeolocation, dbservice, $scope){
 	window.surveyId = $state.params.surveyId;
 	window.groupId = $state.params.groupId;
 	var getGroupsData = 'SELECT * FROM survey_sections WHERE survey_id = ?';
@@ -1456,11 +1518,7 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 		return value.survey_id == $state.params.surveyId;
 	});*/
 
-	$ionicLoading.show({
-      template: 'Section completed successfully!',
-      noBackdrop: false,
-      duration: 2000
-    });
+	
 	var Query = 'SELECT completed_groups from survey_result_'+$state.params.surveyId+' WHERE id = ?';
 	var surveyStatus = [];
 	dbservice.runQuery(Query,[record_id],function(res) {
@@ -1469,38 +1527,53 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 
 			var completedGroup = JSON.parse(res.rows.item(0).completed_groups);
 			completedGroup.push(parseInt(window.groupId));
+            var submit_section = localStorageService.get('submit_section');
 			var Query = 'UPDATE survey_result_'+window.surveyId+' SET completed_groups = ?, last_group_id = ? WHERE id = ?';
-			dbservice.runQuery(Query,[JSON.stringify(completedGroup),'',record_id],function(res) {
-				localStorageService.set('completedGroups',completedGroup);
-				angular.forEach(currentSurveyGroups, function(group, key){
-					if($.inArray(group.group_id, completedGroup) != -1){
-		    			surveyStatus.push('completed');
-		    		}else{
-		    			surveyStatus.push('incomplete');
-		    		}
-				});
-				if($.inArray('incomplete', surveyStatus) != -1){
-					surveyStatus = 'incomplete';
-				}else{
-					surveyStatus = 'completed';
-				}
-				if(surveyStatus == 'completed'){
-					var Query = 'UPDATE survey_result_'+window.surveyId+' SET survey_status = ?, last_group_id = ? WHERE id = ?';
-					dbservice.runQuery(Query,[surveyStatus,'',record_id],function(res) {
-						$state.go('app.surveyGroup',{id: window.surveyId});
-	                  	console.log("survey completed ");
-	                }, function (err) {
-	                  console.log(err);
-	                });
-	                console.log(surveyStatus);
-	              	$state.go('app.success',{},{location:'replace'});
-				}else{
-					$state.go('app.surveyGroup',{id: $state.params.surveyId});
-				}
-              console.log("group updated");
-            }, function (err) {
-              console.log(err);
-            });
+            if(submit_section == 'yes' || submit_section != 'no'){
+                dbservice.runQuery(Query,[JSON.stringify(completedGroup),'',record_id],function(res) {
+                    localStorageService.set('completedGroups',completedGroup);
+                    angular.forEach(currentSurveyGroups, function(group, key){
+                        if($.inArray(group.group_id, completedGroup) != -1){
+                            surveyStatus.push('completed');
+                        }else{
+                            surveyStatus.push('incomplete');
+                        }
+                    });
+                    if($.inArray('incomplete', surveyStatus) != -1){
+                        surveyStatus = 'incomplete';
+                    }else{
+                        surveyStatus = 'completed';
+                    }
+                    if(surveyStatus == 'completed'){
+                        var Query = 'UPDATE survey_result_'+window.surveyId+' SET survey_status = ?, last_group_id = ? WHERE id = ?';
+                        dbservice.runQuery(Query,[surveyStatus,'',record_id],function(res) {
+                            $state.go('app.surveyGroup',{id: window.surveyId});
+                            console.log("survey completed ");
+                        }, function (err) {
+                          console.log(err);
+                        });
+                        console.log(surveyStatus);
+                        $state.go('app.success',{},{location:'replace'});
+                    }else{
+                        $ionicLoading.show({
+                          template: $scope.section_submitted_text,
+                          noBackdrop: false,
+                          duration: 2000
+                        });
+                        $state.go('app.surveyGroup',{id: $state.params.surveyId});
+                    }
+                  console.log("group updated");
+                }, function (err) {
+                  console.log(err);
+                });
+            }else{
+                $ionicLoading.show({
+                  template: $scope.section_discarded_text,
+                  noBackdrop: false,
+                  duration: 2000
+                });
+                $state.go('app.surveyGroup',{id: $state.params.surveyId});
+            }
 
 		}else{
 			var completedGroup = [];
@@ -1518,18 +1591,34 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 			}else{
 				surveyStatus = 'completed';
 			}
-			var Query = 'UPDATE survey_result_'+ window.surveyId +' SET completed_groups = ?, last_group_id = ?, survey_status = ? WHERE id = ?';
-			dbservice.runQuery(Query,[JSON.stringify(completedGroup),'',surveyStatus,record_id],function(res) {
-				localStorageService.set('completedGroups',completedGroup);
-				$state.go('app.surveyGroup',{id: $state.params.surveyId});
-              	console.log("group updated");
-              	console.log(surveyStatus);
-              	if(surveyStatus == 'completed'){
-              		$state.go('app.success',{},{location:'replace'});
-              	}
-            }, function (err) {
-              console.log(err);
-            });
+            var submit_section = localStorageService.get('submit_section');
+            if(submit_section == 'yes' || submit_section != 'no'){
+    			var Query = 'UPDATE survey_result_'+ window.surveyId +' SET completed_groups = ?, last_group_id = ?, survey_status = ? WHERE id = ?';
+    			dbservice.runQuery(Query,[JSON.stringify(completedGroup),'',surveyStatus,record_id],function(res) {
+    				localStorageService.set('completedGroups',completedGroup);
+                    $ionicLoading.show({
+                      template: $scope.section_submitted_text,
+                      noBackdrop: false,
+                      duration: 2000
+                    });
+    				$state.go('app.surveyGroup',{id: $state.params.surveyId});
+                  	console.log("group updated");
+                  	console.log(surveyStatus);
+                  	if(surveyStatus == 'completed'){
+                  		$state.go('app.success',{},{location:'replace'});
+                  	}
+                }, function (err) {
+                  console.log(err);
+                });
+
+            }else{
+                $ionicLoading.show({
+                  template: $scope.section_discarded_text,
+                  noBackdrop: false,
+                  duration: 2000
+                });
+                $state.go('app.surveyGroup',{id: $state.params.surveyId});
+            }
 		}
     }, function (err) {
       console.log(err);

@@ -47,13 +47,79 @@
     <script src="js/services.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/settings.js"></script>
+    <script src="lib/jquery-ui/jquery-ui.js"></script>
+    <script src="lib/jquery-ui/jquery.ui.touch-punch.js"></script>
     <script type="text/javascript">
         $.validate();
     </script>
   </head>
     
   <body ng-app="smaart">
-
     <ion-nav-view></ion-nav-view>
+    
+    <style>
+        .console-log-div {
+            font-family: monospace;
+            margin-top: 20px;
+            margin-left: 10px;
+            margin-right: 10px;
+            white-space: pre;
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 99999;
+            bottom: 10px;
+            right: 0;
+            left: 0;
+            overflow-y: auto;
+            overflow-x: scroll;
+            max-height: 100px;
+            background-color: #000;
+            color: #FFF;
+            max-width: 300px;
+            display: none;
+        }
+      
+        .console-log-div legend{
+            display: none;
+        }
+        .move-icon{
+            top: 0;
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+            color: #FFF;
+            margin-left: 1%;
+            margin-top: 1%;
+        }
+        .trash-icon{
+            top: 0;
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+            color: #FFF;
+            margin-left: 10%;
+            margin-top: 1%;
+        }
+        #console-log-text{
+            margin-top: -19% !important;
+        }
+    </style>
+
+    <div id="console-log-div">
+        <a href="javascript:;" class="move-icon"><i class="ion-arrow-move"></i></a>
+        <a href="javascript:;" class="trash-icon"><i class="ion-trash-a"></i></a>
+    </div>
   </body>
+  <!-- <script src="lib/console-log-div/console-log-div.js"></script> -->
+  
+  <script type="text/javascript">
+      $('.console-log-div').draggable({
+        handle: '.move-icon'
+      });
+      $('.trash-icon').click(function(){
+            $(this).parents('.console-log-div').find('#console-log-text').html('');
+      });
+  </script>
 </html>

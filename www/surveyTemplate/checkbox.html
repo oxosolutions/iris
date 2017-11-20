@@ -1,5 +1,5 @@
 <style type="text/css">
-	.ng-binding .ng-valid{
+/*	.ng-binding .ng-valid{
 		margin-right:5px;
 	}
 	.answer_row .col ul li{
@@ -9,18 +9,103 @@
 	}
 	.checkbox input:before, .checkbox-icon:before{
 		border-radius: 0px !important;
-	}
+	}*/
+	 input[type=checkbox],
+    input[type=radio] {
+      display: inline-block;
+      margin: 0;
+      padding: 0!important;
+      outline: 0;
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+      line-height: 0;
+      color: #555;
+      background-color: #fff;
+      border: 1px solid #b4b9be;
+      clear: none;
+      cursor: pointer;
+      text-align: center;
+      vertical-align: middle;
+      -webkit-appearance: none;
+      -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+      -moz-transition: all .2s ease-in-out;
+      -webkit-transition: all .2s ease-in-out;
+      transition: all .2s ease-in-out
+    }
+    input[type=radio] {
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      border-radius: 50%
+    }
+    input[type=radio]:checked {
+      background-color: #0073aa;
+      border: 1px solid #0073aa
+    }
+    input[type=radio]:before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      margin: 10px;
+      opacity: 0;
+      display: block;
+      background-color: rgba(255,255,255,.8);
+      -moz-border-radius: 50%;
+      -webkit-border-radius: 50%;
+      border-radius: 50%;
+      -moz-transition: all .2s ease-in-out;
+      -webkit-transition: all .2s ease-in-out;
+      transition: all .2s ease-in-out
+    }
+    input[type=radio]:checked:before {
+      opacity: 1;
+      width: 8px;
+      height: 8px;
+      margin: 7px;
+      display: block
+    }
+    input[type=checkbox]:checked {
+      background-color: #0073aa;
+      border: 1px solid #0073aa
+    }
+    input[type=checkbox]:before {
+      content: "";
+      opacity: 0;
+      width: 8px;
+      height: 14px;
+      margin: 2px 0 0 7px;
+      display: block;
+      border-bottom: 2px solid #fff;
+      border-right: 2px solid #fff;
+      -moz-transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      transform: rotate(45deg);
+      -moz-transition: all .2s ease-in-out;
+      -webkit-transition: all .2s ease-in-out;
+      transition: all .2s ease-in-out
+    }
+    input[type=checkbox]:checked:before {
+      opacity: 1
+    }
+    
+
+
 </style>
 <div class="row answer_row">
 	<div class="col">
-		<ul>
-			<label ng-repeat="opt in $parent.checkboxOptions">
+		
+			<!-- <label ng-repeat="opt in $parent.checkboxOptions">
 				<li>
 					<h4>
-						<label><ion-checkbox name="checkbox" ng-model="$parent.$parent.checkboxAnswer[opt.option_value]" >{{opt.option_text}}</ion-checkbox>
+						<label><ion-checkbox name="checkbox" ng-model="$parent.$parent.checkboxAnswer[opt.option_value]" ng-click="checkUnkown(opt.option_value)" >{{opt.option_text}}</ion-checkbox>
 					</h4>
 				</li>
-			</label>
-		</ul>
+			</label> -->
+			<div  ng-repeat="opt in $parent.checkboxOptions" style="border-bottom: 1px solid #e8e8e8 ">
+				<label style="display: block;padding: 10px 0px"><input style="margin-right: 10px" type="checkbox" name="checkbox" ng-model="$parent.$parent.checkboxAnswer[opt.option_value]" ng-click="checkUnkown(opt.option_value)"  >{{opt.option_text}}</label>	
+			</div>
+			
+		
 	</div>
 </div>

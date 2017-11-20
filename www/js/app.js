@@ -164,6 +164,7 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
 
   .state('app.survey', {
       url: '/survey/:surveyId/:groupId/:QuestId',
+      cache: true,
       views: {
         'menuContent': {
           templateUrl: 'templates/survey.html'

@@ -358,7 +358,7 @@ angular.module('smaart.controllers', ['ngCordova'])
 	                    duration: 1000
 	                  });
 	                  $state.go('login');
-                  },20000);
+                  },35000);
                 }
                 
             });

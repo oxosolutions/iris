@@ -54,17 +54,17 @@ angular.module('smaart.settingsCTRL', ['ngCordova'])
             }else{
                 var query = 'SELECT * FROM settings WHERE key = ?';
                 dbservice.runQuery(query,['survey_update_date'],function(res){
-                    // if(ApiRes.data.settings.survey_update_date > res.rows.item(0).value){
-                    if(ApiRes.data.settings.survey_update_date){
+                    if(ApiRes.data.settings.survey_update_date > res.rows.item(0).value){
+                    // if(ApiRes.data.settings.survey_update_date){
                         $ionicLoading.hide();
                         var confirmPopup = $ionicPopup.confirm({
-                            title: 'Update Available version: '+ApiRes.data.settings.survey_update_date,
+                            title: 'Update Available version: <br/>'+ApiRes.data.settings.survey_update_date,
                             template: 'Do you want to update the survyes?',
                             cancelText: 'No',
                             okText: 'Update'
                         });
                         confirmPopup.then(function(res){
-                            console.log(res);
+                            $state.go('app.reactivate');
                         });
                     }else{
                         $ionicLoading.hide();

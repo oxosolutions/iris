@@ -38,6 +38,8 @@ angular.module('smaart.dashboard', ['ngCordova'])
         $scope.sidenav_header_text = settings['sidenav_header_text'];
         $scope.about_page_content = settings['about_page_content'];
         $scope.help_page_content = settings['help_page_content'];
+        $scope.section_submitted_text = settings['section_submitted_text'];
+        $scope.section_discarded_text = settings['section_discarded_text'];
         $scope.page = {
             title: settings['android_application_title']
         }
