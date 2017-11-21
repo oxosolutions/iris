@@ -257,6 +257,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 		    				}
 		    			}
 		    			//localStorageService.set('uniqueSerial',null);
+                        localStorageService.set('filled_questions',null);
 	    				$ionicHistory.clearCache().then(function(){
 		    				$state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
 		    			});
@@ -273,6 +274,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	    				}
     				}
     				//localStorageService.set('uniqueSerial',null);
+                    localStorageService.set('filled_questions',null);
     				$ionicHistory.clearCache().then(function(){
 	    				$state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
 	    			});

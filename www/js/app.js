@@ -6,7 +6,7 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
   $ionicPlatform.ready(function() {
     if (window.cordova) {
         window.db = $cordovaSQLite.openDB({ name: "smaart.db", iosDatabaseLocation: 'default' }); //device
-      console.log("Android");
+        console.log("Android");
     }else{
         window.db = window.openDatabase("smaart.db", '1', 'my', 1024 * 1024 * 100); // browser
         //console.log("browser");
@@ -164,7 +164,7 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
 
   .state('app.survey', {
       url: '/survey/:surveyId/:groupId/:QuestId',
-      cache: true,
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: 'templates/survey.html'

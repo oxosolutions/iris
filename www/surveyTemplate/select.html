@@ -15,7 +15,7 @@
 		
 		<label class="item item-input item-select">
 		    <div class="input-label drop">
-		      Select any one
+		      Please Select
 		    </div>
 		    <select name="selectAnswer" class="app_select" ng-model="selectAnswer.value" class="selectAnswer" ng-change="setNextQuestion(option.option_next,'select')">
 		    	<option ng-repeat="option in $parent.selectOptions" next="{{option.option_next}}" value="{{option.option_value}}">{{option.option_text}}</option>

@@ -2,7 +2,7 @@
 
 angular.module('smaart.controllers', ['ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, localStorageService, $ionicLoading) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, localStorageService, $ionicLoading, dbservice, exportS, $ionicPlatform) {
 
     $scope.logout = function(){
 
@@ -29,8 +29,118 @@ angular.module('smaart.controllers', ['ngCordova'])
         });
     }
 
+    setExportInterval();
+    var exportInterval;
+    function setExportInterval(){
+        exportInterval = setInterval(startInterval,1200000);
+    }
+    function startInterval(){
+        exportSurveyRecords();
+    }
+
+    function exportSurveyRecords(){
+        clearInterval(exportInterval);
+        var getAllSurveys = 'SELECT * FROM survey_data';
+        dbservice.runQuery(getAllSurveys, [],(res)=>{
+            var surveyCount = 0;
+            exportOneByOne(surveyCount,res);
+            function exportOneByOne(surveyCount,res){
+                if(surveyCount < res.rows.length){
+                    var getSurveyResults = 'SELECT * FROM survey_result_'+res.rows.item(surveyCount)['survey_id'];
+                    dbservice.runQuery(getSurveyResults,[],(response)=>{
+                        if(response.rows.length != 0){
+                            var row = {};
+                            for(var i=0; i<response.rows.length; i++) {
+                                 row[i] = res.rows.item(i);
+                            }
+                            var formData = new FormData;
+                            formData.append('survey_data',JSON.stringify(row));
+                            formData.append('survey_id',res.rows.item(surveyCount)['survey_id']);
+                            formData.append('activation_code',localStorageService.get('ActivationCode'));
+                            formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
+                            formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
+                            try{
+                                cordova.getAppVersion(function(version) {
+                                    formData.append('app_version',version);
+                                });
+                            }catch(e){
+                                formData.append('app_version','Unable to get app version');
+                            }
+                            $ionicPlatform.ready(function() {
+                                if(window.Connection) {
+                                    if(navigator.connection.type != Connection.NONE) {
+                                        exportS.exportSurvey(formData).then((result)=>{
+                                            console.log('Called Api');
+                                            surveyCount++;
+                                            exportOneByOne(surveyCount,res);
+                                        });
+                                    }else{
+                                        console.log('Trying to export, but internet not available');
+                                    }
+                                }else{
+                                    console.log('Trying to export, but internet not available');
+                                }
+                            });
+                        }else{
+                            surveyCount++;
+                            exportOneByOne(surveyCount,res);
+                        }
+                    },(error)=>{
+                        console.log(error);
+                    });
+                }else{
+                    console.log('No Records Exists');
+                    setExportInterval();
+                }
+            }
+        },(error)=>{
+            console.log(error)
+        });
+    }
+
+  
+
     
-}).controller('LoginCtrl', function($scope, $ionicLoading, localStorageService, $state, appData, $ionicNavBarDelegate, dbservice){
+}).controller('LoginCtrl', function($scope, $ionicLoading, localStorageService, $state, appData, $ionicNavBarDelegate, dbservice, appActivation, $ionicPlatform){
+    // Fetch User on Login Page
+    $ionicPlatform.ready(function() {
+        if(window.Connection) {
+            if(navigator.connection.type != Connection.NONE) {
+                if(localStorageService.get('ActivationCode') != null && localStorageService.get('ActivationCode') != ''){
+                    var formData = new FormData;
+                    formData.append('activation_key',localStorageService.get('ActivationCode'));
+                    $ionicLoading.show({
+                      template: 'Loading app data..',
+                      noBackdrop: false
+                    });
+                    appActivation.appActivate(formData).then(function(res){
+                        $ionicLoading.show({
+                          template: 'Loading database..',
+                          noBackdrop: false
+                        });
+                        var countIndex = 0;
+                        var updateUserQuery = 'UPDATE users SET app_password = ?, email = ?, name = ?, role = ?, updated_at = ?, organization_id = ? WHERE email = ?';
+                        updateUserDetails(countIndex);
+                        function updateUserDetails(countIndex){
+                            var user = res.data.users[countIndex];
+                            dbservice.runQuery(updateUserQuery,[user.app_password, user.email, user.name, JSON.stringify(user.user_roles), user.updated_at, user.org_id, user.email], (result)=>{
+                                console.log(result);
+                                countIndex++;
+                                if(countIndex == res.data.users.length){
+                                    $ionicLoading.hide();
+                                }else{
+                                    updateUserDetails(countIndex);
+                                }
+                            },(error)=>{
+                                console.log(error);
+                            });
+                        }
+                    });     
+                }
+            }
+        }
+    });
+    // End here
 	var getSettings = 'SELECT * FROM settings';
     dbservice.runQuery(getSettings,[], function(res){
       	var row = {};
@@ -141,6 +251,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                   noBackdrop: false
                 });
             appActivation.appActivate(formData).then(function(res){
+
                 if(res.data.status == 'error'){
                   $ionicLoading.show({
                     template: 'Invalid Activation Code',
@@ -361,6 +472,13 @@ angular.module('smaart.controllers', ['ngCordova'])
                   },35000);
                 }
                 
+            },(error) => {
+                $ionicLoading.hide();
+                $ionicLoading.show({
+                    template: 'Request timeout, check your internet connection',
+                    noBackdrop: false,
+                    duration: 1000
+                });
             });
       	}
       	

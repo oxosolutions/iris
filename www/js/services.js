@@ -95,8 +95,8 @@ angular.module('smaart.services', ['ngCordova'])
 						    url: ApiURL+'survey_api',
 						    method: 'POST',
 						    data: PostData,
-						    
-						})
+						    timeout: 5000
+						});
 		}
 
 
