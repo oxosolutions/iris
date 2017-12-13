@@ -143,6 +143,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
   		localStorageService.set('RuningSurvey',null);
   		localStorageService.set('record_id',null);
   		localStorageService.set('uniqueSerial',null);
+        localStorageService.set('discarded_groups',null);
   		window.currentTimeStamp = null;
   		window.surveyStatus = 'new';
   		$state.go('app.surveyGroup',{id:surveyid});
@@ -297,6 +298,17 @@ angular.module('smaart.dashboard', ['ngCordova'])
     		}
     		
     	}
+
+        $scope.checkGroupDiscarded = function(groupID){
+            if(localStorageService.get('discarded_groups') != undefined){
+                var discarded_groups = localStorageService.get('discarded_groups');
+                if($.inArray(groupID, discarded_groups) !== -1){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
 }).controller('about',function($scope){
 
 	//about

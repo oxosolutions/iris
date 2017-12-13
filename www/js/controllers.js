@@ -28,7 +28,7 @@ angular.module('smaart.controllers', ['ngCordova'])
           duration: 1000
         });
     }
-
+    // exportSurveyRecords();
     setExportInterval();
     var exportInterval;
     function setExportInterval(){
@@ -41,23 +41,22 @@ angular.module('smaart.controllers', ['ngCordova'])
     function exportSurveyRecords(){
         clearInterval(exportInterval);
         var getAllSurveys = 'SELECT * FROM survey_data';
-        dbservice.runQuery(getAllSurveys, [],(res)=>{
+        dbservice.runQuery(getAllSurveys, [], function(res){
             var surveyCount = 0;
             exportOneByOne(surveyCount,res);
             function exportOneByOne(surveyCount,res){
                 if(surveyCount < res.rows.length){
                     var getSurveyResults = 'SELECT * FROM survey_result_'+res.rows.item(surveyCount)['survey_id'];
-                    dbservice.runQuery(getSurveyResults,[],(response)=>{
+                    dbservice.runQuery(getSurveyResults,[],function(response){
                         if(response.rows.length != 0){
                             var row = {};
                             for(var i=0; i<response.rows.length; i++) {
-                                 row[i] = res.rows.item(i);
+                                 row[i] = response.rows.item(i);
                             }
                             var formData = new FormData;
                             formData.append('survey_data',JSON.stringify(row));
                             formData.append('survey_id',res.rows.item(surveyCount)['survey_id']);
                             formData.append('activation_code',localStorageService.get('ActivationCode'));
-                            formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
                             formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
                             try{
                                 cordova.getAppVersion(function(version) {
@@ -69,7 +68,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                             $ionicPlatform.ready(function() {
                                 if(window.Connection) {
                                     if(navigator.connection.type != Connection.NONE) {
-                                        exportS.exportSurvey(formData).then((result)=>{
+                                        exportS.exportSurvey(formData).then(function(result){
                                             console.log('Called Api');
                                             surveyCount++;
                                             exportOneByOne(surveyCount,res);
@@ -85,7 +84,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                             surveyCount++;
                             exportOneByOne(surveyCount,res);
                         }
-                    },(error)=>{
+                    },function(error){
                         console.log(error);
                     });
                 }else{
@@ -93,7 +92,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                     setExportInterval();
                 }
             }
-        },(error)=>{
+        },function(error){
             console.log(error)
         });
     }
@@ -101,19 +100,21 @@ angular.module('smaart.controllers', ['ngCordova'])
   
 
     
-}).controller('LoginCtrl', function($scope, $ionicLoading, localStorageService, $state, appData, $ionicNavBarDelegate, dbservice, appActivation, $ionicPlatform){
+}).controller('LoginCtrl', function($scope, $ionicLoading, localStorageService, $state, appData, $ionicNavBarDelegate, dbservice, appActivation, $ionicPlatform, users){
     // Fetch User on Login Page
     $ionicPlatform.ready(function() {
         if(window.Connection) {
             if(navigator.connection.type != Connection.NONE) {
                 if(localStorageService.get('ActivationCode') != null && localStorageService.get('ActivationCode') != ''){
                     var formData = new FormData;
-                    formData.append('activation_key',localStorageService.get('ActivationCode'));
+                    formData.append('activation_code',localStorageService.get('ActivationCode'));
+                    formData.append('_token','d1a2r3l4i5c6o7x8o9s10o11l12o13u14t15i16o17n18s');
                     $ionicLoading.show({
                       template: 'Loading app data..',
                       noBackdrop: false
                     });
-                    appActivation.appActivate(formData).then(function(res){
+                    users.getUsers(formData).then(function(res){
+                        
                         $ionicLoading.show({
                           template: 'Loading database..',
                           noBackdrop: false
@@ -123,7 +124,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                         updateUserDetails(countIndex);
                         function updateUserDetails(countIndex){
                             var user = res.data.users[countIndex];
-                            dbservice.runQuery(updateUserQuery,[user.app_password, user.email, user.name, JSON.stringify(user.user_roles), user.updated_at, user.org_id, user.email], (result)=>{
+                            dbservice.runQuery(updateUserQuery,[user.app_password, user.email, user.name, JSON.stringify(user.user_roles), user.updated_at, user.org_id, user.email], function(result){
                                 console.log(result);
                                 countIndex++;
                                 if(countIndex == res.data.users.length){
@@ -131,10 +132,12 @@ angular.module('smaart.controllers', ['ngCordova'])
                                 }else{
                                     updateUserDetails(countIndex);
                                 }
-                            },(error)=>{
+                            },function(error){
                                 console.log(error);
                             });
                         }
+                    },function(error){
+                        console.log(error);
                     });     
                 }
             }
@@ -204,7 +207,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                   for(var i=0; i<res.rows.length; i++) {
                       row[i] = res.rows.item(i)
                   } 
-                  localStorageService.set('userId',row[0].id);
+                  localStorageService.set('userId',row[0].user_id);
                   localStorageService.set('userName',row[0].name);
                   localStorageService.set('userRole',row[0].user_role);
                   $ionicLoading.hide();
@@ -217,6 +220,8 @@ angular.module('smaart.controllers', ['ngCordova'])
                     duration: 2000
                   });
                 }
+            }, function(error){
+                console.log(error);
             });            
         }else{
 
@@ -251,7 +256,6 @@ angular.module('smaart.controllers', ['ngCordova'])
                   noBackdrop: false
                 });
             appActivation.appActivate(formData).then(function(res){
-
                 if(res.data.status == 'error'){
                   $ionicLoading.show({
                     template: 'Invalid Activation Code',
@@ -337,12 +341,12 @@ angular.module('smaart.controllers', ['ngCordova'])
 					//create survey table results end
 					
 					//create user table if not exists
-					var createUserTable = 'CREATE TABLE IF NOT EXISTS users(id integer primary key, name text, email text, api_token text, created_at text, updated_at text, role text, organization_id integer, approved integer, app_password text)';
+					var createUserTable = 'CREATE TABLE IF NOT EXISTS users(id integer primary key, user_id integer, name text, email text, api_token text, created_at text, updated_at text, role text, organization_id integer, approved integer, app_password text)';
 					dbservice.runQuery(createUserTable,[],function(userResp){
 						angular.forEach(users, function(v,k){
-							var insertUser = 'INSERT INTO users(name, email, api_token, created_at, updated_at, role, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?)';
+							var insertUser = 'INSERT INTO users(user_id, name, email, api_token, created_at, updated_at, role, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?,?)';
                                 dbservice.runQuery(insertUser,[
-                                v.name,v.email,v.api_token,v.created_at,v.updated_at,JSON.stringify(v.user_roles),v.org_id,v.approved,v.app_password], function(res){
+                                parseInt(v.id),v.name,v.email,v.api_token,v.created_at,v.updated_at,JSON.stringify(v.user_roles),v.org_id,v.approved,v.app_password], function(res){
 
 								},function(error){
 									console.log(error);
@@ -472,7 +476,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                   },35000);
                 }
                 
-            },(error) => {
+            },function(error){
                 $ionicLoading.hide();
                 $ionicLoading.show({
                     template: 'Request timeout, check your internet connection',

@@ -204,12 +204,12 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 
 			                   //create user table if not exists
-								var createUserTable = 'CREATE TABLE IF NOT EXISTS users(id integer primary key, name text, email text, api_token text, created_at text, updated_at text, role_id integer, organization_id integer, approved integer, app_password text)';
+								var createUserTable = 'CREATE TABLE IF NOT EXISTS users(id integer primary key, name text, email text, api_token text, created_at text, updated_at text, role integer, organization_id integer, approved integer, app_password text)';
 								dbservice.runQuery(createUserTable,[],function(userResp){
 									angular.forEach(users, function(v,k){
-										var insertUser = 'INSERT INTO users(name, email, api_token, created_at, updated_at, role_id, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?)';
+										var insertUser = 'INSERT INTO users(name, email, api_token, created_at, updated_at, role, organization_id, approved, app_password) VALUES(?,?,?,?,?,?,?,?,?)';
 		                                    dbservice.runQuery(insertUser,[
-		                                    v.name,v.email,v.api_token,v.created_at,v.updated_at,v.role_id,v.organization_id,v.approved,v.app_password], function(res){
+		                                    v.name,v.email,v.api_token,v.created_at,v.updated_at,JSON.stringify(v.user_roles),v.org_id,v.approved,v.app_password], function(res){
 
 											},function(error){
 												console.log(error);
@@ -582,6 +582,13 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 						        formData.append('survey_id',$scope.selectedSyncSurvey);
 						        formData.append('activation_code',localStorageService.get('ActivationCode'));
 						        formData.append('lat_long',JSON.stringify({lat: window.lat, long: window.long}));
+                                try{
+                                    cordova.getAppVersion(function(version) {
+                                        formData.append('app_version',version);
+                                    });
+                                }catch(e){
+                                    formData.append('app_version','Unable to get app version');
+                                }
 						        exportS.exportSurvey(formData).then(function(result){
 						        	console.log(result);
                                     $ionicLoading.hide();

@@ -87,6 +87,24 @@ angular.module('smaart.services', ['ngCordova'])
 
 })
 
+.factory('users', function($http, $ionicLoading, localStorageService, $q, ApiURL){
+
+    return {
+
+        getUsers: function(PostData){
+               // console.log(PostData);
+               $http.defaults.headers.post['Content-Type'] = undefined;
+               return $http({
+                            url: ApiURL+'organization/users',
+                            method: 'POST',
+                            data: PostData,
+                            timeout: 5000
+                        })
+        },
+    }
+
+})
+
 .factory('appActivation', function($http, $ionicLoading, localStorageService, $q, ApiURL){
 	return {
 		appActivate: function(PostData){

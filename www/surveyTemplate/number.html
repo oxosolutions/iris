@@ -4,7 +4,8 @@
 		<!-- <div class="ans_head">
 			<p>You Answer:</p>
 		</div> -->
-		<input type="number" name="number" value="" ng-model="numberAnswer.value" class="numberAnswer" ng-pattern="onlyNumbers" />
+        <input type="number" name="number" value="" class="numberAnswer" ng-pattern="onlyNumbers" ng-if="repeater" />
+		<input type="number" name="number" value="" ng-model="numberAnswer.value" class="numberAnswer" ng-pattern="onlyNumbers" ng-if="!repeater" />
 		<div class="ans_footer">
 			<!-- <p>Maxime quis.</p> -->
 		</div>

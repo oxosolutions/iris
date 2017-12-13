@@ -42,6 +42,7 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
 
 .constant('AppConfig', {'QuestionOrder': 'false'})
 .constant('ApiURL', 'http://iris.fhts.ac.in/api/')
+// .constant('ApiURL', 'http://admin.scolm.com/api/')
 
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider

@@ -14,15 +14,23 @@
   			    margin-bottom: 0
   		}
   	</style>
-  
+    <div class="row" ng-if="quest_type === 'repeater'">
+        <div class="col">
+            <div class="textBoxSurvey" style="margin-bottom: 2%;">
+                <div class="row">
+                    <div class="col question_div">
+                        <h4 class="para">How many vehicles involved in crash?</h4>
+                        <input type="number" name="number_of_vehicle" value="" class="numberAnswer" ng-pattern="onlyNumbers" style="width: 95%; margin-left:2%;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 	<div class="row" ng-show="{{showHideQuestion}}">
+
 		<div class="col">
-			 <!-- <div class="row">
-			 				<div class="col timediv" style="padding: 0;">
-			 					<center><h3 style="margin-bottom: 0;"><img src="img/clock.png" style="width: 10%; vertical-align: middle;margin-right: 2%;padding-top: 1%;padding-bottom: 1%;" /><span class="hr">{{hour}}</span>:<span class="min">{{min}}</span>:<span class="sec">{{sec}}</span></h3></center>
-			 				</div>
-			 			</div> -->
- 		<div class="row">
+ 		    <div class="row">
 				<div class="col question_div">
 					<div ng-if="quest_type === undefined">
 						<div class="qus_head">
@@ -36,6 +44,7 @@
 
 						</div>
 					</div>
+
 					<div answers="AnswerHtml" style="padding: 5px 10px;">
 							
 					</div>
@@ -43,7 +52,29 @@
 			</div>
 
 			
-			
+			<div class="row" ng-if="quest_type === 'repeater'">
+                <div class="col">
+                    <div class="textBoxSurvey" style="margin-bottom: 2%;">
+                        <div class="row">
+                            <div class="col question_div">
+                                <h4 class="para">Would you like to submit this section?</h4>
+                                <ul style="margin-left: 3%;">
+                                    <li style="margin-bottom: 3%;">
+                                        <label>
+                                            <input type="radio" value="yes" name="submit_section" /> Yes
+                                        </label>
+                                    </li>
+                                    <li style="margin-bottom: 3%;">
+                                        <label>
+                                            <input type="radio" value="no" name="submit_section" /> No
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 					
 			
 
@@ -68,7 +99,6 @@
 					-->
 				</div>
 			</div>
-			
 		</div>
 	</div>
 

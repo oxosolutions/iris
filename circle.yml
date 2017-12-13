@@ -16,6 +16,8 @@ dependencies:
     - npm install -g ionic cordova
     - echo y | android update sdk --no-ui --all --filter tools,platform-tools,extra-google-m2repository,extra-google-google_play_services,extra-android-support,extra-android-m2repository,android-26
     - echo y | android update sdk --no-ui --all --filter build-tools-26.0.0
+    - echo y | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;26.0.2"
+    ##- echo y | $ANDROID_HOME/tools/bin/sdkmanager --licenses
 
   cache_directories:
     - /usr/local/android-sdk-linux/tools
@@ -23,12 +25,12 @@ dependencies:
 
   post:
     ##- mkdir www
+    - chmod +x hooks/after_prepare/010_add_platform_class.js
     - ionic cordova platform add android
 
 test:
   pre:
     - npm install
-
   override:
     - ionic cordova build android -Y
     - cp -r platforms/android/build/outputs/apk $CIRCLE_ARTIFACTS

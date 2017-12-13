@@ -126,15 +126,11 @@
 	<div class="col">
         <ul>
             <li ng-repeat="opt in $parent.radioOptions">
-                <label><input type="radio" value="{{opt.option_value}}" name="radio" ng-model="radioAnswer.value" ng-click="setNextQuestion(opt.option_next)" /> {{opt.option_text}}</label>
+                <label>
+                    <input type="radio" value="{{opt.option_value}}" name="radio_{{questId}}" ng-if="repeater" ng-click="setNextQuestion(opt.option_next)" />
+                    <input type="radio" value="{{opt.option_value}}" name="radio" ng-model="radioAnswer.value" ng-if="!repeater" ng-click="setNextQuestion(opt.option_next)" /> {{opt.option_text}}
+                </label>
             </li>
         </ul>
-		<!-- <ul>
-			<md-radio-group ng-model='radioAnswer.value'>
-				<li>
-					<md-radio-button ng-repeat="opt in $parent.radioOptions" class="background-options" name="radio"  ng-value="'{{opt.option_value}}'" ng-click="setNextQuestion(opt.option_next)">{{opt.option_text}}</md-radio-button>
-				</li>
-			 </md-radio-group>
-		</ul> -->
 	</div>
 </div>

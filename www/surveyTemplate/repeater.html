@@ -1,21 +1,28 @@
+
 <div class="repeater">
-	<div class="row repeaterRow">
+	<div class="row repeaterRow" style="border-bottom: 6px solid #CCC; margin-bottom: 5%; ">
 		<div class="col question_div">
-			<div ng-repeat="field in fieldsList" class="repeater_field">
+            <div class="row" style="text-align: center;">
+                <div class="col">
+                    <h4><u>#Vehicle <span class="vehicle-count">1</span></u></h4>
+                </div>
+            </div>
+			<div ng-repeat="field in fieldsList" class="repeater_field {{questionkey}}">
 				
 				<div>
 					<h4 class="para"><span>{{field.question_text}}</span> </h4>
 					<span>{{field.question_desc}}</span>
 				</div>
 				<div class="textBoxSurvey" key="{{field.question_key}}">
-					<div ng-include src="templateUrl(field.question_type,field.answers[0])"></div>
+					<div ng-include src="templateUrl(field.question_type,field.answers[0],field)"></div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
-<a href="javascript:;" ng-click="createClone()" class="repeatRow">Add More</a>
+<div class="row" style="  align-items: center;">
+    <a href="javascript:;" ng-click="createClone()" class="repeatRow button blue" style="color: #FFF; margin: 0 auto;">Add information about other vehicle</a>
+</div>
 
 <!-- <div><input type='text' name='textAnswer' ng-model='textAnswer' class='surveyTextBox' disabled /><button class='dateBut button-small ion-android-calendar' ng-click='DatePicker()'></button></div> -->
 

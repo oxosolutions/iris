@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="iris.fhts.ac.in" version="4.3.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="iris.fhts.ac.in" version="4.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>IRIS</name>
     <description>
         Integrated Road Traffic Injuries Surveillance System - INDIA
@@ -22,6 +22,9 @@
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
+    <platform name="windows">
+        <preference name="windows-target-version" value="10.0" />
+    </platform>
     <platform name="android">
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
@@ -61,7 +64,6 @@
     <engine name="android" spec="^6.3.0" />
     <engine name="windows" spec="~4.3.0" />
     <plugin name="cordova-plugin-background-mode" spec="~0.7.2" />
-    <plugin name="cordova-plugin-console" spec="~1.0.3" />
     <plugin name="cordova-plugin-device" spec="~1.1.2" />
     <plugin name="cordova-plugin-splashscreen" spec="~3.2.2" />
     <plugin name="cordova-plugin-statusbar" spec="~2.1.3" />
