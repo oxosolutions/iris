@@ -110,7 +110,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 
 	
 
-	$ionicModal.fromTemplateUrl('suvlist.html', {
+	/*$ionicModal.fromTemplateUrl('suvlist.html', {
 	    scope: $scope,
 	    animation: 'slide-in-up'
 	  }).then(function(modal) {
@@ -121,7 +121,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	  };
 	  $scope.closeModal = function() {
 	    $scope.modal.hide();
-	  };
+	  };*/
 	  // Cleanup the modal when we're done with it!
 	  /*$scope.$on('$destroy', function() {
 	    $scope.modal.remove();

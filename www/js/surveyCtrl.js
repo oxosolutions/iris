@@ -499,6 +499,78 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                         $scope.$parent.textareaAnswer = answ;
                     }
                 break;
+
+                case'repeater':
+                    answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                    if(answ != '' && answ != null){
+                        var answData = JSON.parse(answ);
+                        // console.log(answData);
+                        for(var clone = 1; clone < answData.length; clone++){
+                            var divClone = $('.repeaterRow:last').clone();
+                            $('.repeater').append(divClone);
+                            $('.repeaterRow:last').find('.vehicle-count').html(clone+1);
+                        }
+
+                        var ind = 1;
+                        $.each(answData, function(key,val){
+                            $.each(val, function(cl,v){
+                                var elem = $('.repeaterRow:nth-child('+ind+')');
+                                if(elem.find('div[key='+cl+'] input').attr('type') != 'radio'){
+                                    elem.find('div[key='+cl+'] select, div[key='+cl+'] input').val(v);
+                                }else{
+                                    elem.find('div[key='+cl+'] input[value='+v+']').attr('checked','checked');
+                                }
+                                if(cl == 'SID2_GID9_QID89'){
+                                    if(v == '9'){
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID89').show();
+                                            elem.find('.SID2_GID9_QID295').show();
+                                            elem.find('.SID2_GID9_QID92').show();
+                                        },1500);
+                                    }else if($.inArray(v.toString(),['1','2','3a']) == -1){
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID295').show();
+                                            elem.find('.SID2_GID9_QID92').show();
+                                            elem.find('.SID2_GID9_QID89').hide();
+                                        },1500);
+                                        
+                                    }else{
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID89').hide();
+                                            elem.find('.SID2_GID9_QID295').hide();
+                                            elem.find('.SID2_GID9_QID92').hide();
+                                        },1500);
+                                    }
+                                }
+                                if(cl == 'SID2_GID9_QID90'){
+                                    if(v == '9'){
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID90').show();
+                                        },1500);
+                                    }else{
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID90').hide();
+                                        },1500);
+                                    }
+                                }
+
+                                if(cl == 'SID2_GID9_QID91'){
+                                    if(v == '9'){
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID91').show();
+                                        },1500);
+                                    }else{
+                                        setTimeout(function(){
+                                            elem.find('.SID2_GID9_QID91').hide();
+                                        },1500);
+                                    }
+                                }
+                            });
+                            ind++;
+                        });
+                        $('input[name=number_of_vehicle]').val(ind-1);
+                    }
+                break;
             }
         });
 	});
@@ -797,18 +869,22 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/repeater.html'\"></div>";
     setTimeout(function(){
         $('input[type=radio],input[type=number]').removeAttr('ng-model').removeClass('ng*');
-        $('.SID2_GID9_QID89, .SID2_GID9_QID90, .SID2_GID9_QID91').hide();
+        $('.SID2_GID9_QID89, .SID2_GID9_QID90, .SID2_GID9_QID91, .SID2_GID9_QID92, .SID2_GID9_QID295').hide();
     },1000);
     $('body').on('change','.SID2_GID9_QID93 select', function(){
         var elem = $(this).parents('.repeaterRow');
         if($(this).val() == '9'){
             elem.find('.SID2_GID9_QID89').show();
+            elem.find('.SID2_GID9_QID295').show();
+            elem.find('.SID2_GID9_QID92').show();
         }else if($.inArray($(this).val().toString(),['1','2','3a']) == -1){
-            elem.find('.SID2_GID9_QID91').show();
+            elem.find('.SID2_GID9_QID295').show();
+            elem.find('.SID2_GID9_QID92').show();
             elem.find('.SID2_GID9_QID89').hide();
         }else{
             elem.find('.SID2_GID9_QID89').hide();
-            elem.find('.SID2_GID9_QID91').hide();
+            elem.find('.SID2_GID9_QID295').hide();
+            elem.find('.SID2_GID9_QID92').hide();
         }
     });
     $('body').on('change','.SID2_GID9_QID222 select', function(){
@@ -819,8 +895,16 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
             elem.find('.SID2_GID9_QID90').hide();
          }
     });
+    $('body').on('change','.SID2_GID9_QID226 select', function(){
+        var elem = $(this).parents('.repeaterRow');
+        if($(this).val() == '9'){
+            elem.find('.SID2_GID9_QID91').show();
+         }else{
+            elem.find('.SID2_GID9_QID91').hide();
+         }
+    });
     $scope.repeater = true;
-    console.log($scope.fieldsList);
+    // console.log($scope.fieldsList);
 	$scope.templateUrl = function(type,answers,field){
         
         $scope.selectOptions = answers;
@@ -831,6 +915,7 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
 		return "surveyTemplate/"+type+".html";
 	}
     
+
 	
 	$scope.createClone = function(){
         if($('input[name=number_of_vehicle]').val().trim() != '' && $('input[name=number_of_vehicle]').val().trim() != null){
@@ -919,8 +1004,8 @@ function date(params, ionicDatePicker){
 				        $scope.textAnswer = SelectedDate.getFullYear()+'-'+(SelectedDate.getMonth()+1)+'-'+SelectedDate.getDate();
 				      },
 				      from: new Date(1990, 1, 1), 
-				      // to: new Date(2020, 10, 30), 
-				      inputDate: new Date(), 
+				      to: new Date(),
+				      inputDate: new Date(),
 				      mondayFirst: true,
 				      closeOnSelect: false,
 				      templateType: 'modal'
