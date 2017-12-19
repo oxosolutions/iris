@@ -1,7 +1,6 @@
 'use strict'
 
 angular.module('smaart.surveyCtrl', ['ngCordova'])
-
 .directive('question', function ($compile) {
   return {
     restrict: 'A',
@@ -14,7 +13,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     }
   };
 })
-
 .directive('description', function ($compile) {
   return {
     restrict: 'A',
@@ -27,7 +25,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     }
   };
 })
-
 .directive('answers', function ($compile) {
   return {
     restrict: 'A',
@@ -40,7 +37,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     }
   };
 })
-
 .directive('image', function ($compile) {
   return {
     restrict: 'A',
@@ -53,7 +49,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     }
   };
 })
-
 .controller('surveyLoad', function(dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile, $ionicHistory, $ionicPlatform){
 	var dt = new Date;
 	var startedTime = dt.getFullYear()+''+(dt.getMonth()+1)+''+dt.getDay()+''+dt.getHours()+''+dt.getMinutes()+''+dt.getSeconds()+''+dt.getMilliseconds();
@@ -97,13 +92,11 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 		if($state.params.QuestId.trim() != ''){
 
 			QuestionIndex = $state.params.QuestId;
-			
 		}
 		if(SurveyData[QuestionIndex] == undefined || SurveyData[QuestionIndex] == ''){
 	    	finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeolocation, dbservice, $scope);
 	    	return false;
 	    }
-
 		var my_media = {};
 		$scope.play = function(url, exact){
 			angular.forEach(my_media, function(value, key){
@@ -148,14 +141,11 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 				$scope.questionId = '';
 			}
 		}
-
 		$scope.stop = function(url, exact){
 			my_media[exact].stop();
 			$('.playMusic_'+exact).show();
 		    $('.pauseMusic_'+exact).hide();
 		}
-
-
 
 		$scope.currentQst = parseInt(QuestionIndex)+1; //Set Current Question number in Survey.html
 
