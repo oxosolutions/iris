@@ -516,7 +516,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 
 	$scope.exportSurv = function(){
-		/*if(window.Connection) {
+		if(window.Connection) {
 	      	if(navigator.connection.type == Connection.NONE) {
 	        	$ionicPopup.confirm({
 	          		title: 'No Internet Connection',
@@ -524,7 +524,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 	        	}).then(function(result) {
 	          		
 	        	});
-	      	}else{*/
+	      	}else{
 	      		if($scope.selectedSyncSurvey == undefined || $scope.selectedSyncSurvey == ''){
 	      			$ionicPopup.confirm({
 		          		title: 'Please Select any one survey',
@@ -615,8 +615,8 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 		        }, function (err) {
 		          console.log(err);
 		        });
-	      	/*}
-	    }*/
+	      	}
+	    }
 	}
 })
 .controller('CompletedSurveyListCTLR', function($scope,$rootScope, $ionicLoading, localStorageService, $state, exportS, $ionicPopup, $cordovaDevice, dbservice, $ionicHistory){

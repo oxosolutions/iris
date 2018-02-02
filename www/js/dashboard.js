@@ -177,7 +177,56 @@ angular.module('smaart.dashboard', ['ngCordova'])
     	 $scope.goToSurvey = function() {
 
     }
-}).controller('surveyGroup',function($scope, $ionicLoading, localStorageService, $state, appData, $ionicHistory, $ionicPlatform, dbservice){
+}).controller('surveyGroup',function($scope, $ionicLoading, localStorageService, $state, appData, $ionicHistory, $ionicPlatform, dbservice, $ionicPopup){
+        if(localStorageService.get('runnig_status') == 'started'){
+            var exitPrompt = $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+                if(localStorageService.get('runnig_status') != null){
+                    if(toState.name != 'app.survey'){
+                        event.preventDefault();
+                        var myPopup = $ionicPopup.show({
+                            template: '<input type = "text" ng-model = "stopSurvey" style="color:#000 !important;">',
+                            title: 'Enter Incomplete Survey Name',
+                            subTitle: 'Enter name for your incomplete survey',
+                            scope: $scope,                      
+                            buttons: [
+                            { text: 'Cancel' }, {
+                                text: '<b>Save</b>',
+                                type: 'button-positive',
+                                    onTap: function(e) {
+                                        if (!$scope.$$childTail.stopSurvey) {
+                                        //don't allow the user to close unless he enters model...
+                                            e.preventDefault();
+                                        } else {
+                                        return $scope.$$childTail.stopSurvey;
+                                        }
+                                    }
+                            }
+                            ]
+                        });
+                        myPopup.then(function(res) {
+                            if(res != undefined){
+                            var record_id = localStorageService.get('record_id');
+                            var Query = 'UPDATE survey_result_'+$state.params.id+' SET incomplete_name = ? WHERE id = ?';
+                            dbservice.runQuery(Query,[res, record_id],function(res) {
+                                console.log("name updated");
+                                localStorageService.set('runnig_status',null);
+                                exitPrompt = null;
+                                $state.go(toState.name);
+                            }, function (err) {
+                                console.log(err);
+                            });
+                            }else{
+                            console.log('You clicked cancel');
+                            }
+                        });  
+                    }
+                }else{
+                    $state.go(toState.name);
+                }
+            });
+            $scope.$on('$destroy', exitPrompt)
+        }
+
     	$ionicPlatform.registerBackButtonAction(function (event) {
 		  if($state.current.name=="app.surveyGroup"){
 		    $state.go('app.dashboard');
@@ -232,6 +281,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
     	}*/
 
     	$scope.startSurvey = function(surveyid, groupid){
+            localStorageService.set('runnig_status','started');
     		var groupsArray = {};
     		groupsArray[2] = 5;
     		groupsArray[5] = 19;
