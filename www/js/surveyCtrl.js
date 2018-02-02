@@ -49,7 +49,30 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     }
   };
 })
-.controller('surveyLoad', function(dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile, $ionicHistory, $ionicPlatform){
+.controller('surveyLoad', function($ionicSideMenuDelegate, dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile, $ionicHistory, $ionicPlatform, $ionicGesture){
+    $ionicSideMenuDelegate.canDragContent(false);
+    $scope.nextStatus = false;
+    setTimeout(function(){
+        var element = angular.element(document.querySelector('#content')); 
+        $ionicGesture.on('swipeleft', function(e){
+            $scope.nextStatus = true;
+            $scope.$apply(function() {
+                $rootScope.$emit('nextQst',{
+                    id: $scope.questionId
+                });
+            })    
+        }, element);
+
+        $ionicGesture.on('swiperight', function(e){
+            $scope.$apply(function() {
+                $rootScope.$emit('prevQst');
+            })    
+        }, element);
+    },1500);
+    
+    
+   
+
 	var dt = new Date;
 	var startedTime = dt.getFullYear()+''+(dt.getMonth()+1)+''+dt.getDay()+''+dt.getHours()+''+dt.getMinutes()+''+dt.getSeconds()+''+dt.getMilliseconds();
 	var SurveyData = '';
@@ -228,7 +251,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                                 return false;
                             }
                         });
-
                         var conditionQuery = 'SELECT '+conditioned_question_key+' FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
                         var rec_id = localStorageService.get('record_id');
                         dbservice.runQuery(conditionQuery,[rec_id],function(res){
@@ -403,7 +425,25 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
             switch(QuestType){
                 case'text':
                     try{
-                        var answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        if(SurveyData[QuestionIndex].question_repeater == 'yes'){
+                            var jsonAnswer = JSON.parse(resp.rows.item(0)[SurveyData[QuestionIndex].question_key]);
+                            if(jsonAnswer.length > 0){
+                                setTimeout(function(){
+                                    $.each(jsonAnswer, function(key,value){
+                                        if(key == 0){
+                                            $('.textBoxSurvey:first').find('input').val(value);
+                                        }else{
+                                            var cloneTextBox = $('.textBoxSurvey:first').clone();
+                                            var questionText = $('.para').text();
+                                            $('.repeat_div').append(cloneTextBox);
+                                            $('.surveyTextBox:last').attr('placeholder',questionText).val(value);
+                                        }
+                                    });
+                                },500);
+                            }
+                        }else{
+                            var answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        }
                     }catch(e){
 
                     }
@@ -588,9 +628,15 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
 .controller('nextQuest', function($scope, $rootScope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, dbservice, $cordovaDevice, $ionicHistory){
 
-
+    $rootScope.$on('nextQst', function(event, dataObject) {
+        if($scope.nextStatus == true){
+            $scope.nextStatus = false;
+            $scope.QuestNext(dataObject.id);
+        }
+    });
 
 	$scope.QuestNext = function(nextQuestion){
+        console.log(nextQuestion);
         if($scope.discardStatus){
             if($scope.notDisable){
                 
@@ -649,16 +695,20 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 					if(SurveyData[QuestionIndex].pattern != '' && SurveyData[QuestionIndex].pattern != null){
 						var validationResult = validatePattern($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex].pattern, SurveyData[QuestionIndex]);
 						if(validationResult == false){
+                            $scope.nextStatus = true;
 							return false;
 						}
 					}
                     locS.set('lastQuestionIndex',QuestionIndex);
 					goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory);
-				}
+				}else{
+                    $scope.nextStatus = true;
+                }
 			}else{
 				if(SurveyData[QuestionIndex].pattern != '' && SurveyData[QuestionIndex].pattern != null){
 					var validationResult = validatePattern($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex].pattern, SurveyData[QuestionIndex]);
 					if(validationResult == false){
+                        $scope.nextStatus = true;
 						return false;
 					}
 				}
@@ -676,6 +726,10 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
 
 .controller('prevQuest', function($scope, $rootScope, $ionicLoading, localStorageService, $state, $ionicHistory, $ionicViewSwitcher){
+    
+    $rootScope.$on('prevQst', function(event, dataObject) {
+        $scope.goToPrev();
+    });
 	$scope.goToPrev = function(){
         $ionicViewSwitcher.nextDirection('back');
         var lastQuestInd = localStorageService.get('lastQuestionIndex');
@@ -698,6 +752,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
 function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory){
 	$scope.showHideQuestion = false;
+
 	StoreAnswer(QuestionIndex,$scope, QuestType, rawData, locS, dbservice, $state, $cordovaDevice);
 	if(nextQuestion != ''){
 		QuestionIndex = nextQuestion;
@@ -810,15 +865,25 @@ function text(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
 			
 		});
 	}
-	
+
 	if(params.raw.pattern == 'number'){
 		$scope.onlyNumbers = /^\d+$/;
 		$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/number.html'\"></div>";
-	}else{
+	}else if(params.raw.question_repeater == 'yes'){
+        $scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/text_repeater.html'\"></div>";
+    }else{
 		$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/text.html'\"></div>";
 	}
 	$scope.readonlyText.status = false;
-
+    setTimeout(function(){
+        $('input[name=repeat]').on('click',function(){
+            var cloneTextBox = $('.textBoxSurvey:first').clone();
+            var questionText = $('.para').text();
+            $('.repeat_div').append(cloneTextBox);
+            $('.surveyTextBox:last').attr('placeholder',questionText).val('');
+        });
+    },200);
+    
 }
 
 function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $compile, $ionicLoading){
@@ -1296,7 +1361,13 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		case'text':
 			if(rawData.pattern == 'number'){
 				answer_of_current_question = ($scope.numberAnswer.value === undefined)?null:$scope.numberAnswer.value;
-			}else{
+			}else if(rawData.question_repeater == 'yes'){
+                var textAnswersData = [];
+                $('input[name=textAnswer]').each(function(){
+                    textAnswersData.push($(this).val());
+                });
+                answer_of_current_question = JSON.stringify(textAnswersData);
+            }else{
 				answer_of_current_question = ($scope.$parent.textAnswer === undefined)?null:$scope.textAnswer.value;
 			}			
 		break;
@@ -1367,7 +1438,7 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 				});
 				answerObject.push(questionsObjectArray);
 			});
-            console.log(answerObject);
+            
 			answer_of_current_question = JSON.stringify(answerObject);
 		break;
 	}
@@ -1416,8 +1487,8 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 									[
 										answer, localStorage.get('startStamp'), 
 										localStorage.get('userId'),'app','NULL',uniqueKey, 
-										JSON.stringify($cordovaDevice.getDevice()),
-										// 'device_details',
+										// JSON.stringify($cordovaDevice.getDevice()),
+										'device_details',
 										localStorage.get('userId'), 
 										timeStamp(), QuestionIndex,
 										'incomplete',

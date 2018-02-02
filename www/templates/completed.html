@@ -84,7 +84,7 @@ button{
 	        border-bottom: 2px solid #387EF5 !important;
 }
   </style>
-  <ion-content class="surveyPage has-subheader" style="background-color: white">
+  <ion-content class="surveyPage has-subheader has-footer" style="background-color: white">
     <ng-include src="'templates/testmode.html'" ng-show="checkAppMode()" ng-controller="settingsCTRL"></ng-include>
 <!-- 	<div class="row" style="margin-top:-8%;">
 		<div class="col">
@@ -130,7 +130,8 @@ button{
 	                <th>Survey title</th>
 	                <th>Total questions</th>
 	                <th>Synced records</th>
-	                <th>Un-synced records</th>
+                    <th>Un-synced records</th>
+	              
 	            </tr>
 	        </thead>
 
@@ -139,8 +140,9 @@ button{
 					<td>{{surveyDetails.survey.name}}</td>
 					<td style="text-align: center;" ng-init="getQuestionCounts(surveyDetails.survey.survey_id)">{{surveyData.questionCount[surveyDetails.survey.survey_id]}}</td>
 					<td style="text-align: center;color: green">{{surveyDetails.result.synced}}</td>
-					<td style="text-align: center;color: red">{{surveyDetails.result.unsynced}}</td>
-	            </tr>         
+                    <td style="text-align: center;color: red">{{surveyDetails.result.unsynced}}</td>
+					
+	            </tr>
 	           
 	        </tbody>
 	    </table>  

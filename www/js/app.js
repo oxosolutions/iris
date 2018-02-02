@@ -152,6 +152,17 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
     }
   })
 
+    .state('app.completedList', {
+        url: '/completed/list/:surveyid',
+        cache: false,
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/complete-list.html',
+                controller: 'CompletedSurveyListCTLR'
+            }
+        }
+    })
+
 .state('app.completed', {
     url: '/completed',
     cache: false,

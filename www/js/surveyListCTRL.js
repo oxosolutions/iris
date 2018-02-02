@@ -498,6 +498,10 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 		$('.active').removeClass('active');
 		$(elem.currentTarget).addClass('active');
 	}
+
+    $scope.editRecords = function(){
+
+    }
 	
 	$scope.surveyData = {};
 	$scope.getQuestionCounts = function(surveyid){
@@ -614,6 +618,55 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 	      	/*}
 	    }*/
 	}
+})
+.controller('CompletedSurveyListCTLR', function($scope,$rootScope, $ionicLoading, localStorageService, $state, exportS, $ionicPopup, $cordovaDevice, dbservice, $ionicHistory){
+    
+    var Query = 'SELECT * FROM survey_result_'+$state.params.surveyid+' WHERE survey_status = ?';
+    dbservice.runQuery(Query, ['completed'], function(res){
+        var row = {};
+        for(var i=0; i<res.rows.length; i++) {
+            row[i] = res.rows.item(i);
+        }
+        $scope.CompletedSurvey = row;
+        console.log(row);
+    });
+
+    $scope.edit = function(recordId){
+        localStorageService.set('type','edit');
+        var SurveyID = $state.params.surveyid;
+        var Query = 'SELECT * FROM survey_result_'+SurveyID+' WHERE id = ?';
+        dbservice.runQuery(Query,[recordId],function(res) { 
+            var lastIds = res.rows.item(0);
+            /*################################## HARD CODED ##########################################*/
+                if($state.params.surveyid == 2){
+                    var irisId = {0:res.rows.item(0).SID2_GID5_QID43,1:res.rows.item(0).SID2_GID5_QID44,2:res.rows.item(0).SID2_GID5_QID45};
+                    localStorageService.set('uniqueSerial',irisId);
+                }
+                if($state.params.surveyid == 5){
+                    var irisId = {0:res.rows.item(0).SID5_GID19_QID136,1:res.rows.item(0).SID5_GID19_QID138};
+                    localStorageService.set('uniqueSerial',irisId);
+                }
+            /*#######################################################################################*/
+            localStorageService.set('completedGroups',JSON.parse(res.rows.item(0).completed_groups));
+            localStorageService.set('record_id',recordId);
+            /*################################## HARD CODED ##########################################*/
+                if($state.params.surveyid == 2){
+                    var irisId = {0:res.rows.item(0).SID2_GID5_QID43,1:res.rows.item(0).SID2_GID5_QID44,2:res.rows.item(0).SID2_GID5_QID45};
+                    localStorageService.set('uniqueSerial',irisId);
+                }
+                if($state.params.surveyid == 5){
+                    var irisId = {0:res.rows.item(0).SID5_GID19_QID136,1:res.rows.item(0).SID5_GID19_QID138};
+                    localStorageService.set('uniqueSerial',irisId);
+                }
+            /*#######################################################################################*/
+            $ionicHistory.clearCache().then(function(){
+                $state.go('app.surveyGroup',{id:SurveyID},{reload: true});
+            });
+            
+        }, function (err) {
+          console.log(err);
+        });     
+    }
 });
 
 

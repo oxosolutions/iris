@@ -144,6 +144,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
   		localStorageService.set('record_id',null);
   		localStorageService.set('uniqueSerial',null);
         localStorageService.set('discarded_groups',null);
+        localStorageService.set('type',null);
   		window.currentTimeStamp = null;
   		window.surveyStatus = 'new';
   		$state.go('app.surveyGroup',{id:surveyid});
@@ -235,9 +236,10 @@ angular.module('smaart.dashboard', ['ngCordova'])
     		groupsArray[2] = 5;
     		groupsArray[5] = 19;
     		var Query = 'SELECT completed_groups FROM survey_result_'+$state.params.id+' WHERE id = ?';
+            var typeNewOrEdit = localStorageService.get('type');
     		dbservice.runQuery(Query,[localStorageService.get('record_id')],function(res) {
     			if(res.rows.length != 0){
-    				if($.inArray(groupid, JSON.parse(res.rows.item(0).completed_groups)) !== -1){
+    				if($.inArray(groupid, JSON.parse(res.rows.item(0).completed_groups)) !== -1 && typeNewOrEdit == null){
 	    				$ionicLoading.show({
 		                  template: 'Section already filled!',
 		                  noBackdrop: false,
