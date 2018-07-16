@@ -37,7 +37,7 @@
 			</div> -->
 			<div class="list list-inset">
 			    <div class="item" ng-repeat="(key, value) in PendingSurvey" ng-click="continue(value.id)">
-			      <label style="float:left;">{{(value.incomplete_name != null)?value.incomplete_name:value.survey_started_on}}</label>
+			      <label style="float:left;">{{value['SID2_GID10_QID64']}}{{value['SID1_GID1_QID5']}}</label>
 			      <i class="icon ion-chatbubble-working" style="float:right !important; font-size:20px;"></i>
 			    </div>
 

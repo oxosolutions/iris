@@ -22,7 +22,8 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
   		localStorageService.set('completedGroups',undefined);
   		localStorageService.set('ContinueKey',undefined);
   		localStorageService.set('RuningSurvey',null);
-  		localStorageService.set('record_id',null);
+        localStorageService.set('record_id',null);
+  		localStorageService.set('iris_id',null);
   		window.currentTimeStamp = null;
   		window.surveyStatus = 'new';
   		$state.go('app.surveyGroup',{id:surveyid});
@@ -56,6 +57,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 			if(status == 'completed'){
 				$scope.surveyData['completed'][surveyid.toString()] = res.rows.item(0).count;
 			}else{
+
 				$scope.surveyData['incomplete'][surveyid.toString()] = res.rows.item(0).count;
 			}
 		});
@@ -344,22 +346,43 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 	$scope.StopSurvey = function(){
 		var myPopup = $ionicPopup.show({
-	     template: '<input type = "text" ng-model = "stopSurvey" style="color:#000 !important;">',
-	     title: 'Enter Incomplete Survey Name',
-	     subTitle: 'Enter name for your incomplete survey',
+	     title: 'Do you want to save this record?',
+	     subTitle: 'This action is not revertable.',
 	     scope: $scope,
 			
 	     buttons: [
-	        { text: 'Cancel' }, {
-	           text: '<b>Save</b>',
+	        { 
+                text: 'No',
+                onTap: function(e){
+                    /*var iris_id = localStorageService.get('iris_id');
+                    var record_id = localStorageService.get('record_id');
+                    var Query = 'DELETE FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
+                    dbservice.runQuery(Query,[record_id],function(res) {
+                        console.log("Record deleted due to non IRIS ID");
+                        $state.go('app.dashboard');
+                    }, function (err) {
+                        console.log(err);
+                    });*/
+                    $state.go('app.dashboard');
+                } 
+            }, 
+            {
+	           text: '<b>Yes</b>',
 	           type: 'button-positive',
 	              onTap: function(e) {
-	                 if (!$scope.$$childHead.stopSurvey) {
-	                    //don't allow the user to close unless he enters model...
-	                       e.preventDefault();
-	                 } else {
-	                    return $scope.$$childHead.stopSurvey;
-	                 }
+	                    var iris_id = localStorageService.get('iris_id');
+                        var record_id = localStorageService.get('record_id');
+                        if(iris_id == null){
+                            var Query = 'DELETE FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
+                            dbservice.runQuery(Query,[record_id],function(res) {
+                              console.log("Record deleted due to non IRIS ID");
+                              $state.go('app.dashboard');
+                            }, function (err) {
+                              console.log(err);
+                            });
+                        }else{
+                            $state.go('app.dashboard');
+                        }
 	              }
 	        }
 	     ]
@@ -367,14 +390,25 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
       myPopup.then(function(res) {
       	 if(res != undefined){
-      	 	var record_id = localStorageService.get('record_id');
-      	 	var Query = 'UPDATE survey_result_'+$state.params.surveyId+' SET incomplete_name = ?, last_field_id = ? WHERE id = ?';
-      	 	dbservice.runQuery(Query,[res, $state.params.QuestId-1, record_id],function(res) {
-              console.log("name updated");
-              $state.go('app.dashboard');
-            }, function (err) {
-              console.log(err);
-            });
+            /*var iris_id = localStorageService.get('iris_id');
+            var record_id = localStorageService.get('record_id');
+            if(iris_id == null){
+                var Query = 'DELETE FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
+                dbservice.runQuery(Query,[record_id],function(res) {
+                  console.log("Record deleted due to non IRIS ID");
+                  $state.go('app.dashboard');
+                }, function (err) {
+                  console.log(err);
+                });
+            }else{
+                var Query = 'UPDATE survey_result_'+$state.params.surveyId+' SET incomplete_name = ?, last_field_id = ? WHERE id = ?';
+                dbservice.runQuery(Query,[iris_id+' ('+res+')', $state.params.QuestId-1, record_id],function(res) {
+                  console.log("name updated");
+                  $state.go('app.dashboard');
+                }, function (err) {
+                  console.log(err);
+                });
+            }*/
       	 }else{
       	 	console.log('You clicked cancel');
       	 }
@@ -403,13 +437,13 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 	var sendArrayList = {};
 	var SurveyID = $state.params.surveyid;
-	var Query = 'SELECT id, incomplete_name, survey_started_on FROM survey_result_'+SurveyID+' WHERE survey_status = ?';
+	var Query = 'SELECT * FROM survey_result_'+SurveyID+' WHERE survey_status = ?';
 	dbservice.runQuery(Query,['incomplete'],function(res) {	
 		var row = {};
 		for(var i=0; i<res.rows.length; i++) {
             row[i] = res.rows.item(i)
         }		
-		$scope.PendingSurvey = row;
+		$scope.PendingSurvey = row;        
     }, function (err) {
       console.log(err);
     });
@@ -417,49 +451,64 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 	$scope.continue = function(recordId){
 		var SurveyID = $state.params.surveyid;
-		var Query = 'SELECT * FROM survey_result_'+SurveyID+' WHERE id = ?';
-		dbservice.runQuery(Query,[recordId],function(res) {	
-			var lastIds = res.rows.item(0);
-			/*################################## HARD CODED ##########################################*/
-				if($state.params.surveyid == 2){
-					console.log('here');
-					var irisId = {0:res.rows.item(0).SID2_GID5_QID43,1:res.rows.item(0).SID2_GID5_QID44,2:res.rows.item(0).SID2_GID5_QID45};
-					localStorageService.set('uniqueSerial',irisId);
-				}
-				if($state.params.surveyid == 5){
-					var irisId = {0:res.rows.item(0).SID5_GID19_QID136,1:res.rows.item(0).SID5_GID19_QID138};
-					localStorageService.set('uniqueSerial',irisId);
-				}
-			/*#######################################################################################*/
-			localStorageService.set('completedGroups',JSON.parse(res.rows.item(0).completed_groups));
-			localStorageService.set('record_id',recordId);
-			if(lastIds.last_group_id != null && lastIds.last_group_id != ''){
-				$ionicHistory.clearCache().then(function(){
-    				$state.go('app.survey',{'surveyId':SurveyID, 'QuestId': lastIds.last_field_id+1, 'groupId': lastIds.last_group_id},{reload: true});
-    			});
-			}else{
-				/*################################## HARD CODED ##########################################*/
-					if($state.params.surveyid == 2){
-						var irisId = {0:res.rows.item(0).SID2_GID5_QID43,1:res.rows.item(0).SID2_GID5_QID44,2:res.rows.item(0).SID2_GID5_QID45};
-						localStorageService.set('uniqueSerial',irisId);
-					}
-					if($state.params.surveyid == 5){
-						var irisId = {0:res.rows.item(0).SID5_GID19_QID136,1:res.rows.item(0).SID5_GID19_QID138};
-						localStorageService.set('uniqueSerial',irisId);
-					}
-				/*#######################################################################################*/
-				$ionicHistory.clearCache().then(function(){
-    				$state.go('app.surveyGroup',{id:SurveyID},{reload: true});
-    			});
-			}
-        }, function (err) {
-          console.log(err);
-        });		
+        var getGroups = 'SELECT * FROM survey_sections WHERE survey_id = ?';
+        dbservice.runQuery(getGroups, [SurveyID], function(res){
+            var row = {};
+            var sectionsData = [];
+            for(var i=0; i<res.rows.length; i++) {
+                row[i] = res.rows.item(i);
+              sectionsData.push(res.rows.item(i));
+            }
+            $scope.groupList = row;
+            localStorageService.set('sections_data',sectionsData);
+
+            var Query = 'SELECT * FROM survey_result_'+SurveyID+' WHERE id = ?';
+            dbservice.runQuery(Query,[recordId],function(res) { 
+                var lastIds = res.rows.item(0);
+                /*################################## HARD CODED ##########################################*/
+                    if($state.params.surveyid == 2){                        
+                        var irisId = {0:res.rows.item(0).SID2_GID5_QID43,1:res.rows.item(0).SID2_GID5_QID44,2:res.rows.item(0).SID2_GID5_QID45};
+                        localStorageService.set('uniqueSerial',irisId);
+                    }
+                    if($state.params.surveyid == 5){
+                        var irisId = {0:res.rows.item(0).SID5_GID19_QID136,1:res.rows.item(0).SID5_GID19_QID138};
+                        localStorageService.set('uniqueSerial',irisId);
+                    }
+                /*#######################################################################################*/
+                localStorageService.set('completedGroups',JSON.parse(res.rows.item(0).completed_groups));
+                localStorageService.set('record_id',recordId);
+                if(lastIds.last_group_id != null && lastIds.last_group_id != ''){
+                    $ionicHistory.clearCache().then(function(){
+                        $state.go('app.survey',{'surveyId':SurveyID, 'QuestId': lastIds.last_field_id, 'groupId': lastIds.last_group_id},{reload: true});
+                    });
+                }else{
+                    /*################################## HARD CODED ##########################################*/
+                        if($state.params.surveyid == 2){
+                            var irisId = {0:res.rows.item(0).SID2_GID5_QID43,1:res.rows.item(0).SID2_GID5_QID44,2:res.rows.item(0).SID2_GID5_QID45};
+                            localStorageService.set('uniqueSerial',irisId);
+                        }
+                        if($state.params.surveyid == 5){
+                            var irisId = {0:res.rows.item(0).SID5_GID19_QID136,1:res.rows.item(0).SID5_GID19_QID138};
+                            localStorageService.set('uniqueSerial',irisId);
+                        }
+                    /*#######################################################################################*/
+                    $ionicHistory.clearCache().then(function(){
+                        $state.go('app.surveyGroup',{id:SurveyID},{reload: true});
+                    });
+                }
+            }, function (err) {
+              console.log(err);
+            });
+
+        }, function(error){
+            console.warn(error);
+        });
+		
 	}
 })
 
 
-.controller('CompleteSurveyCTLR', function($scope,$rootScope, $ionicLoading, localStorageService, $state, exportS, $ionicPopup, $cordovaDevice, dbservice){
+.controller('CompleteSurveyCTLR', function($scope,$rootScope, $ionicLoading, localStorageService, $state, exportS, $ionicPopup, $cordovaDevice, dbservice, $cordovaFile, $cordovaFileTransfer){
 	
 	var getSurveys = 'SELECT * FROM survey_data';
 	dbservice.runQuery(getSurveys,[], function(res){
@@ -516,6 +565,7 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 
 
 	$scope.exportSurv = function(){
+
 		if(window.Connection) {
 	      	if(navigator.connection.type == Connection.NONE) {
 	        	$ionicPopup.confirm({
@@ -581,6 +631,10 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
                                     template: '<ion-spinner class="spinner-energized"></ion-spinner>',
                                     noBackdrop: false
                                 });
+
+
+
+
 						        var formData = new FormData;
 						        formData.append('survey_data',JSON.stringify(row));
 						        formData.append('survey_id',$scope.selectedSyncSurvey);
@@ -594,7 +648,42 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
                                     formData.append('app_version','Unable to get app version');
                                 }
 						        exportS.exportSurvey(formData).then(function(result){
-						        	console.log(result);
+						        	//upload images
+
+                                    function success(entries){
+                                        endtrisLoop(entries,0);
+                                        function endtrisLoop(entries, index){
+                                            if(entries[index] != undefined){
+                                                var row = entries[index];
+                                                var options = {
+                                                        fileKey: "avatar",
+                                                        fileName: row.name,
+                                                        chunkedMode: false,
+                                                        mimeType: "image/jpeg",
+                                                        params: {
+                                                            userId: localStorageService.get('userId')
+                                                        }
+                                                    };
+                                                // var userId
+                                                $cordovaFileTransfer.upload('http://iris2.fhts.ac.in/api/handle/images', row.nativeURL, options).then(function(result) {
+                                                    console.log("SUCCESS: " + JSON.stringify(result.response));
+                                                    index = index + 1;
+                                                    endtrisLoop(entries,index);
+                                                }, function(err) {
+                                                    console.log("ERROR: " + JSON.stringify(err));
+                                                }, function (progress) {
+                                                    // constant progress updates
+                                                });
+                                            }
+                                        }
+                                    }
+                                    var myPath = cordova.file.externalCacheDirectory;
+                                    window.resolveLocalFileSystemURL(myPath, function (dirEntry) {
+                                         var directoryReader = dirEntry.createReader();
+                                         directoryReader.readEntries(success);
+                                    });
+                                    //upload images end
+
                                     $ionicLoading.hide();
 						        	$ionicLoading.show({
 								      template: 'Data Successfully Exported!',

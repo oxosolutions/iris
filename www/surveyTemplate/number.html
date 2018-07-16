@@ -1,13 +1,20 @@
 
 <div class="row">
-	<div class="col question_div">
+	<div class="col question_div" ng-if="question_repeater == 'no'">
 		<!-- <div class="ans_head">
 			<p>You Answer:</p>
 		</div> -->
         <input type="number" name="number" value="" class="numberAnswer" ng-pattern="onlyNumbers" ng-if="repeater" />
-		<input type="number" name="number" value="" ng-model="numberAnswer.value" class="numberAnswer" ng-pattern="onlyNumbers" ng-if="!repeater" />
+		<input type="number" name="number" value="" ng-model="numberAnswer.value" class="numberAnswer" ng-pattern="onlyNumbers" ng-if="!repeater" ng-readonly="readonlyNumber.status" />
 		<div class="ans_footer">
 			<!-- <p>Maxime quis.</p> -->
 		</div>
 	</div>
+
+    <div class="col question_div" ng-if="question_repeater == 'yes'">
+        <input type="number" name="number" value="" class="numberAnswer" ng-pattern="onlyNumbers" ng-if="!repeater" ng-readonly="readonlyNumber.status" ng-repeat="i in [].constructor(question_repeater_length) track by $index" />
+        <div class="ans_footer">
+            <!-- <p>Maxime quis.</p> -->
+        </div>
+    </div>
 </div>

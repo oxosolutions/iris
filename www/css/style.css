@@ -219,5 +219,42 @@ input{
  .black-fg{
  	color: black !important;
  }
+ .capture-image{
+ 	margin: 20px;border:2px dashed #ccc;padding: 30px;font-size: 24px;text-align: center;background: #f5f5f5;color: #999
+ }
+ .capture-image > i{
+ 	color: grey
+ }
+ .image-wrap{
+ 	padding: 10px;
+ 	margin: 0 auto;
+ }
+ .image-wrap > span{
+ 	display: inline-block;max-height: 60px;max-width:60px;overflow: hidden;
+    margin-right: 5px;
+    margin-bottom: 5px;
+ }
+ .image-wrap > span > img{
+ 	width: 80px;
+ }
+
+/* .image-wrap > span.active{
+ 	position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -120px;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: block;
+    text-align: center;
+    max-height: unset;
+    max-width: unset;
+ }
+ .image-wrap > span.active >img{
+ 	    width: auto;
+    height: auto;
+ }
+*/
 
 

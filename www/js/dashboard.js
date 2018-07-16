@@ -21,6 +21,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 	if(localStorageService.get('userId') == undefined || localStorageService.get('userId') == null){
         $state.go('login');
     }
+    
     var settings = localStorageService.get('settings');
     try{
         $scope.description = settings['android_application_description'];
@@ -96,7 +97,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
         console.warn(error);
     });
 
-
+    
 
 	/*angular.forEach(allSurveys, function(value, key){
 		// var text = value.name;
@@ -145,6 +146,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
   		localStorageService.set('uniqueSerial',null);
         localStorageService.set('discarded_groups',null);
         localStorageService.set('type',null);
+        localStorageService.set('iris_id',null);
   		window.currentTimeStamp = null;
   		window.surveyStatus = 'new';
   		$state.go('app.surveyGroup',{id:surveyid});
@@ -178,15 +180,15 @@ angular.module('smaart.dashboard', ['ngCordova'])
 
     }
 }).controller('surveyGroup',function($scope, $ionicLoading, localStorageService, $state, appData, $ionicHistory, $ionicPlatform, dbservice, $ionicPopup){
-        if(localStorageService.get('runnig_status') == 'started'){
+        /*if(localStorageService.get('runnig_status') == 'started'){
             var exitPrompt = $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
                 if(localStorageService.get('runnig_status') != null){
                     if(toState.name != 'app.survey'){
                         event.preventDefault();
                         var myPopup = $ionicPopup.show({
                             template: '<input type = "text" ng-model = "stopSurvey" style="color:#000 !important;">',
-                            title: 'Enter Incomplete Survey Name',
-                            subTitle: 'Enter name for your incomplete survey',
+                            title: 'Enter Survey Name',
+                            subTitle: 'Enter name for your survey',
                             scope: $scope,                      
                             buttons: [
                             { text: 'Cancel' }, {
@@ -205,16 +207,26 @@ angular.module('smaart.dashboard', ['ngCordova'])
                         });
                         myPopup.then(function(res) {
                             if(res != undefined){
-                            var record_id = localStorageService.get('record_id');
-                            var Query = 'UPDATE survey_result_'+$state.params.id+' SET incomplete_name = ? WHERE id = ?';
-                            dbservice.runQuery(Query,[res, record_id],function(res) {
-                                console.log("name updated");
-                                localStorageService.set('runnig_status',null);
-                                exitPrompt = null;
-                                $state.go(toState.name);
-                            }, function (err) {
-                                console.log(err);
-                            });
+                                var record_id = localStorageService.get('record_id');
+                                var iris_id = localStorageService.get('iris_id');
+                                if(iris_id != null){
+                                    var Query = 'UPDATE survey_result_'+$state.params.id+' SET incomplete_name = ? WHERE id = ?';
+                                    dbservice.runQuery(Query,[iris_id+' ('+res+')', record_id],function(res) {
+                                        console.log("name updated");
+                                        localStorageService.set('runnig_status',null);
+                                        exitPrompt = null;
+                                        $state.go(toState.name);
+                                    }, function (err) {
+                                        console.log(err);
+                                    });   
+                                }else{
+                                    var Query = 'DELETE FROM survey_result_'+$state.params.id+' WHERE id = ?';
+                                    dbservice.runQuery(Query,[record_id],function(res) {
+                                        localStorageService.set('runnig_status',null);
+                                        exitPrompt = null;
+                                        $state.go(toState.name);
+                                    });
+                                }
                             }else{
                             console.log('You clicked cancel');
                             }
@@ -225,7 +237,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
                 }
             });
             $scope.$on('$destroy', exitPrompt)
-        }
+        }*/
 
     	$ionicPlatform.registerBackButtonAction(function (event) {
 		  if($state.current.name=="app.surveyGroup"){
@@ -281,21 +293,54 @@ angular.module('smaart.dashboard', ['ngCordova'])
     	}*/
 
     	$scope.startSurvey = function(surveyid, groupid){
+            if(surveyid == 3){
+                var completed_groups_data = localStorageService.get('completedGroups');
+                if(groupid != 11){
+                    if(completed_groups_data == null || $.inArray(11,completed_groups_data) === -1){
+                        $ionicLoading.show({
+                            template: 'Please fill IDENTIFICATION first!',
+                            noBackdrop: false,
+                            duration: 3000
+                        });
+                        return false;
+                    }
+                }
+            }
             localStorageService.set('runnig_status','started');
     		var groupsArray = {};
-    		groupsArray[2] = 5;
+    		groupsArray[1] = 1;
     		groupsArray[5] = 19;
-    		var Query = 'SELECT completed_groups FROM survey_result_'+$state.params.id+' WHERE id = ?';
+    		var Query = 'SELECT * FROM survey_result_'+$state.params.id+' WHERE id = ?';
             var typeNewOrEdit = localStorageService.get('type');
+
     		dbservice.runQuery(Query,[localStorageService.get('record_id')],function(res) {
     			if(res.rows.length != 0){
     				if($.inArray(groupid, JSON.parse(res.rows.item(0).completed_groups)) !== -1 && typeNewOrEdit == null){
-	    				$ionicLoading.show({
-		                  template: 'Section already filled!',
-		                  noBackdrop: false,
-		                  duration: 2000
-		                });
-		    			return false;
+                        if(groupid == 8){
+                            if(res.rows.item(0)['SID1_GID7_QID114'] == 2 || res.rows.item(0)['SID1_GID7_QID114'] == 3){
+                                //do same
+                            }else{
+                                var updateGroupQuery = 'UPDATE survey_result_1 SET completed_groups = ? WHERE id = ?';
+                                var currentGroups = JSON.parse(res.rows.item(0).completed_groups);
+                                if($.inArray(parseInt(groupid),currentGroups) != 2){
+                                    currentGroups.push(groupid);
+                                }
+                                localStorageService.set('completedGroups',currentGroups)
+                                dbservice.runQuery(updateGroupQuery,[JSON.stringify(currentGroups),localStorageService.get('record_id')], function(res){
+                                    $ionicLoading.show({
+                                        template: 'Condition not satisfied!',
+                                        noBackdrop: false,
+                                        duration: 3000
+                                    });
+                                }, function(error){
+
+                                });
+                                return false;
+                            }
+                        }
+                        $ionicHistory.clearCache().then(function(){
+                            $state.go('app.survey',{surveyId:surveyid,groupId:groupid,QuestId:''});
+                        });
 	    			}else{
 	    				if(groupsArray[surveyid] != undefined){
 		    				if(groupid != groupsArray[surveyid]){
@@ -309,6 +354,28 @@ angular.module('smaart.dashboard', ['ngCordova'])
 			    				}
 		    				}
 		    			}
+                        if(groupid == 8){
+                            if(res.rows.item(0)['SID1_GID7_QID114'] == 2 || res.rows.item(0)['SID1_GID7_QID114'] == 3){
+                                //do same
+                            }else{
+                                var updateGroupQuery = 'UPDATE survey_result_1 SET completed_groups = ? WHERE id = ?';
+                                var currentGroups = JSON.parse(res.rows.item(0).completed_groups);
+                                if($.inArray(parseInt(groupid),currentGroups) != 2){
+                                    currentGroups.push(groupid);
+                                }
+                                localStorageService.set('completedGroups',currentGroups);
+                                dbservice.runQuery(updateGroupQuery,[JSON.stringify(currentGroups),localStorageService.get('record_id')], function(res){
+                                    $ionicLoading.show({
+                                        template: 'Condition not satisfied!',
+                                        noBackdrop: false,
+                                        duration: 3000
+                                    });
+                                }, function(error){
+
+                                });
+                                return false;
+                            }
+                        }
 		    			//localStorageService.set('uniqueSerial',null);
                         localStorageService.set('filled_questions',null);
 	    				$ionicHistory.clearCache().then(function(){
@@ -316,6 +383,7 @@ angular.module('smaart.dashboard', ['ngCordova'])
 		    			});
 	    			}
     			}else{
+                    console.log(groupid);
     				if(groupsArray[surveyid] != undefined){
     					if(groupid != groupsArray[surveyid]){
 	    					$ionicLoading.show({

@@ -2,7 +2,13 @@
 
 angular.module('smaart.settingsCTRL', ['ngCordova'])
 .controller('settingsCTRL', function($scope, $ionicLoading, localStorageService, $state, $ionicPopup, appData, appActivation, dbservice){
+    try{
+        cordova.getAppVersion(function(version) {
+            $scope.build_version = version;
+        });
+    }catch(e){
 
+    }
     $scope.app = {};
     var current_mode = localStorageService.get('app_mode');
     if(current_mode == 'test'){

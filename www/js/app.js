@@ -1,9 +1,10 @@
 
-angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'smaart.surveyCtrl','smaart.surveyListCTRL', 'smaart.dashboard', 'LocalStorageModule', 'ionic-datepicker','ngMaterial','ionic-timepicker','smaart.settingsCTRL'])
+angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'smaart.surveyCtrl','smaart.surveyListCTRL', 'smaart.dashboard', 'LocalStorageModule', 'ionic-datepicker','ngMaterial','ionic-timepicker','smaart.settingsCTRL','ngTimePicker','ngMaterialDatePicker'])
 
 .run(function($ionicPlatform, $cordovaSQLite) {
 
   $ionicPlatform.ready(function() {
+    // window.db = window.openDatabase("smaart.db", '1', 'my', 1024 * 1024 * 100); // browser
     if (window.cordova) {
         window.db = $cordovaSQLite.openDB({ name: "smaart.db", iosDatabaseLocation: 'default' }); //device
         console.log("Android");
@@ -41,7 +42,8 @@ angular.module('smaart', ['ionic', 'smaart.controllers', 'smaart.services', 'sma
 })
 
 .constant('AppConfig', {'QuestionOrder': 'false'})
-.constant('ApiURL', 'http://iris.fhts.ac.in/api/')
+// .constant('ApiURL', 'http://iris.fhts.ac.in/api/')
+.constant('ApiURL', 'http://iris2.fhts.ac.in/api/')
 // .constant('ApiURL', 'http://admin.scolm.com/api/')
 
 .config(function($stateProvider, $urlRouterProvider) {

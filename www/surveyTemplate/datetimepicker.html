@@ -1,0 +1,31 @@
+
+<div class="row">
+	<div class="col question_div">
+		<!-- <div class="ans_head">
+			<p>You Answer:</p>
+		</div> -->
+		<div class="textBoxSurvey">
+			<!-- <div>
+                            <input type='text' name='textAnswer' ng-model='$parent.textAnswer' class='surveyTextBox' style="width:90% !important;float:left !important;" readonly ng-click='timePicker()'/><button class='dateBut button-small ion-android-time' ng-click='timePicker()' ></button>
+                        </div> -->
+            <md-input-container flex-gt-md="100" style="width:100%;">
+                <input mdc-datetime-picker date="true" time="true" type="text" id="time" short-time="true"
+                       placeholder="Time"
+                       format="YYYY-MM-DD hh:mm a"
+                       max-date="$parent.maxDate"
+                       ng-model="$parent.datetime">
+            </md-input-container>
+			
+		</div>
+		<div class="ans_footer">
+			<!-- <p>Maxime quis.</p> -->
+		</div>
+	</div>
+</div>
+<style type="text/css">
+    md-input-container input{
+        color: #000 !important;
+    }
+</style>
+
+<!-- <div><input type='text' name='textAnswer' ng-model='textAnswer' class='surveyTextBox' disabled /><button class='dateBut button-small ion-android-calendar' ng-click='DatePicker()'></button></div> -->

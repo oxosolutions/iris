@@ -380,6 +380,7 @@ angular.module('smaart.controllers', ['ngCordova'])
                                     console.log(res);
                                 },function(error){
                                     console.log(error);
+                                    console.log(dataArray);
                                     console.log(insertQuestion,k);
                                 });
 							});
@@ -474,7 +475,7 @@ angular.module('smaart.controllers', ['ngCordova'])
 	                    duration: 1000
 	                  });
 	                  $state.go('login');
-                  },35000);
+                  },40000);
                 }
 
             },function(error){

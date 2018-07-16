@@ -1,0 +1,37 @@
+
+<div class="row">
+	<div class="col question_div">
+		<!-- <div class="ans_head">
+			<p>Your Answer:</p>
+		</div> -->
+		<div class="textBoxSurvey">
+			<!-- <input type='file' name='textAnswer' ng-model='textAnswer.value' class='surveyTextBox' ng-readonly="readonlyText.status" data-validation="required" /> -->
+			<div class="image-wrap">
+			</div>
+
+			<div class="capture-image" ng-click="capture_image()">
+				<i class="fa fa-camera" ></i>
+				Capture an image
+			</div>
+		</div>
+		<div class="ans_footer">
+			<!-- <p>Maxime quis.</p> -->
+		</div>
+	</div>
+</div>
+<div class="row popup-image" style="display: none;">
+    <div class="col">
+        <div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 555; opacity: 0.8; " class="backg">
+        </div>
+        <div style="position: absolute; top: 10%; width: 100%; left: 0; z-index: 666; margin: 0 auto; text-align: center;">
+            <a href="javascript:;" class="deleteImage" style="text-decoration: none; font-size: 26px; position: absolute; top: -8%; right: 21%;"><i class="fa fa-trash" style="color: red;"></i></a>
+            <a href="javascript:;" class="close-pop" style="text-decoration: none; font-size: 26px; position: absolute; color: #FFF; top: -8%; right: 10%;"><i class="fa fa-close"></i></a>
+            <img src="http://via.placeholder.com/300x300" width="300px" height="300px" />
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+</script>
+
+<!-- <div><input type='text' name='textAnswer' ng-model='textAnswer' class='surveyTextBox' disabled /><button class='dateBut button-small ion-android-calendar' ng-click='DatePicker()'></button></div> -->

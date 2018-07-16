@@ -11,6 +11,8 @@
     <link rel="stylesheet" type="text/css" href="css/component.css">
     <link href="css/fa/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="lib/angular-material/angular-material.css"> 
+    <link rel="stylesheet" href="lib/angular-material-time-picker/dist/md-time-picker.css"> 
+    <link rel="stylesheet" href="lib/angular-material-datetimepicker/dist/material-datetimepicker.min.css"> 
       
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="css/ionic.app.css" rel="stylesheet">
@@ -26,6 +28,9 @@
     <script src="lib/angular-cache/dist/angular-cache.min.js"></script>
     <script src="lib/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="lib/ionic-timepicker/dist/ionic-timepicker.bundle.min.js"></script>
+    <script src="lib/angular-material-time-picker/dist/md-time-picker.js"></script>
+    <script src="lib/moment/min/moment.min.js"></script>
+    <script src="lib/angular-material-datetimepicker/dist/angular-material-datetimepicker.min.js"></script>
     <!-- path to ionic -->
     <script src="lib/ionic-datepicker/dist/ionic-datepicker.bundle.min.js"></script>
     <script src="lib/mathjs/dist/math.js"></script>
@@ -52,7 +57,7 @@
   
   </head>
     
-  <body ng-app="smaart">
+  <body ng-app="smaart" class="platform-android platform-cordova platform-webview">
     <ion-nav-view></ion-nav-view>
     
     <style>

@@ -17,7 +17,24 @@
 	
 	<div dynamic="about_page_content"></div>
 	
-
+    <div style="width: 100%; background-color: white;padding: 20px; margin-top: 5%;">
+        <div class="row" style="padding: 0;    margin-bottom: 12px;    border-bottom: 1px solid #e8e8e8;padding-bottom: 12px;">
+            <div class="col " style="padding: 0">
+            Build Version:
+            </div>
+            <div class="col" style="text-align: right;padding: 0" ng-controller="settingsCTRL">
+                 {{build_version}}
+            </div>          
+        </div>
+        <div class="row" style="padding: 0;    margin-bottom: 12px;border-bottom: 1px solid #e8e8e8;padding-bottom: 12px;">
+            <div class="col " style="padding: 0">
+            Build Number :
+            </div>
+            <div class="col" style="text-align: right;padding: 0">
+                20180601
+            </div>          
+        </div>
+    </div>
   </ion-content>
   	<div ng-include="'templates/footer.html'">
 		

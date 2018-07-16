@@ -1,3 +1,4 @@
+
 <ion-view view-title="{{page.title}}" class="main_row" ng-controller="surveyLoad">
 	 <ion-nav-bar class="bar-stable bar-positive"></ion-nav-bar>
 	 <div class="bar bar-subheader" style="background-color: #e8e8e8;">
@@ -20,7 +21,8 @@
                 <div class="row">
                     <div class="col question_div">
                         <h4 class="para">How many vehicles involved in crash?</h4>
-                        <input type="number" name="number_of_vehicle" value="" class="numberAnswer" ng-pattern="onlyNumbers" style="width: 95%; margin-left:2%;" />
+                        <p style="margin-left: 4%;color: #8c8b8b;margin-top: -4%;">Enter between 1 to 5.</p>
+                        <input type="number" name="number_of_vehicle" value="" class="numberAnswer" ng-pattern="onlyNumbers" style="width: 95%; margin-left:2%;" min="1" max="5" />
                     </div>
                 </div>
             </div>
@@ -52,29 +54,29 @@
 			</div>
 
 			
-			<div class="row" ng-if="quest_type === 'repeater'">
-                <div class="col">
-                    <div class="textBoxSurvey" style="margin-bottom: 2%;">
-                        <div class="row">
-                            <div class="col question_div">
-                                <h4 class="para">Would you like to submit this section?</h4>
-                                <ul style="margin-left: 3%;">
-                                    <li style="margin-bottom: 3%;">
-                                        <label>
-                                            <input type="radio" value="yes" name="submit_section" /> Yes
-                                        </label>
-                                    </li>
-                                    <li style="margin-bottom: 3%;">
-                                        <label>
-                                            <input type="radio" value="no" name="submit_section" /> No
-                                        </label>
-                                    </li>
-                                </ul>
+			<!-- <div class="row" ng-if="quest_type === 'repeater'">
+                            <div class="col">
+                                <div class="textBoxSurvey" style="margin-bottom: 2%;">
+                                    <div class="row">
+                                        <div class="col question_div">
+                                            <h4 class="para">Would you like to submit this section?</h4>
+                                            <ul style="margin-left: 3%;">
+                                                <li style="margin-bottom: 3%;">
+                                                    <label>
+                                                        <input type="radio" value="yes" name="submit_section" /> Yes
+                                                    </label>
+                                                </li>
+                                                <li style="margin-bottom: 3%;">
+                                                    <label>
+                                                        <input type="radio" value="no" name="submit_section" /> No
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        </div> -->
 					
 			
 

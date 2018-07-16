@@ -49,7 +49,8 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     }
   };
 })
-.controller('surveyLoad', function($ionicSideMenuDelegate, dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile, $ionicHistory, $ionicPlatform, $ionicGesture){
+.controller('surveyLoad', function($ionicSideMenuDelegate, dbservice, $q, $sce, $parse, $cordovaFile, $rootScope, $scope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $timeout, appData, $cordovaGeolocation, ionicTimePicker, $compile, $ionicHistory, $ionicPlatform, $ionicGesture, $mdpTimePicker, $cordovaCamera){
+    
     $ionicSideMenuDelegate.canDragContent(false);
     $scope.nextStatus = false;
     setTimeout(function(){
@@ -71,12 +72,11 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     },1500);
     
     
-   
-
 	var dt = new Date;
 	var startedTime = dt.getFullYear()+''+(dt.getMonth()+1)+''+dt.getDay()+''+dt.getHours()+''+dt.getMinutes()+''+dt.getSeconds()+''+dt.getMilliseconds();
 	var SurveyData = '';
-	$scope.readonlyText = {};
+    $scope.readonlyText = {};
+	$scope.readonlyNumber = {};
 	setSurveyNameAndId($state, localStorageService, 0, dbservice);
 	var getQuestions = 'SELECT * FROM survey_questions WHERE group_id = ? AND survey_id = ?';
     $scope.showHideQuestion = false;
@@ -85,6 +85,9 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
         $scope.discardStatus = true;
     }else{
         $scope.discardStatus = false;
+    }
+    if(localStorageService.get('iris_id') != null){
+        $scope.iris_id = localStorageService.get('iris_id')
     }
 	dbservice.runQuery(getQuestions, [$state.params.groupId,$state.params.surveyId], function(res){
 
@@ -231,7 +234,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                 $('input,select,textarea').prop('disabled',false);
             }
         }
-
         // console.log(JSON.parse(SurveyData[QuestionIndex].field_conditions));
         //Question Conditions start here ###################################################
 	    var conditionsArray = [];
@@ -307,7 +309,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
             // console.log('No conditions found');
         }
         //Question conditions ends here ############################################################
-
 	    var QuestType  =  SurveyData[QuestionIndex].question_type;
 	    var DrawHTML = {
 	    				  'QuestionText': SurveyData[QuestionIndex].question_text, 
@@ -350,7 +351,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			break;
 
 			case'select'://select
-				select(DrawHTML, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce);
+				select(DrawHTML, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce, $state, dbservice);
 			break;
 
 			case'datepicker':
@@ -358,7 +359,7 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			break;
 
 			case'timepicker':
-				time(DrawHTML, ionicTimePicker);
+				time(DrawHTML, ionicTimePicker, $mdpTimePicker, $state);
 			break;
 
 			case'location':
@@ -371,6 +372,16 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
 			case'text_image':
 				text_only(DrawHTML, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce);
+            break;
+
+            case'datetimepicker':
+                datetimepicker(DrawHTML, ionicTimePicker, $mdpTimePicker);
+            break;
+
+            case'image':
+                image(DrawHTML,$cordovaCamera);
+            break;
+
 		}
 
 		/*############################## HARD CODED CONDITIONS ##############################*/
@@ -388,17 +399,115 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 				}
 				$scope.readonlyText.status = true;
 			}
-			if($state.params.surveyId == 2 && $state.params.groupId == 5 && QuestionIndex == 3){
-				var datavalues = localStorageService.get('uniqueSerial');
-				$scope.textAnswer.value = datavalues[0]+''+datavalues[1]+''+datavalues[2];
-				$scope.readonlyText.status = true;
-			}
-			if($state.params.surveyId == 5 && $state.params.groupId == 19 && QuestionIndex == 2){
-				var datavalues = localStorageService.get('uniqueSerial');
-				$scope.textAnswer.value = datavalues[0]+''+datavalues[1];
-				$scope.readonlyText.status = true;
-			}
-			if(	($state.params.surveyId == 2)){
+            if($state.params.surveyId == 1 && $state.params.groupId == 1 && QuestionIndex == 4){
+                var getFilledData = 'SELECT `SID1_GID1_QID1`,`SID1_GID1_QID2`,`SID1_GID1_QID3`,`SID1_GID1_QID4` FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
+                dbservice.runQuery(getFilledData,[localStorageService.get('record_id')], function(res){
+                    console.log(res.rows.item(0));
+                    var prefilled_answer_data = res.rows.item(0);
+                    
+                    setTimeout(function(){
+                        $scope.textAnswer.value = prefilled_answer_data.SID1_GID1_QID1+''+prefilled_answer_data.SID1_GID1_QID2+''+prefilled_answer_data.SID1_GID1_QID4+''+prefilled_answer_data.SID1_GID1_QID3;
+                        $scope.iris_id = 'IRISID: '+$scope.textAnswer.value;
+                        localStorageService.set('iris_id',$scope.iris_id);
+                    },5);
+                    $scope.readonlyText.status = true;
+                }, function(error){
+                    console.log(error);
+                });
+            }
+			
+			if($state.params.surveyId == 3 && $state.params.groupId == 11 && QuestionIndex == 3){
+                var getFilledData = 'SELECT `SID3_GID11_QID107`,`SID3_GID11_QID141`,`SID3_GID11_QID142` FROM survey_result_'+$state.params.surveyId+' WHERE id = ?';
+                dbservice.runQuery(getFilledData,[localStorageService.get('record_id')], function(res){
+                    var prefilled_answer_data = res.rows.item(0);
+                    $scope.textAnswer.value = prefilled_answer_data.SID3_GID11_QID107+''+prefilled_answer_data.SID3_GID11_QID142+''+prefilled_answer_data.SID3_GID11_QID141;
+                    $scope.iris_id = 'IRISID: '+$scope.textAnswer.value;
+                    localStorageService.set('iris_id',$scope.iris_id);
+                    $scope.readonlyText.status = true;
+                }, function(error){
+                    console.log(error);
+                });
+            }
+
+            if($state.params.surveyId == 1 && $state.params.groupId == 2 && $state.params.QuestId == 3){
+                var QueryForCondition = 'SELECT SID1_GID2_QID23 FROM survey_result_1 WHERE id = ?';
+                dbservice.runQuery(QueryForCondition,[localStorageService.get('record_id')], function(res){
+                    if(res.rows.item(0)['SID1_GID2_QID23'] != 998 && res.rows.item(0)['SID1_GID2_QID23'] != '998'){
+                        var jsonParse = JSON.parse(res.rows.item(0)['SID1_GID2_QID23']);
+                        if("years" in jsonParse){
+                            if(jsonParse['years'] < 5){
+                                $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1},{replace: true});
+                            }
+                        }else if("months" in jsonParse){
+                            $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1},{replace: true});
+                        }
+                    }
+                }); 
+            }
+
+            if($state.params.surveyId == 3 && $state.params.groupId == 11 && $state.params.QuestId == 8){
+                var QueryForCondition = 'SELECT SID3_GID11_QID275 FROM survey_result_3 WHERE id = ?';
+                dbservice.runQuery(QueryForCondition,[localStorageService.get('record_id')], function(res){
+                    if(res.rows.item(0)['SID3_GID11_QID275'] != 998 && res.rows.item(0)['SID3_GID11_QID275'] != '998'){
+                        var jsonParse = JSON.parse(res.rows.item(0)['SID3_GID11_QID275']);
+                        if("years" in jsonParse){
+                            if(jsonParse['years'] < 5){
+                                $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1},{replace: true});
+                            }
+                        }else if("months" in jsonParse){
+                            $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1},{replace: true});
+                        }
+                    }
+                }); 
+            }
+
+            if($state.params.surveyId == 1 && $state.params.groupId == 4 && $state.params.QuestId == 2){
+                var QueryForCondition = 'SELECT SID1_GID4_QID43 FROM survey_result_1 WHERE id = ?';
+                var nextStatus = false;
+                dbservice.runQuery(QueryForCondition,[localStorageService.get('record_id')], function(res){
+                    if(res.rows.item(0)['SID1_GID4_QID43'] != ''){
+                        var jsonParesed = JSON.parse(res.rows.item(0)['SID1_GID4_QID43']);
+                        $.each(jsonParesed, function(key,value){
+                            if(($.inArray(parseInt(key),[6,7,8,11,12]) !== -1) && value == true){
+                                nextStatus = true;
+                            }
+                        });
+                        if(nextStatus == false){
+                            $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1},{replace: true});
+                        }
+                    }
+                }); 
+            }
+            if($state.params.surveyId == 1 && $state.params.groupId == 6 && $state.params.QuestId == 5){
+                var QueryForCondition = 'SELECT SID1_GID6_QID60, SID1_GID6_QID80 FROM survey_result_1 WHERE id = ?';
+                dbservice.runQuery(QueryForCondition,[localStorageService.get('record_id')], function(res){
+                    if(res.rows.item(0)['SID1_GID6_QID80'] != ''){
+                        var jsonParesed = JSON.parse(res.rows.item(0)['SID1_GID6_QID80']);
+                        var singleValue = res.rows.item(0)['SID1_GID6_QID60'];
+                        if(((1 in jsonParesed && jsonParesed[1] == true) && singleValue == 1) || ((2 in jsonParesed && jsonParesed[2] == true) && singleValue == 2) || ((5 in jsonParesed && jsonParesed[5] == true) && singleValue == 3)){
+                            //do nothing
+                        }else{
+                            $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': parseInt(QuestionIndex)+1},{replace: true});
+                        }
+                    }
+                }); 
+            }
+            if($state.params.surveyId == 1 && $state.params.groupId == 7 && $state.params.QuestId == 10){
+                var QueryForCondition = 'SELECT SID1_GID7_QID110 FROM survey_result_1 WHERE id = ?';
+                dbservice.runQuery(QueryForCondition,[localStorageService.get('record_id')], function(res){
+                    if($.inArray(parseInt(res.rows.item(0)['SID1_GID7_QID110']),[2,3,4]) !== -1){
+                        setTimeout(function(){
+                            $('select[name=selectAnswer] option').each(function(){
+                                if($.inArray(parseInt( $(this).attr('value') ),[4,5,6] ) !== -1){
+                                    $(this).remove();
+                                }
+                            });
+                        },800);
+                    }
+                }); 
+            }
+
+			/*if(	($state.params.surveyId == 2)){
 				// console.log(localStorageService.get('uniqueSerial'));
 				if(localStorageService.get('uniqueSerial') != undefined && localStorageService.get('uniqueSerial') != null){
 					var datavalues = localStorageService.get('uniqueSerial');
@@ -406,16 +515,16 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 						$scope.iris_id = 'IRISID: '+datavalues[0]+''+datavalues[1]+''+datavalues[2];
 					}
 				}
-			}
+			}*/
 
-			if(	($state.params.surveyId == 5)){
+			/*if(	($state.params.surveyId == 5)){
 				if(localStorageService.get('uniqueSerial') != undefined && localStorageService.get('uniqueSerial') != null){
 					var datavalues = localStorageService.get('uniqueSerial');
 					if(datavalues[0] != undefined && datavalues[1] != undefined){
 						$scope.iris_id = 'IRISID: '+datavalues[0]+''+datavalues[1];
 					}
 				}
-			}
+			}*/
 
 		/*####################################################################################*/
         //Pre fill answer
@@ -453,13 +562,25 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                 break;
 
                 case'number':
-                    try{
-                        answ = parseInt(resp.rows.item(0)[SurveyData[QuestionIndex].question_key]);
-                    }catch(e){
+                    if(SurveyData[QuestionIndex].question_repeater == 'yes'){
+                        var answerData = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        if(answerData != null && answerData != ''){
+                            var numberAnswerData = JSON.parse(answerData);
+                            var index = 1;
+                            $.each(numberAnswerData,function(key,value){
+                                $('.numberAnswer:nth-child('+index+')').val(value);
+                                index++;
+                            });
+                        }
+                    }else{
+                        try{
+                            answ = parseInt(resp.rows.item(0)[SurveyData[QuestionIndex].question_key]);
+                        }catch(e){
 
-                    }
-                    if(answ != '' && answ != null){
-                        $scope.numberAnswer.value = answ;
+                        }
+                        if((answ != '' && answ != null) || answ == 0){
+                            $scope.numberAnswer.value = answ;
+                        }
                     }
                 break;
 
@@ -470,7 +591,10 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 
                     }
                     if(answ != '' && answ != null){
-                        $scope.selectAnswer.value = answ;
+                         $scope.selectAnswer.value = answ;
+                        setTimeout(function(){
+                            $scope.setNextQuestion('','select');                                
+                        },100);
                     }
                 break;
 
@@ -486,18 +610,78 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                 break;
 
                 case'radio':
+                    if(SurveyData[QuestionIndex].have_others == 'yes'){
+                        if(resp.rows.item(0)[SurveyData[QuestionIndex].question_key] != '998.0'){
+                            var jsonDataAnswer = JSON.parse(resp.rows.item(0)[SurveyData[QuestionIndex].question_key]);
+                            angular.forEach(jsonDataAnswer, function(value, key){
+                                if(key == 'months'){
+                                    $scope.haveOther = true;
+                                    $('.radioButtons[value=1]').prop('checked',true).click();
+                                    $scope.radioAnswer.value = 1;
+                                    $('.surveyTextBox').val(value);
+                                }else if(key == 'years'){
+                                    $scope.haveOther = true;
+                                    $('.radioButtons[value=2]').prop('checked',true).click();
+                                    $scope.radioAnswer.value = 2;
+                                    $('.surveyTextBox').val(value);
+                                }else{
+                                    console.log(value);
+                                }
+                            });
+                        }else{
+                            answ = parseInt(resp.rows.item(0)[SurveyData[QuestionIndex].question_key]);
+                            $('.radioButtons:checked').click();
+                            $scope.radioAnswer.value = answ;
+                        }
+                        
+                    }else{
+                       try{
+                            answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                            setTimeout(function(){
+                                $scope.setNextQuestion($('.radioButtons:checked').data('next'),'radio');                                
+                            },100);
+                        }catch(e){
+
+                        }
+                        if(answ != '' && answ != null){
+                            $('.radioButtons:checked').click();
+                            $scope.radioAnswer.value = answ;
+                        } 
+                    }
+                    
+                break;
+                case'datetimepicker':
                     try{
-                        answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        var prefillAnswer = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        if(prefillAnswer != null && prefillAnswer != ''){
+                            answ = new Date(resp.rows.item(0)[SurveyData[QuestionIndex].question_key]);
+                        }
                     }catch(e){
 
                     }
                     if(answ != '' && answ != null){
-                        $scope.radioAnswer.value = answ;
+                        $scope.$parent.datetime = answ;
                     }
                 break;
-
-                case'datepicker':
                 case'timepicker':
+                    try{
+                        var time = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        if(time != ''){
+                            var splitedTime = time.split(':');
+                        }
+                        var year = new Date().getFullYear();
+                        var month = new Date().getMonth()+1;
+                        var day = new Date().getDay();
+                        $scope.$parent.textAnswer = new Date(year,month,day,splitedTime[0],splitedTime[1]);
+                        
+                    }catch(e){
+
+                    }
+                    if(answ != '' && answ != null){
+                        $scope.$parent.textAnswer = answ;
+                    }
+                break;
+                case'datepicker':
                     try{
                         answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
                     }catch(e){
@@ -530,8 +714,21 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                     }
                 break;
 
+                case'image':
+                    if(resp.rows.length != 0){
+                        answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                        answ = JSON.parse(answ);
+                        $.each(answ, function(key,value){
+                            var imageSpan = '<span style=""><img src="'+value+'" class="selected_image" data-index="'+key+'" style="width: 100%; height: 100%;" ></span>';
+                            $('.image-wrap').append(imageSpan);
+                        });
+                    }
+                break;
+
                 case'repeater':
-                    answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                    if(resp.rows.length != 0){
+                        answ = resp.rows.item(0)[SurveyData[QuestionIndex].question_key];
+                    }
                     if(answ != '' && answ != null){
                         var answData = JSON.parse(answ);
                         // console.log(answData);
@@ -607,20 +804,33 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     $scope.showHideQuestion = true;
     $scope.$parent.checkboxAnswer = {};
     $scope.checkUnkown = function(value){
-        if(value == 98 || value == '98'){
+        console.log(value);
+        if(value == 998 || value == '998'){
             var checkBoxObjectArray = $scope.$parent.checkboxAnswer;
-            if(checkBoxObjectArray[98] !== undefined && checkBoxObjectArray[98] != false){
+            if(checkBoxObjectArray[998] !== undefined && checkBoxObjectArray[998] != false){
                 $scope.$parent.checkboxAnswer = {};
-                $scope.$parent.checkboxAnswer[98] = true;
+                $scope.$parent.checkboxAnswer[998] = true;
             }
         }else{
             try{
-                $scope.$parent.checkboxAnswer[98] = false;
+                $scope.$parent.checkboxAnswer[998] = false;
             }catch(e){
 
             }
         }
-        console.log($scope.$parent.checkboxAnswer);
+        if(value == '996' || value == 996){
+            var checkBoxObjectArray = $scope.$parent.checkboxAnswer;
+            if(checkBoxObjectArray[996] !== undefined && checkBoxObjectArray[996] != false ){
+                $scope.$parent.checkboxAnswer = {};
+                $scope.$parent.checkboxAnswer[996] = true;
+            }
+        }else{
+            try{
+                $scope.$parent.checkboxAnswer[996] = false;
+            }catch(e){
+
+            }
+        }        
     }
 
 
@@ -636,7 +846,6 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
     });
 
 	$scope.QuestNext = function(nextQuestion){
-        console.log(nextQuestion);
         if($scope.discardStatus){
             if($scope.notDisable){
                 
@@ -661,6 +870,8 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 	      	var SurveyData = row;
 			//to get question_type for store in answer
 			
+            var checkUnique = false;
+
             var QuestType  =  SurveyData[QuestionIndex].question_type;
 
 			var RequiredCheck = SurveyData[QuestionIndex].required;
@@ -678,19 +889,43 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
                 if($.inArray(parseInt(SurveyData[QuestionIndex].question_id),[50,56,98,149,186,46,139]) != -1){
                     RequiredCheck = 'yes';
                 }
+
+                if($state.params.surveyId == 1 && $state.params.groupId == 1 && $state.params.QuestId == 2){
+                    checkUnique = true;
+                }
 			/*###########################################################################*/
             try{
+                var lengthCheck = 'no';
+                var patternCheck = 'no';
+                var rangeCheck = 'no';
+                var patternValidationData = {};
+                var lengthValidationData = {};
+                var rangeValidationData = {};
                 var fieldValidations = JSON.parse(SurveyData[QuestionIndex].field_validations);
+                // console.log(fieldValidations);
                 angular.forEach(fieldValidations, function(validation,k){
-                    if(validation.validation == 'required'){
+                    if(validation.field_validation == 'required'){
                         RequiredCheck = 'yes';
                     }
+                    if(validation.field_validation == 'length'){
+                        lengthCheck = 'yes';
+                        lengthValidationData = validation;
+                    }
+                    if(validation.field_validation == 'pattern'){
+                        patternCheck = 'yes';
+                        patternValidationData = validation;
+                    }
+                    if(validation.field_validation == 'range'){
+                        rangeCheck = 'yes';
+                        rangeValidationData = validation;
+                    }
+
                 });
             }catch(e){
                 console.log(e);
             }
 			if(RequiredCheck == 'yes'){
-				var valResult = validation($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex]);
+				var valResult = validation($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex], $state);
 				if(valResult == true){
 					if(SurveyData[QuestionIndex].pattern != '' && SurveyData[QuestionIndex].pattern != null){
 						var validationResult = validatePattern($scope, QuestType, $ionicLoading, SurveyData[QuestionIndex].pattern, SurveyData[QuestionIndex]);
@@ -699,8 +934,40 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 							return false;
 						}
 					}
-                    locS.set('lastQuestionIndex',QuestionIndex);
-					goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory);
+                    if(lengthCheck == 'yes'){
+                        if(checkLengthValidation(SurveyData[QuestionIndex], lengthValidationData) == false){
+                            return false;
+                        }
+                    }
+                    if(patternCheck == 'yes'){
+                        if(checkPatternValidation(SurveyData[QuestionIndex], patternValidationData) == false){
+                            return false;
+                        }
+                    }
+                    if(rangeCheck == 'yes'){
+                        if(checkRangeValidation(SurveyData[QuestionIndex], rangeValidationData) == false){
+                            return false;
+                        }
+                    }
+                    if(checkUnique == true){
+                        var recordID= localStorageService.get('record_id');
+                        var checkUniqueSerialNumber = 'SELECT * FROM survey_result_'+$state.params.surveyId+' WHERE SID1_GID1_QID3 = ? and id != ?';
+                        dbservice.runQuery(checkUniqueSerialNumber,[$scope.textAnswer.value, recordID], function(res){
+                            if(res.rows.length != 0){
+                                $ionicLoading.show({
+                                    template: 'Serial number already in use!',
+                                    noBackdrop: false,
+                                    duration: 2000
+                                });
+                            }else{
+                                locS.set('lastQuestionIndex',QuestionIndex);
+                                goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory, $ionicLoading);    
+                            }
+                        });
+                    }else{
+                        locS.set('lastQuestionIndex',QuestionIndex);
+                        goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory, $ionicLoading);    
+                    }
 				}else{
                     $scope.nextStatus = true;
                 }
@@ -712,8 +979,41 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 						return false;
 					}
 				}
-                locS.set('lastQuestionIndex',QuestionIndex);
-				goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory);
+                if(lengthCheck == 'yes'){
+                    if(checkLengthValidation(SurveyData[QuestionIndex], lengthValidationData) == false){
+                        return false;
+                    }
+                }
+                if(patternCheck == 'yes'){
+                    if(checkPatternValidation(SurveyData[QuestionIndex], patternValidationData) == false){
+                        return false;
+                    }
+                }
+                if(rangeCheck == 'yes'){
+                    if(checkRangeValidation(SurveyData[QuestionIndex], rangeValidationData) == false){
+                        return false;
+                    }
+                }
+                if(checkUnique == true){
+                    var recordID= localStorageService.get('record_id');
+                    var checkUniqueSerialNumber = 'SELECT * FROM survey_result_'+$state.params.surveyId+' WHERE SID1_GID1_QID3 = ? and id != ?';
+                    dbservice.runQuery(checkUniqueSerialNumber,[$scope.textAnswer.value, recordID], function(res){
+                        if(res.rows.length != 0){
+                            $ionicLoading.show({
+                                template: 'Serial number already in use!',
+                                noBackdrop: false,
+                                duration: 2000
+                            });
+                        }else{
+                            locS.set('lastQuestionIndex',QuestionIndex);
+                            goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory, $ionicLoading);
+                        }
+                    });
+                }else{
+                    locS.set('lastQuestionIndex',QuestionIndex);
+                    goToNext(QuestionIndex, $scope, QuestType, $state, SurveyData[QuestionIndex], locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory, $ionicLoading);
+                }
+                
 			}
 
 			if(SurveyData == undefined){
@@ -721,6 +1021,91 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 			}
 		});
 	}
+
+    function checkRangeValidation(questionData, validation){
+        var validationArguments = validation.validation_argument;
+        validationArguments = validationArguments.split(',');
+        var rangeData = validationArguments[0].split('-');
+        var minRange = parseInt(rangeData[0]);
+        var maxRange = parseInt(rangeData[1]);
+        var rangeError = false;
+        $('.numberAnswer').each(function(key){
+            var numberValue = parseInt($(this).val());
+            if(numberValue <  minRange || numberValue > maxRange){
+                if(numberValue != parseInt(validationArguments[1]) && numberValue != parseInt(validationArguments[2])){
+                    rangeError = true;
+                }
+            }
+        });
+        if(rangeError == true){
+            $ionicLoading.show({
+                template: validation.field_validation_message,
+                noBackdrop: false,
+                duration: 1000
+            });
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    function checkPatternValidation(questionData, validation){
+        if(eval(validation['validation_argument']).test($scope.$parent.textAnswer.value)){
+            return true;
+        }else{
+            $ionicLoading.show({
+              template: validation.field_validation_message,
+              noBackdrop: false,
+              duration: 1000
+            });
+            return false;
+        }
+    }
+    function isNumber(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    function checkLengthValidation(questionData, validation){
+        var numberText = '';
+        if(questionData.question_type == 'text'){
+            numberText = $scope.$parent.textAnswer.value;
+        }
+        if(questionData.question_type == 'number'){
+            numberText = $scope.$parent.numberAnswer.value.toString();
+        }
+        if(!isNaN(numberText) && numberText != null){
+            
+            if(numberText.length == validation.validation_argument && parseInt(numberText) >= 1){
+                if(isNumber(numberText)){
+                    return true;
+                }else{
+                    $ionicLoading.show({
+                      template: validation.field_validation_message,
+                      noBackdrop: false,
+                      duration: 1000
+                    });
+                    return false;
+                }
+            }else{
+                $ionicLoading.show({
+                  template: validation.field_validation_message,
+                  noBackdrop: false,
+                  duration: 1000
+                });
+                return false;
+            }
+        }else{
+            if(isNumber(numberText)){
+                return true;
+            }else{
+                $ionicLoading.show({
+                  template: validation.field_validation_message,
+                  noBackdrop: false,
+                  duration: 1000
+                });
+                return false;
+            }
+        }
+    }
 
 })
 
@@ -750,30 +1135,32 @@ angular.module('smaart.surveyCtrl', ['ngCordova'])
 });
 
 
-function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory){
+function goToNext(QuestionIndex, $scope, QuestType, $state, rawData, locS, nextQuestion, dbservice, $cordovaDevice, $ionicHistory, $ionicLoading){
 	$scope.showHideQuestion = false;
 
-	StoreAnswer(QuestionIndex,$scope, QuestType, rawData, locS, dbservice, $state, $cordovaDevice);
-	if(nextQuestion != ''){
-		QuestionIndex = nextQuestion;
-		var $next = parseInt(QuestionIndex);
-	}else{
-		var $next = parseInt(QuestionIndex) + 1;
-	}
-    
-    //Set localstorage data 
-        var preFilledQuestions = locS.get('filled_questions');
-        if(preFilledQuestions == null){
-            preFilledQuestions = [];
+	var storeStatus = StoreAnswer(QuestionIndex,$scope, QuestType, rawData, locS, dbservice, $state, $cordovaDevice, $ionicLoading);
+    if(storeStatus  != false){
+        if(nextQuestion != ''){
+            QuestionIndex = nextQuestion;
+            var $next = parseInt(QuestionIndex);
+        }else{
+            var $next = parseInt(QuestionIndex) + 1;
         }
-        if($.inArray(parseInt(QuestionIndex),preFilledQuestions) == -1){
-            preFilledQuestions.push(parseInt(QuestionIndex));
-        }
-        locS.set('filled_questions',preFilledQuestions);
-    /******************************/
-    $ionicHistory.clearHistory();
-    $ionicHistory.clearCache();
-	$state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': $next},{replace: true});
+        
+        //Set localstorage data 
+            var preFilledQuestions = locS.get('filled_questions');
+            if(preFilledQuestions == null){
+                preFilledQuestions = [];
+            }
+            if($.inArray(parseInt(QuestionIndex),preFilledQuestions) == -1){
+                preFilledQuestions.push(parseInt(QuestionIndex));
+            }
+            locS.set('filled_questions',preFilledQuestions);
+        /******************************/
+        $ionicHistory.clearHistory();
+        $ionicHistory.clearCache();
+        $state.go('app.survey',{'surveyId':$state.params.surveyId, 'QuestId': $next},{replace: true});
+    }
 }
 
 function checkbox(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce){
@@ -924,38 +1311,38 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/repeater.html'\"></div>";
     setTimeout(function(){
         $('input[type=radio],input[type=number]').removeAttr('ng-model').removeClass('ng*');
-        $('.SID2_GID9_QID89, .SID2_GID9_QID90, .SID2_GID9_QID91, .SID2_GID9_QID92, .SID2_GID9_QID295').hide();
+        $('.SID1_GID5_QID51, .SID1_GID5_QID53, .SID1_GID5_QID55, .SID2_GID9_QID92, .SID2_GID9_QID295').hide();
     },1000);
-    $('body').on('change','.SID2_GID9_QID93 select', function(){
+    $('body').on('change','.SID1_GID5_QID59 select', function(){
         var elem = $(this).parents('.repeaterRow');
-        if($(this).val() == '9'){
-            elem.find('.SID2_GID9_QID89').show();
+        if($(this).val() == '997'){
+            elem.find('.SID1_GID5_QID51').show();
             elem.find('.SID2_GID9_QID295').show();
             elem.find('.SID2_GID9_QID92').show();
         }else if($.inArray($(this).val().toString(),['1','2','3a']) == -1){
             elem.find('.SID2_GID9_QID295').show();
             elem.find('.SID2_GID9_QID92').show();
-            elem.find('.SID2_GID9_QID89').hide();
+            elem.find('.SID1_GID5_QID51').hide();
         }else{
-            elem.find('.SID2_GID9_QID89').hide();
+            elem.find('.SID1_GID5_QID51').hide();
             elem.find('.SID2_GID9_QID295').hide();
             elem.find('.SID2_GID9_QID92').hide();
         }
     });
-    $('body').on('change','.SID2_GID9_QID222 select', function(){
+    $('body').on('change','.SID1_GID5_QID52 select', function(){
         var elem = $(this).parents('.repeaterRow');
-         if($(this).val() == '9'){
-            elem.find('.SID2_GID9_QID90').show();
+         if($(this).val() == '997'){
+            elem.find('.SID1_GID5_QID53').show();
          }else{
-            elem.find('.SID2_GID9_QID90').hide();
+            elem.find('.SID1_GID5_QID53').hide();
          }
     });
-    $('body').on('change','.SID2_GID9_QID226 select', function(){
+    $('body').on('change','.SID1_GID5_QID54 select', function(){
         var elem = $(this).parents('.repeaterRow');
-        if($(this).val() == '9'){
-            elem.find('.SID2_GID9_QID91').show();
+        if($(this).val() == '997'){
+            elem.find('.SID1_GID5_QID55').show();
          }else{
-            elem.find('.SID2_GID9_QID91').hide();
+            elem.find('.SID1_GID5_QID55').hide();
          }
     });
     $scope.repeater = true;
@@ -998,6 +1385,17 @@ function repeater(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse,
             });
         }
 	}
+
+    $('body').on('keyup','input[name=number_of_vehicle]',function(){
+       if($(this).val() > 5){
+            $(this).val(5);
+            return false;
+       }
+       if($(this).val() == 0 && $(this).val() != ''){
+            $(this).val(1);
+            return false;
+       }
+    });
 }
 
 function message(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse){
@@ -1072,15 +1470,88 @@ function date(params, ionicDatePicker){
 	}
 }
 
-function time(params, ionicTimePicker){
+function datetimepicker(params, ionicTimePicker, $mdpTimePicker){
+    var $scope = params.scope;
+    $scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
+    if(params.QuestionDesc != null){
+        $scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+    }
+    $scope.$parent.maxDate = new Date();
+    $scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/datetimepicker.html'\"></div>";
+}
 
+
+function image(params,$cordovaCamera){
+    var $scope = params.scope;
+    $scope.numberAnswer = {};
+    $scope.numberAnswer.value = '';
+    $scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
+    if(params.QuestionDesc != null){
+        $scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
+    }
+    $('body').on('click','.selected_image', function(){
+        var selectedImages = $(this).attr('src');
+        $('.popup-image').find('img').attr('src',selectedImages).attr('data-index',$(this).data('index'));
+        $('.popup-image').fadeIn(300);
+    });
+    $('body').on('click','.backg, .close-pop', function(){
+        $('.popup-image').fadeOut(300);
+    });
+    $('body').on('click','.deleteImage', function(){
+        var dataIndex = $(this).parent('div').find('img').data('index');
+        delete seletcedImages[dataIndex];
+        seletcedImages = seletcedImages.filter(function(){return true;});
+        $('.image-wrap').html('');
+        $.each(seletcedImages, function(key,value){
+            var imageSpan = '<span style=""><img src="'+value+'" class="selected_image" data-index="'+key+'" style="width: 100%; height: 100%;" ></span>';
+            $('.image-wrap').append(imageSpan);
+        });
+    });
+    window.seletcedImages = [];
+    $scope.capture_image = function(){
+        
+        var options = {
+            quality: 50,
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.CAMERA,
+            // sourceType: 0,
+            limit: 5,
+            allowEdit: false,
+            encodingType: Camera.EncodingType.JPEG,
+            /*targetWidth: 100,
+            targetHeight: 100,*/
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: true,
+            correctOrientation:true
+        };
+
+        $cordovaCamera.getPicture(options).then(function(imageURI) {
+            console.log(imageURI);
+            seletcedImages.push(imageURI);
+            $('.image-wrap').html('');
+            $.each(seletcedImages, function(key,value){
+                var imageSpan = '<span style=""><img src="'+imageURI+'" class="selected_image" data-index="'+key+'" style="width: 100%; height: 100%;" ></span>';
+                $('.image-wrap').append(imageSpan);
+            });
+        }, function(err) {
+          console.log(err);
+        });
+    }
+    $scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/image.html'\"></div>";
+}
+
+function time(params, ionicTimePicker, $mdpTimePicker, $state){
 	var $scope = params.scope;
 	$scope.QuesHtml = "<p>"+params.QuestionText+"</p>";
 	if(params.QuestionDesc != null){
 		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
 	}
+    $scope.hour_minutes = false;
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/timepicker.html'\"></div>";
-	var ipObj1 = {
+    if($state.params.surveyId == 1 && $state.params.groupId == 7 && $state.params.QuestId == 0){
+        $scope.hour_minutes = true;
+    }
+	/*var ipObj1 = {
 	    callback: function (val) {      //Mandatory
 	      if (typeof (val) === 'undefined') {
 	        console.log('Time not selected');
@@ -1099,7 +1570,7 @@ function time(params, ionicTimePicker){
 	$scope.timePicker = function(){
 		
 		ionicTimePicker.openTimePicker(ipObj1);
-	}
+	}*/
 }
 
 function GpsLocation(params, $ionicLoading, $cordovaGeolocation){
@@ -1235,6 +1706,8 @@ function number(params){
 		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
 	}
     $scope.repeater = false;
+    $scope.question_repeater = params.raw.question_repeater;
+    $scope.question_repeater_length = parseInt(params.raw.repeation_length);
 	$scope.AnswerHtml = "<div ng-include src=\"'surveyTemplate/number.html'\"></div>";
 }
 
@@ -1258,6 +1731,21 @@ function radio(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $s
 	if(params.QuestionDesc != null){
 		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
 	}
+
+    $('.have_other').hide();
+    $scope.haveOthers = params.raw.have_others;
+    if($scope.haveOthers == 'yes'){
+        $('body').on('click','.radioButtons',function(){
+            if($scope.haveOthers == 'yes'){
+                var radioButtonValue = $('input[name=radio]:checked').val();
+                if($.inArray(parseInt(radioButtonValue),[1,2]) !== -1){
+                    $scope.haveOther = true;
+                }else{
+                    $scope.haveOther = false;
+                }
+            }
+        });
+    }
 	$scope.radioOptions = params.QuestAnswers;
 	if(params.ls.get('SurveyMedia') != 'null'){
 		document.addEventListener("deviceready", function() {
@@ -1298,7 +1786,7 @@ function radio(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $s
 }
 
 
-function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce){
+function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $sce, $state, dbservice){
 
 	var $scope = params.scope;
 	$scope.selectAnswer = {};
@@ -1309,8 +1797,52 @@ function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $
 		$scope.DescHtml = "<p>"+params.QuestionDesc+"</p>";
 	}
 	$scope.$parent.selectAnswer = {};
-	$scope.selectOptions = params.QuestAnswers;
-	console.log(params.QuestAnswers);
+    var optionsArary = [];
+    var record_id = params.ls.get('record_id');
+
+    if($state.params.QuestId == '2' && $state.params.groupId == '10' && $state.params.surveyId == '2'){
+        var getRunnugSurveyResults = 'SELECT SID2_GID10_QID61, SID2_GID10_QID63 FROM survey_result_2 WHERE id = ?';
+        dbservice.runQuery(getRunnugSurveyResults,[record_id], function(response){
+            var QueryForIris = 'SELECT SID1_GID1_QID5,SID1_GID1_QID6,SID1_GID1_QID8,SID1_GID1_QID9,SID1_GID1_QID10 FROM survey_result_1 WHERE SID1_GID1_QID1 = ? AND SID1_GID1_QID2 = ?';
+            dbservice.runQuery(QueryForIris,[response.rows.item(0)['SID2_GID10_QID61'],response.rows.item(0)['SID2_GID10_QID63']],function(res){
+                var QueryAlreadySelected = 'SELECT SID2_GID10_QID64 FROM survey_result_2 WHERE id != ?';
+                dbservice.runQuery(QueryAlreadySelected,[record_id],function(resp){
+                    var irisIdArray = [];
+                    for(var i = 0; i < resp.rows.length; i++){
+                        irisIdArray.push(resp.rows.item(i)['SID2_GID10_QID64']);
+                    }
+                    
+                    for(var i = 0; i < res.rows.length; i++){
+                        
+                        if($.inArray(res.rows.item(i)['SID1_GID1_QID5'],irisIdArray) === -1){
+                            var optionsObject = {};
+                            optionsObject['option_type'] = 'select';
+                            optionsObject['option_value'] = res.rows.item(i)['SID1_GID1_QID5'];
+                            optionsObject['iris_id'] = res.rows.item(i)['SID1_GID1_QID5'];
+                            optionsObject['mr_num'] = res.rows.item(i)['SID1_GID1_QID6'];
+                            optionsObject['adm_date'] = res.rows.item(i)['SID1_GID1_QID8'];
+                            optionsObject['adm_time'] = res.rows.item(i)['SID1_GID1_QID9'];
+                            optionsObject['resp_name'] = res.rows.item(i)['SID1_GID1_QID10'];
+                            optionsObject['option_next'] = '';
+                            optionsObject['option_prompt'] = '';
+                            optionsObject['option_text'] = optionsObject['iris_id']+'(N:'+optionsObject['resp_name']+', M:'+optionsObject['mr_num']+', AD:'+optionsObject['adm_date']+', AT:'+optionsObject['adm_time']+')';
+                            optionsArary.push(optionsObject);
+                        }
+                    }
+                    console.log('*************************');
+                    console.log(optionsArary);
+                    $scope.selectOptions = optionsArary;
+                });
+            },function(error){
+                console.log(error);
+            });
+        },function(error){
+
+        });
+    }else{
+        $scope.selectOptions = params.QuestAnswers;
+    }
+	
 	
 	if(params.ls.get('SurveyMedia') != 'null'){
 		document.addEventListener("deviceready", function() {
@@ -1352,7 +1884,7 @@ function select(params, ionicDatePicker, $q, $rootScope, $cordovaFile, $parse, $
 
 
 
-function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $state, $cordovaDevice){
+function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $state, $cordovaDevice, $ionicLoading){
 	/*console.log($scope.numberAnswer);
 	return false;*/
 	var answer_of_current_question = '';
@@ -1377,7 +1909,15 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		break;
 
 		case'number':
-			answer_of_current_question = $scope.numberAnswer.value;
+            if(rawData.question_repeater == 'yes'){
+                var numberAnswerJson = {};//field_slug
+                $('.numberAnswer').each(function(key){
+                    numberAnswerJson[rawData.field_slug+''+(key+1)] = $(this).val();
+                });
+                answer_of_current_question = JSON.stringify(numberAnswerJson);
+            }else{
+                answer_of_current_question = $scope.numberAnswer.value;
+            }			
 		break;
 
 		case'email':
@@ -1385,8 +1925,23 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		break;
 
 		case'radio':
-			answer_of_current_question = $scope.radioAnswer.value;
-            locS.set('submit_section',$scope.radioAnswer.value);
+            if(rawData.have_others == 'yes'){
+                var radioAnswerCheckedValue = $('.radioButtons:checked').val();
+                var answerJson = {};
+                if(radioAnswerCheckedValue == 1){
+                    answerJson['months'] = $('.surveyTextBox').val();
+                }else if(radioAnswerCheckedValue == 2){
+                    answerJson['years'] = $('.surveyTextBox').val();
+                }
+                answer_of_current_question = JSON.stringify(answerJson);
+                if(radioAnswerCheckedValue == '998'){
+                    answer_of_current_question = 998;
+                }
+                locS.set('submit_section',$scope.radioAnswer.value);
+            }else{
+                answer_of_current_question = $scope.radioAnswer.value;
+                locS.set('submit_section',$scope.radioAnswer.value);
+            }
 		break;
 
 		case'checkbox':
@@ -1409,6 +1964,9 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 		break;
 
 		case'select'://dropdown
+            if($state.params.QuestId == '2' && $state.params.groupId == '10' && $state.params.surveyId == '2'){
+                locS.set('iris_id',$scope.selectAnswer.value);
+            }
 			answer_of_current_question = $scope.selectAnswer.value;
 		break;
 
@@ -1416,28 +1974,64 @@ function StoreAnswer(QuestionIndex, $scope, type, rawData, locS, dbservice, $sta
 			answer_of_current_question = ($scope.textAnswer === undefined)?null:$scope.textAnswer;
 		break;
 
+        case'datetimepicker':
+            var dateTimeVar = $scope.$parent.datetime;
+            // var dateAndTime = dateTimeVar.getFullYear()+'-'+(parseInt(dateTimeVar.getMonth())+1)+'-'+dateTimeVar.getDay();
+            // console.log(dateTimeVar);
+            // return false;
+            try{
+                answer_of_current_question = dateTimeVar;
+            }catch(e){
+                answer_of_current_question = '';
+            }
+        break;
+
 		case'timepicker':
-			answer_of_current_question = ($scope.textAnswer === undefined)?null:$scope.textAnswer;
+            try{
+                answer_of_current_question = $scope.$parent.$$childTail.textAnswer.getHours()+':'+$scope.$parent.$$childTail.textAnswer.getMinutes();
+            }catch(e){
+                answer_of_current_question = '';
+            }
 		break;
+
+        case'image':
+            console.log(window.seletcedImages);
+            answer_of_current_question = JSON.stringify(window.seletcedImages);
+        break;
 
 		case'location':
 			answer_of_current_question = ($scope.locAnswer === undefined)?null:$scope.locAnswer;
 		break;
 
 		case'repeater':
-            locS.set('submit_section',$('input[name=submit_section]:checked').val());
+            locS.set('submit_section','yes');
 			var answerObject = [];
+            var repeaterErrorStatus = [];
 			$('.repeaterRow').each(function(i){
 				var questionsObjectArray = {};
 				$(this).find('.repeater_field').each(function(j){
                     if($(this).find('input').attr('type') == 'radio'){
                         questionsObjectArray[$(this).find('.textBoxSurvey').attr('key')] = $(this).find('input[type=radio]:checked').val();
                     }else{
+                        var answerValue = $(this).find('select').val();
+                        console.log(answerValue);
+                        if((answerValue == '' || answerValue == null || answerValue == '? undefined:undefined ?') && answerValue != undefined ){
+                            repeaterErrorStatus.push('true');
+                        }
                         questionsObjectArray[$(this).find('.textBoxSurvey').attr('key')] = $(this).find('select,input,input[type=radio]:checked').val();
                     }
 				});
 				answerObject.push(questionsObjectArray);
 			});
+            console.log(repeaterErrorStatus);
+            if($.inArray('true',repeaterErrorStatus) !== -1){
+                $ionicLoading.show({
+                    template: 'Please select all',
+                    noBackdrop: false,
+                    duration: 1000
+                });
+                return false;
+            }
             
 			answer_of_current_question = JSON.stringify(answerObject);
 		break;
@@ -1487,8 +2081,8 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 									[
 										answer, localStorage.get('startStamp'), 
 										localStorage.get('userId'),'app','NULL',uniqueKey, 
-										JSON.stringify($cordovaDevice.getDevice()),
-										// 'device_details',
+										//JSON.stringify($cordovaDevice.getDevice()),
+										 'device_details',
 										localStorage.get('userId'), 
 										timeStamp(), QuestionIndex,
 										'incomplete',
@@ -1656,9 +2250,29 @@ function validatePattern($scope, type, $ionicLoading, pattern, rawData){
 	}
 }
 
-function validation($scope, type, $ionicLoading, rawData){
+function validation($scope, type, $ionicLoading, rawData, $state){
 
 	switch(type){
+
+        case'timepicker':
+            var message = 'Please fill answer';
+            if(rawData.field_validations != ''){
+                var validationData = JSON.parse(rawData.field_validations);
+                angular.forEach(validationData, function(value,key){
+                    if(value.field_validation == "required"){
+                        message = value.field_validation_message;
+                    }
+                })
+            }
+            if($scope.$parent.$$childTail.textAnswer == undefined || $scope.$parent.$$childTail.textAnswer == null){
+                $ionicLoading.show({
+                  template: message,
+                  noBackdrop: false,
+                  duration: 1000
+                });
+                return false;
+            }
+        break;
 
 		case'text':
 			if(rawData.pattern == 'number'){
@@ -1671,9 +2285,18 @@ function validation($scope, type, $ionicLoading, rawData){
 				    return false;
 				}
 			}else{
+                var message = 'Please fill answer';
+                if(rawData.field_validations != ''){
+                    var validationData = JSON.parse(rawData.field_validations);
+                    angular.forEach(validationData, function(value,key){
+                        if(value.field_validation == "required"){
+                            message = value.field_validation_message;
+                        }
+                    })
+                }
 				if($scope.textAnswer.value === undefined || $scope.textAnswer.value == ''){
 					$ionicLoading.show({
-				      template: 'Please fill answer!',
+				      template: message,
 				      noBackdrop: false,
 				      duration: 1000
 				    });
@@ -1695,7 +2318,7 @@ function validation($scope, type, $ionicLoading, rawData){
 
 		case'number':
             // ############################################ HARD CODED #############################################
-            if($.inArray(parseInt(rawData.question_id),[50,56,98,149,186]) != -1){
+            /*if($.inArray(parseInt(rawData.question_id),[50,56,98,149,186]) != -1){
                 console.log($scope.$parent.numberAnswer);
                 if($scope.$parent.numberAnswer === undefined || $scope.$parent.numberAnswer.value == null || $scope.$parent.numberAnswer.value == ''){
                     return true;
@@ -1711,6 +2334,15 @@ function validation($scope, type, $ionicLoading, rawData){
                 }
             }
             if($.inArray(parseInt(rawData.question_id),[276,275]) != -1){
+                console.log($scope.$parent.numberAnswer.value);
+                if(/[^\d|(?=+)]/g.test($scope.$parent.numberAnswer.value)){
+                    $ionicLoading.show({
+                      template: 'Please enter correct digits!',
+                      noBackdrop: false,
+                      duration: 2000
+                    });
+                    return false;
+                }
                 if($scope.$parent.numberAnswer.value == null || $scope.$parent.numberAnswer.value == ''){
                     $ionicLoading.show({
                       template: 'Please mention age with min one and max two digits!',
@@ -1727,16 +2359,39 @@ function validation($scope, type, $ionicLoading, rawData){
                     });
                     return false;
                 }
-            }
+            }*/
             // ############################################ HARD CODED #############################################
-			if($scope.$parent.numberAnswer === undefined){
+            
+            if($state.params.surveyId == 2 && $state.params.groupId == 10 && $state.params.QuestId == 3){
+                if($scope.numberAnswer.value != null){
+                    if($scope.numberAnswer.value.toString().length == 0 || $scope.numberAnswer.value.toString().length > 2){
+                        $ionicLoading.show({
+                          template: 'Invalid Entry',
+                          noBackdrop: false,
+                          duration: 1000
+                        });
+                        return false;
+                    }
+                }
+            }
+            var message = 'Please select answer';
+            if(rawData.field_validations != ''){
+                var validationData = JSON.parse(rawData.field_validations);
+                angular.forEach(validationData, function(value,key){
+                    if(value.field_validation == "required"){
+                        message = value.field_validation_message;
+                    }
+                })
+            }
+			if((isNaN($scope.$parent.numberAnswer.value) || $scope.$parent.numberAnswer.value == '' || $scope.$parent.numberAnswer.value == null) && $scope.$parent.numberAnswer.value != 0){
 				$ionicLoading.show({
-			      template: 'Please fill answer!',
+			      template: message,
 			      noBackdrop: false,
 			      duration: 1000
 			    });
 			    return false;
 			}
+
 		break;
 
 		case'email':
@@ -1752,7 +2407,55 @@ function validation($scope, type, $ionicLoading, rawData){
 		break;
 
 		case'radio':
-			console.log($scope.radioAnswer.value);
+            if(rawData.have_others == 'yes'){
+                if($scope.radioAnswer.value === undefined || $scope.radioAnswer.value == '' || $scope.radioAnswer.value == '{}'){
+                    $ionicLoading.show({
+                      template: 'Please select',
+                      noBackdrop: false,
+                      duration: 1000
+                    });
+
+                    return false;
+                }
+                if($.inArray(parseInt($scope.radioAnswer.value),[1,2]) !== -1){
+                    var otherValue = $('.surveyTextBox').val();
+                    if(otherValue == '' || otherValue == null){
+                        $ionicLoading.show({
+                          template: 'Please enter',
+                          noBackdrop: false,
+                          duration: 1000
+                        });
+                        return false;
+                    }else{
+                        if($.inArray(parseInt($scope.radioAnswer.value),[1,2]) !== -1){
+                            if(parseInt($scope.radioAnswer.value) == 1){ //means month
+                                var textValue = parseInt($('.surveyTextBox').val());
+                                if(textValue < 0 || textValue > 12){
+                                    $ionicLoading.show({
+                                      template: 'Value should not lass then 0 or greater than 12',
+                                      noBackdrop: false,
+                                      duration: 3000
+                                    });
+                                    return false;
+                                }
+                                return true;
+                            }
+                            if(parseInt($scope.radioAnswer.value) == 2){ //means year
+                                var textValue = parseInt($('.surveyTextBox').val());
+                                if(textValue < 1 || textValue > 150){
+                                    $ionicLoading.show({
+                                      template: 'Value should not lass then 1 or greater than 150',
+                                      noBackdrop: false,
+                                      duration: 3000
+                                    });
+                                    return false;
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
 			if($scope.radioAnswer.value === undefined || $scope.radioAnswer.value == ''){
 				$ionicLoading.show({
 			      template: 'Please select answer',
@@ -1764,23 +2467,34 @@ function validation($scope, type, $ionicLoading, rawData){
 			}
 		break;
 
-		case'checkbox':			
+		case'checkbox':
+            var message = 'Please select answer';
+            if(rawData.field_validations != ''){
+                var validationData = JSON.parse(rawData.field_validations);
+                angular.forEach(validationData, function(value,key){
+                    if(value.field_validation == "required"){
+                        message = value.field_validation_message;
+                    }
+                })
+            }
 			//var CheckBoxVal = $scope.$parent.checkboxAnswer;
 			if($scope.$parent.checkboxAnswer === undefined){// || validateCheckBoxSelection(CheckBoxVal) == false){
 				$ionicLoading.show({
-			      template: 'Please select answer',
+			      template: message,
 			      noBackdrop: false,
 			      duration: 1000
 			    });
 
 			    return false;
 			}else{
-				var validateStatus = true;
+                return true;
+				/*var validateStatus = true;
 				angular.forEach($scope.$parent.checkboxAnswer, function(value, key){
 					if(value == false){
 						validateStatus = false;
 					}
 				});
+                console.log(validateStatus);
 				if(validateStatus == true){
 					return true;
 				}else{
@@ -1790,14 +2504,23 @@ function validation($scope, type, $ionicLoading, rawData){
 				      duration: 1000
 				    });
 					return false;
-				}
+				}*/
 			}
 		break;
 
         case'datepicker':
+            var message = 'Please fill answer';
+            if(rawData.field_validations != ''){
+                var validationData = JSON.parse(rawData.field_validations);
+                angular.forEach(validationData, function(value,key){
+                    if(value.field_validation == "required"){
+                        message = value.field_validation_message;
+                    }
+                })
+            }
             if($scope.$parent.textAnswer == undefined || $scope.$parent.textAnswer == '' || $scope.$parent.textAnswer == null){
                 $ionicLoading.show({
-                  template: 'Please select answer',
+                  template: message,
                   noBackdrop: false,
                   duration: 1000
                 });
@@ -1805,15 +2528,25 @@ function validation($scope, type, $ionicLoading, rawData){
             }
         break;
 
-		case'dropdown'://select
+		case'select'://dropdown
 			/*console.log(typeof $scope.$parent.selectAnswer);
 			if(typeof $scope.$parent.selectAnswer != 'object'){
 				console.log('Not object')
 			}
 			return false;*/
-			if(typeof $scope.$parent.selectAnswer == 'object'){
+            var message = 'Please select answer';
+			if($scope.$parent.selectAnswer.value == ''){
+                if(rawData.field_validations != ''){
+                    var validationData = JSON.parse(rawData.field_validations);
+                    angular.forEach(validationData, function(value,key){
+                        console.log(value);
+                        if(value.field_validation == "required"){
+                            message = value.field_validation_message;
+                        }
+                    })
+                }
 				$ionicLoading.show({
-			      template: 'Please select answer',
+			      template: message,
 			      noBackdrop: false,
 			      duration: 1000
 			    });
@@ -1943,90 +2676,51 @@ function finishSurvey($state, localStorageService, $ionicLoading, $cordovaGeoloc
 			completedGroup.push(parseInt(window.groupId));
             var submit_section = localStorageService.get('submit_section');
 			var Query = 'UPDATE survey_result_'+window.surveyId+' SET completed_groups = ?, last_group_id = ? WHERE id = ?';
-            if(submit_section == 'yes' || submit_section != 'no'){
-                var discarded_groups = localStorageService.get('discarded_groups');
-                try{
-                    var indexToRemove = discarded_groups.indexOf(parseInt(window.groupId));
-                    delete discarded_groups[indexToRemove];
-                }catch(e){}
-                localStorageService.set('discarded_groups',discarded_groups);
-                dbservice.runQuery(Query,[JSON.stringify(completedGroup),'',record_id],function(res) {
-                    localStorageService.set('completedGroups',completedGroup);
-                    angular.forEach(currentSurveyGroups, function(group, key){
-                        if($.inArray(group.group_id, completedGroup) != -1){
-                            surveyStatus.push('completed');
-                        }else{
-                            surveyStatus.push('incomplete');
-                        }
+            
+            dbservice.runQuery(Query,[JSON.stringify(completedGroup),'',record_id],function(res) {
+                localStorageService.set('completedGroups',completedGroup);
+                angular.forEach(currentSurveyGroups, function(group, key){
+                    if($.inArray(group.group_id, completedGroup) != -1){
+                        surveyStatus.push('completed');
+                    }else{
+                        surveyStatus.push('incomplete');
+                    }
+                });
+                if($.inArray('incomplete', surveyStatus) != -1){
+                    surveyStatus = 'incomplete';
+                }else{
+                    surveyStatus = 'completed';
+                }
+                if(surveyStatus == 'completed'){
+                    var Query = 'UPDATE survey_result_'+window.surveyId+' SET survey_status = ?, last_group_id = ? WHERE id = ?';
+                    dbservice.runQuery(Query,[surveyStatus,'',record_id],function(res) {
+                        $state.go('app.surveyGroup',{id: window.surveyId});
+                        console.log("survey completed ");
+                    }, function (err) {
+                      console.log(err);
                     });
-                    if($.inArray('incomplete', surveyStatus) != -1){
-                        surveyStatus = 'incomplete';
-                    }else{
-                        surveyStatus = 'completed';
-                    }
-                    if(surveyStatus == 'completed'){
-                        var Query = 'UPDATE survey_result_'+window.surveyId+' SET survey_status = ?, last_group_id = ? WHERE id = ?';
-                        dbservice.runQuery(Query,[surveyStatus,'',record_id],function(res) {
-                            $state.go('app.surveyGroup',{id: window.surveyId});
-                            console.log("survey completed ");
-                        }, function (err) {
-                          console.log(err);
-                        });
-                        console.log(surveyStatus);
-                        $state.go('app.success',{},{location:'replace'});
-                    }else{
-                        $ionicLoading.show({
-                          template: $scope.section_submitted_text,
-                          noBackdrop: false,
-                          duration: 2000
-                        });
-                        $state.go('app.surveyGroup',{id: $state.params.surveyId});
-                    }
-                  console.log("group updated");
-                }, function (err) {
-                  console.log(err);
-                });
-            }else{
-                $ionicLoading.show({
-                  template: $scope.section_discarded_text,
-                  noBackdrop: false,
-                  duration: 2000
-                });
-                
-                var discaredGroups = localStorageService.get('discarded_groups');
-                if(discaredGroups == null || discaredGroups == ''){
-                    discaredGroups = [];
+                    console.log(surveyStatus);
+                    $state.go('app.success',{},{location:'replace'});
+                }else{
+                    $ionicLoading.show({
+                      template: $scope.section_submitted_text,
+                      noBackdrop: false,
+                      duration: 2000
+                    });
+                    $state.go('app.surveyGroup',{id: $state.params.surveyId});
                 }
-                if($.inArray(parseInt(window.groupId),discaredGroups) == -1){
-                    discaredGroups.push(parseInt(window.groupId));
-                    localStorageService.set('discarded_groups',discaredGroups);
-                }
-                $state.go('app.surveyGroup',{id: $state.params.surveyId});
-            }
+              console.log("group updated");
+            }, function (err) {
+              console.log(err);
+            });
 
 		}else{
             var submit_section = localStorageService.get('submit_section');
-            if(submit_section == 'yes' || submit_section != 'no'){
-    			var completedGroup = [];
-    			completedGroup.push(parseInt(window.groupId));
-    			localStorageService.set('completedGroups',completedGroup);
-                var discarded_groups = localStorageService.get('discarded_groups');
-                try{
-                    var indexToRemove = discarded_groups.indexOf(parseInt(window.groupId));
-                    delete discarded_groups[indexToRemove];
-
-                }catch(e){}
-                localStorageService.set('discarded_groups',discarded_groups);
-            }else{
-                var discaredGroups = localStorageService.get('discarded_groups');
-                if(discaredGroups == null || discaredGroups == ''){
-                    discaredGroups = [];
-                }
-                if($.inArray(parseInt(window.groupId),discaredGroups) == -1){
-                    discaredGroups.push(parseInt(window.groupId));
-                    localStorageService.set('discarded_groups',discaredGroups);
-                }
-            }
+            
+			var completedGroup = [];
+			completedGroup.push(parseInt(window.groupId));
+			localStorageService.set('completedGroups',completedGroup);
+            
 			angular.forEach(currentSurveyGroups, function(group, key){
 				if($.inArray(group.group_id, completedGroup) != -1){
 	    			surveyStatus.push('completed');

@@ -5,7 +5,15 @@
 			<p>You Answer:</p>
 		</div> -->
 		<div class="textBoxSurvey">
-			<div><input type='text' name='textAnswer' ng-model='$parent.textAnswer' class='surveyTextBox' style="width:90% !important;float:left !important;" readonly ng-click='timePicker()'/><button class='dateBut button-small ion-android-time' ng-click='timePicker()' ></button></div>
+			<!-- <div>
+                            <input type='text' name='textAnswer' ng-model='$parent.textAnswer' class='surveyTextBox' style="width:90% !important;float:left !important;" readonly ng-click='timePicker()'/><button class='dateBut button-small ion-android-time' ng-click='timePicker()' ></button>
+                        </div> -->
+            <div ng-if="hour_minutes == false">
+                <md-time-picker ng-model="$parent.textAnswer" message="message" read-only="readonly" mandatory="required"></md-time-picker>
+            </div>
+            <div ng-if="hour_minutes == true">
+                <md-time-picker ng-model="$parent.textAnswer" message="message" read-only="readonly" mandatory="required" no-meridiem ></md-time-picker>
+            </div>
 			
 		</div>
 		<div class="ans_footer">
@@ -13,5 +21,28 @@
 		</div>
 	</div>
 </div>
+<style type="text/css">
+    i.material-icons{
+        color: white;
+    }
+    i.material-icons:after{
+        content: '\f26e';
+        display: inline-block;
+        font-family: "Ionicons";
+        speak: none;
+        color: black;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        text-rendering: auto;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+    }
+    ng-form[name=timeForm] input, ng-form[name=timeForm] md-input-container{
+        color: black !important;
+    }
+</style>
 
 <!-- <div><input type='text' name='textAnswer' ng-model='textAnswer' class='surveyTextBox' disabled /><button class='dateBut button-small ion-android-calendar' ng-click='DatePicker()'></button></div> -->
