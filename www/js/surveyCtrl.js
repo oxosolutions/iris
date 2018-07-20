@@ -2081,8 +2081,8 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 									[
 										answer, localStorage.get('startStamp'), 
 										localStorage.get('userId'),'app','NULL',uniqueKey, 
-										//JSON.stringify($cordovaDevice.getDevice()),
-										 'device_details',
+										JSON.stringify($cordovaDevice.getDevice()),
+										//'device_details',
 										localStorage.get('userId'), 
 										timeStamp(), QuestionIndex,
 										'incomplete',
