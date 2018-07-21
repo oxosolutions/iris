@@ -1509,7 +1509,10 @@ function image(params,$cordovaCamera){
     });
     window.seletcedImages = [];
     $scope.capture_image = function(){
-        
+        if(seletcedImages.length == 5){
+            alert('You have entered maximum images!');
+            return false;
+        }
         var options = {
             quality: 50,
             destinationType: Camera.DestinationType.FILE_URI,
@@ -1526,7 +1529,6 @@ function image(params,$cordovaCamera){
         };
 
         $cordovaCamera.getPicture(options).then(function(imageURI) {
-            console.log(imageURI);
             seletcedImages.push(imageURI);
             $('.image-wrap').html('');
             $.each(seletcedImages, function(key,value){
@@ -2082,7 +2084,7 @@ function saveResult(questionData, localStorage, dbservice, $state, answer, $cord
 										answer, localStorage.get('startStamp'), 
 										localStorage.get('userId'),'app','NULL',uniqueKey, 
 										JSON.stringify($cordovaDevice.getDevice()),
-										//'device_details',
+										// 'device_details',
 										localStorage.get('userId'), 
 										timeStamp(), QuestionIndex,
 										'incomplete',

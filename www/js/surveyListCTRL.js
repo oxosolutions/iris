@@ -345,9 +345,15 @@ angular.module('smaart.surveyListCTRL', ['ngCordova'])
 .controller('stopSurvey', function($scope, $rootScope, $ionicLoading, localStorageService, $state, AppConfig, ionicDatePicker, $ionicPopup, dbservice){
 
 	$scope.StopSurvey = function(){
+        var iris_id = localStorageService.get('iris_id');
+        if(iris_id == null){
+            var subTitle = '<b>Note: IRIS not generated, record will not save!</b><br/> This action is not revertable.'
+        }else{
+            var subTitle = 'This action is not revertable.';
+        }
 		var myPopup = $ionicPopup.show({
 	     title: 'Do you want to save this record?',
-	     subTitle: 'This action is not revertable.',
+	     subTitle: subTitle,
 	     scope: $scope,
 			
 	     buttons: [
